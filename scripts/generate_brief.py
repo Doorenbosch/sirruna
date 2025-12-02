@@ -41,7 +41,8 @@ def get_market_data():
             "eth_price": prices.get("ethereum", {}).get("usd", 0),
             "eth_24h_change": prices.get("ethereum", {}).get("usd_24h_change", 0),
             "total_market_cap": global_data.get("data", {}).get("total_market_cap", {}).get("usd", 0),
-            "market_cap_change_24h": global_data.get("data", {}).get("market_cap_change_percentage_24h_usd", 0)
+            "market_cap_change_24h": global_data.get("data", {}).get("market_cap_change_percentage_24h_usd", 0),
+            "btc_dominance": round(global_data.get("data", {}).get("market_cap_percentage", {}).get("btc", 0), 1)
         }
     except Exception as e:
         print(f"Error fetching market data: {e}")
@@ -53,6 +54,99 @@ def get_market_data():
             "total_market_cap": 0,
             "market_cap_change_24h": 0
         }
+
+
+def get_evening_prompt(region: str, market_data: dict) -> str:
+    """Generate the evening brief prompt - focused on what happened today"""
+    
+    region_context = {
+        "apac": {
+            "timezone": "Asia-Pacific",
+            "session": "Asian trading session",
+            "overnight": "European and US sessions ahead",
+            "local_factors": "Hong Kong close, Japan institutional activity, Korea retail sentiment shifts"
+        },
+        "emea": {
+            "timezone": "Europe and Middle East", 
+            "session": "European trading session",
+            "overnight": "US session wrapping, Asia opening",
+            "local_factors": "European institutional close, London trading desk handoff, ECB commentary"
+        },
+        "americas": {
+            "timezone": "North and South America",
+            "session": "US trading session",
+            "overnight": "Asia opening soon",
+            "local_factors": "US market close, ETF final flows, institutional repositioning"
+        }
+    }
+    
+    ctx = region_context.get(region, region_context["americas"])
+    
+    # Calculate intraday changes
+    btc_intraday = market_data.get('btc_24h_change', 0)
+    eth_intraday = market_data.get('eth_24h_change', 0)
+    
+    return f"""You are the Chief Markets Analyst for The L/tmus, writing the evening intelligence brief. This is the end-of-day debrief that sophisticated crypto investors read before dinner—a synthesis of what actually happened today and what it means for positioning.
+
+REGIONAL CONTEXT ({ctx['timezone']}):
+The {ctx['session']} is closing. Your reader needs to understand: What moved? Why? What changed about the setup since this morning? Looking ahead: {ctx['overnight']}.
+
+TODAY'S MARKET ACTION:
+- Bitcoin: ${market_data['btc_price']:,.0f} ({btc_intraday:+.1f}% in last 24h)
+- Ethereum: ${market_data['eth_price']:,.0f} ({market_data['eth_24h_change']:+.1f}% in last 24h)
+- Total Market Cap: ${market_data['total_market_cap']/1e12:.2f}T ({market_data['market_cap_change_24h']:+.1f}% 24h)
+- BTC Dominance: {market_data.get('btc_dominance', 'N/A')}%
+
+YOUR MANDATE:
+Write a 450-550 word evening brief that answers: "What actually happened today, and what does it mean?" This is not a morning setup piece—it's a retrospective that earns its place by providing clarity on the day's action.
+
+The evening brief is more empirical than the morning brief. You're explaining what happened, not what might happen. But you still need the interpretive frame—the "so what" that makes raw price action meaningful.
+
+THE STRUCTURE OF THE EVENING BRIEF (450-550 words):
+
+1. THE SESSION (50-70 words)
+Lead with what happened. Not just price—the character of the session. Was it conviction or drift? Liquidation cascade or organic selling? Short squeeze or genuine demand? Give them the one-sentence summary they can repeat to a colleague.
+
+2. THE FLOWS (100-130 words)
+Where did the money move? ETF flows, perpetual funding rates, spot vs derivatives volume, stablecoin movements. This is the plumbing that explains the price action. If you don't know specific numbers, focus on the dynamics you can infer from price behavior.
+
+3. THE DIVERGENCE (80-100 words)
+What's the most interesting thing that doesn't fit the simple narrative? BTC up but ETH down? Price rising on falling volume? Funding negative despite the rally? This is where you show sophistication—the market is never one-dimensional.
+
+4. THE REGIME CHECK (60-80 words)
+Has anything changed about the broader setup? Is this session consistent with the prevailing trend or does it suggest a shift? Connect today to the larger picture. Reference this morning's brief if the thesis was confirmed or challenged.
+
+5. THE OVERNIGHT SETUP (60-80 words)
+What matters for the next 12 hours? Key levels to watch, events that could move markets, positioning dynamics. Not predictions—preparation. What would change your view?
+
+6. THE TAKEAWAY (15-25 words)
+One sentence crystallizing today's significance. The line they remember.
+
+VOICE PRINCIPLES (same as morning):
+Write like a senior editor who respects readers' intelligence. Direct because you've done the work.
+
+Prohibited: bullish, bearish, moon, pump, FOMO, FUD, skyrockets, plummets, explodes, massive, altcoins, certainty about unpredictable outcomes.
+
+Required: Specific numbers with context, structural language (rotation, distribution, accumulation), conditional framing, comparison to recent sessions ("unlike yesterday's drift, today showed conviction").
+
+THE QUALITY TEST:
+Before finishing: Does this help the reader understand what actually happened today better than they would from watching charts? If they could get the same insight from a price chart, rewrite.
+
+OUTPUT FORMAT:
+Return ONLY valid JSON with this exact structure:
+{{
+    "headline": "5-7 word headline capturing today's story",
+    "sections": {{
+        "the_session": "50-70 word summary of today's character",
+        "the_flows": "100-130 word analysis of money movement",
+        "the_divergence": "80-100 word counterpoint or interesting anomaly",
+        "the_regime_check": "60-80 word assessment of whether anything changed",
+        "the_overnight_setup": "60-80 word preview of key levels and events",
+        "the_takeaway": "15-25 word crystallizing statement"
+    }}
+}}
+
+Return ONLY the JSON object, no other text."""
 
 
 def get_morning_prompt(region: str, market_data: dict) -> str:

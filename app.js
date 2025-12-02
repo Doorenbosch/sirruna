@@ -13,14 +13,15 @@ const CONFIG = {
 let briefData = null;
 let currentSection = 'lead';
 let currentRegion = CONFIG.defaultRegion;
+let currentBriefType = 'morning';
 
 // Audio player state
 let audioElement = null;
 let isPlaying = false;
 let currentEpisode = null;
 
-// Section definitions with display names and headlines
-const SECTIONS = {
+// Section definitions - Morning Brief
+const SECTIONS_MORNING = {
     lead: {
         label: 'THE LEAD',
         field: 'the_lead',
@@ -53,12 +54,52 @@ const SECTIONS = {
     }
 };
 
+// Section definitions - Evening Brief
+const SECTIONS_EVENING = {
+    session: {
+        label: 'THE SESSION',
+        field: 'the_session',
+        defaultHeadline: 'Today\'s Character'
+    },
+    flows: {
+        label: 'THE FLOWS',
+        field: 'the_flows',
+        defaultHeadline: 'Where Money Moved'
+    },
+    divergence: {
+        label: 'THE DIVERGENCE',
+        field: 'the_divergence',
+        defaultHeadline: 'What Doesn\'t Fit'
+    },
+    regime: {
+        label: 'THE REGIME CHECK',
+        field: 'the_regime_check',
+        defaultHeadline: 'Has Anything Changed?'
+    },
+    overnight: {
+        label: 'THE OVERNIGHT SETUP',
+        field: 'the_overnight_setup',
+        defaultHeadline: 'What\'s Ahead'
+    },
+    takeaway: {
+        label: 'THE TAKEAWAY',
+        field: 'the_takeaway',
+        defaultHeadline: 'The Bottom Line'
+    }
+};
+
+// Get current sections based on brief type
+function getCurrentSections() {
+    return currentBriefType === 'evening' ? SECTIONS_EVENING : SECTIONS_MORNING;
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initEditionPicker();
+    initBriefSelector();
     initIndexCards();
     initAudioPlayer();
-    loadContent(currentRegion);
+    loadContent(currentRegion, currentBriefType);
     loadBreakdownPodcast();
     
     // Load live market data
@@ -77,8 +118,63 @@ function initEditionPicker() {
             buttons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentRegion = btn.dataset.region;
-            loadContent(currentRegion);
+            loadContent(currentRegion, currentBriefType);
         });
+    });
+}
+
+// Brief Selector (Morning/Evening)
+function initBriefSelector() {
+    const tabs = document.querySelectorAll('.brief-tab');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const briefType = tab.dataset.brief;
+            
+            // Update active state
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            // Update current brief type
+            currentBriefType = briefType;
+            
+            // Reset to first section
+            currentSection = briefType === 'evening' ? 'session' : 'lead';
+            
+            // Rebuild index cards for new brief type
+            rebuildIndexCards();
+            
+            // Load new content
+            loadContent(currentRegion, currentBriefType);
+        });
+    });
+}
+
+// Rebuild Index Cards for Brief Type
+function rebuildIndexCards() {
+    const indexList = document.querySelector('.index-list');
+    if (!indexList) return;
+    
+    const sections = getCurrentSections();
+    
+    // Clear existing cards
+    indexList.innerHTML = '';
+    
+    // Create new cards
+    Object.keys(sections).forEach((key, index) => {
+        const section = sections[key];
+        const card = document.createElement('article');
+        card.className = 'index-card' + (index === 0 ? ' active' : '');
+        card.dataset.section = key;
+        
+        card.innerHTML = `
+            <span class="card-label">${section.label}</span>
+            <h3 class="card-headline" id="index-${key}-headline">${section.defaultHeadline}</h3>
+            <p class="card-excerpt" id="index-${key}-excerpt">Loading...</p>
+        `;
+        
+        card.addEventListener('click', () => setActiveSection(key));
+        indexList.appendChild(card);
     });
 }
 
@@ -110,10 +206,18 @@ function setActiveSection(sectionKey) {
 }
 
 // Load Content
-async function loadContent(region) {
+async function loadContent(region, briefType = 'morning') {
     try {
-        const response = await fetch(`${CONFIG.contentPath}/${region}/morning.json`);
-        if (!response.ok) throw new Error('Failed to load brief');
+        const response = await fetch(`${CONFIG.contentPath}/${region}/${briefType}.json`);
+        
+        if (!response.ok) {
+            // Brief not available yet
+            if (response.status === 404) {
+                showBriefUnavailable(briefType);
+                return;
+            }
+            throw new Error('Failed to load brief');
+        }
         
         briefData = await response.json();
         
@@ -121,11 +225,36 @@ async function loadContent(region) {
         renderReadingPane(currentSection);
         renderTimestamp(briefData);
         
-        // Load week ahead
-        loadWeekAhead(region);
+        // Load week ahead (only for morning brief)
+        if (briefType === 'morning') {
+            loadWeekAhead(region);
+        }
         
     } catch (error) {
         console.error('Error loading content:', error);
+        showBriefUnavailable(briefType);
+    }
+}
+
+// Show brief unavailable message
+function showBriefUnavailable(briefType) {
+    const bodyEl = document.getElementById('reading-body');
+    const headlineEl = document.getElementById('reading-headline');
+    const labelEl = document.getElementById('reading-label');
+    
+    if (headlineEl) {
+        headlineEl.textContent = briefType === 'evening' 
+            ? 'Evening Brief Coming Soon' 
+            : 'Morning Brief Unavailable';
+    }
+    
+    if (labelEl) {
+        labelEl.textContent = briefType.toUpperCase() + ' BRIEF';
+    }
+    
+    if (bodyEl) {
+        const time = briefType === 'evening' ? '18:00' : '06:00';
+        bodyEl.innerHTML = `<p>The ${briefType} brief will be published at ${time} local time. Check back soon for today's analysis.</p>`;
     }
 }
 
@@ -201,8 +330,10 @@ async function loadWeekAhead(region) {
 function renderIndexCards(data) {
     if (!data.sections) return;
     
-    Object.keys(SECTIONS).forEach(key => {
-        const section = SECTIONS[key];
+    const sections = getCurrentSections();
+    
+    Object.keys(sections).forEach(key => {
+        const section = sections[key];
         const content = data.sections[section.field] || '';
         
         // Generate a headline from the content (first few words or use default)
@@ -218,15 +349,23 @@ function renderIndexCards(data) {
 function renderReadingPane(sectionKey) {
     if (!briefData || !briefData.sections) return;
     
-    const section = SECTIONS[sectionKey];
+    const sections = getCurrentSections();
+    const section = sections[sectionKey];
+    
+    if (!section) return;
+    
     const content = briefData.sections[section.field] || '';
     
     // Update label
     setText('reading-label', section.label);
     
-    // Update headline (use main brief headline for lead, generate for others)
-    if (sectionKey === 'lead') {
-        setText('reading-headline', briefData.headline || 'Morning Brief');
+    // Update headline
+    // Use main brief headline for first section (lead or session), generate for others
+    const isFirstSection = (currentBriefType === 'morning' && sectionKey === 'lead') ||
+                           (currentBriefType === 'evening' && sectionKey === 'session');
+    
+    if (isFirstSection) {
+        setText('reading-headline', briefData.headline || (currentBriefType === 'evening' ? 'Evening Brief' : 'Morning Brief'));
     } else {
         setText('reading-headline', generateHeadline(content, section.defaultHeadline));
     }

@@ -1,15 +1,18 @@
 {
-  "headline": "Risk Assets Rally on Macro Relief",
-  "sections": {
-    "the_day": "Bitcoin climbed above $91k while Ethereum reclaimed $3k, extending a broad rally across risk assets. Both majors posted their strongest single-day gains in over a fortnight. Volumes were elevated but not exceptional\u2014this was steady accumulation rather than speculative frenzy. No single catalyst dominated headlines; instead, a confluence of diminishing macro anxiety lifted sentiment.",
-    "the_move_explained": "The rally appears rooted in stabilizing bond yields and softening dollar strength, both of which tend to precede crypto upside. Correlation with tech equities remained tight\u2014when Nasdaq rallied 1.8%, digital assets followed with beta. This wasn't crypto-native news driving price; it was macro conditions becoming less hostile.",
-    "into_tonight": "Asian session liquidity will test whether this momentum holds without Western participation. Watch for profit-taking near resistance levels if volumes thin."
-  },
-  "region": "americas",
-  "type": "evening",
-  "generated_at": "2025-12-02T23:57:29.150781+00:00",
-  "btc_price": 91353,
-  "eth_price": 2997.77,
-  "total_market_cap": 3182790944202.693,
-  "btc_24h_change": 5.878257907664022
+    "region": "americas",
+    "type": "evening",
+    "generated_at": "2025-12-02T18:00:00-05:00",
+    "headline": "A Sideways Day With Hidden Signals",
+    "sections": {
+        "the_session": "Today's session was deceptively quiet. Bitcoin oscillated in a $1,500 range around $91,000, but beneath the surface, derivatives markets showed unusual activity. The character was consolidation, not conviction—a market catching its breath after last week's volatility.",
+        "the_flows": "ETF flows painted a mixed picture: BlackRock's IBIT saw $124 million in inflows while Grayscale's GBTC continued its slow bleed with $45 million out. Net positive, but barely. More telling was perpetual funding rates flipping negative mid-session for the first time this week, suggesting leveraged longs have been flushed. Stablecoin flows into exchanges picked up in the final two hours—someone is positioning.",
+        "the_divergence": "The interesting anomaly: ETH outperformed BTC by nearly 2% despite no obvious catalyst. When ETH leads in a risk-off environment, it often signals rotation rather than retreat. Meanwhile, BTC dominance ticked down 0.3%—small, but noteworthy given the broader caution.",
+        "the_regime_check": "Nothing fundamental changed today. This morning's thesis—that the market is in distribution mode after November's rally—remains intact. The lack of follow-through buying on the early session dip confirms institutional hesitation. We're still in wait-and-see territory.",
+        "the_overnight_setup": "Watch the $90,000 level overnight. Asia opens with BTC just above this psychological floor. A break below likely triggers stop-losses that could accelerate toward $87,500. Conversely, holding $90K and reclaiming $92,000 would suggest the consolidation is constructive rather than distributive.",
+        "the_takeaway": "Today was a pause, not a resolution. The real move is still ahead—likely this week."
+    },
+    "btc_price": 91245,
+    "eth_price": 3125,
+    "total_market_cap": 3180000000000,
+    "btc_24h_change": 0.8
 }

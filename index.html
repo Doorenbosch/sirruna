@@ -59,8 +59,20 @@
             <!-- Left: Article Index -->
             <aside class="article-index">
                 <header class="index-header">
-                    <h2 class="index-title">Morning Brief</h2>
-                    <time class="index-date" id="brief-date">December 2, 2025</time>
+                    <div class="index-header-top">
+                        <h2 class="index-title">Intelligence</h2>
+                        <time class="index-date" id="brief-date">December 2, 2025</time>
+                    </div>
+                    <div class="brief-selector">
+                        <button class="brief-tab active" data-brief="morning">
+                            <span class="brief-tab-label">Morning</span>
+                            <span class="brief-tab-time">06:00</span>
+                        </button>
+                        <button class="brief-tab" data-brief="evening">
+                            <span class="brief-tab-label">Evening</span>
+                            <span class="brief-tab-time">18:00</span>
+                        </button>
+                    </div>
                 </header>
 
                 <nav class="index-list">
