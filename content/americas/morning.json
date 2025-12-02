@@ -1,0 +1,16 @@
+{
+    "region": "americas",
+    "type": "morning",
+    "generated_at": "2025-12-02T06:00:00-05:00",
+    "headline": "The Momentum Machine Breaks Down",
+    "sections": {
+        "overnight": "November's $3.5 billion ETF outflow wasn't just profit-taking—it was the institutional bid stepping away. Bitcoin's 6% overnight decline to $85,945 reveals what happens when algorithmic momentum strategies all hit the same exit.",
+        "the_setup": "The US session inherits a market searching for new buyers. ETF flows turned negative for the first time in three weeks, and the options market has flipped to put-heavy positioning. The $95,000 level—previously support—now acts as resistance.",
+        "what_matters": "Fed Chair Powell speaks at 14:00 EST. Markets are pricing 65% odds of a December cut, but any hawkish surprise could accelerate the de-risking. Watch the ETF flow data at market close—two consecutive outflow days would confirm distribution.",
+        "the_take": "The bull market isn't over, but the easy phase is. What comes next requires patience and conviction that most retail participants don't have."
+    },
+    "btc_price": 85945,
+    "eth_price": 3180,
+    "total_market_cap": 3200000000000,
+    "btc_24h_change": -6.2
+}

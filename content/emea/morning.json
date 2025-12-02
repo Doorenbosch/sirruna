@@ -1,0 +1,16 @@
+{
+    "region": "emea",
+    "type": "morning",
+    "generated_at": "2025-12-02T06:00:00+00:00",
+    "headline": "Asia Confirms the Reversal",
+    "sections": {
+        "overnight": "The US session's 6% drop found no buyers in Asia. Bitcoin tested $84,500 before a modest bounce, but volume remained thin. The lack of dip-buying suggests institutions across time zones are aligned in their caution.",
+        "the_setup": "Europe opens to a market that's now 12% off highs with no clear catalyst for reversal. ETF positioning in the US turned defensive, and Asian perpetual funding rates have flipped negative—traders are now paying to be short.",
+        "what_matters": "ECB's Lagarde speaks at 14:00 GMT on inflation outlook. While not directly crypto-relevant, risk appetite across European markets will take its cue from her tone. MiCA implementation updates from the European Commission are expected this week.",
+        "the_take": "Two sessions, same story: sellers in control. The question isn't whether to buy the dip—it's whether this is a dip or a trend change."
+    },
+    "btc_price": 85200,
+    "eth_price": 3150,
+    "total_market_cap": 3150000000000,
+    "btc_24h_change": -7.1
+}

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Litmus | Crypto Intelligence</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">/</span>
+                <span class="logo-text">THE L/TMUS</span>
+            </div>
+            <nav class="region-selector">
+                <button class="region-btn active" data-region="americas">Americas</button>
+                <button class="region-btn" data-region="emea">EMEA</button>
+                <button class="region-btn" data-region="apac">APAC</button>
+            </nav>
+        </header>
+
+        <!-- Market Bar -->
+        <div class="market-bar">
+            <div class="market-item">
+                <span class="market-label">Bitcoin</span>
+                <span class="market-price" id="btc-price">$97,245</span>
+            </div>
+            <div class="market-item">
+                <span class="market-label">Market</span>
+                <span class="market-price" id="total-market">$3.2T</span>
+            </div>
+            <div class="market-item">
+                <span class="market-label">Session</span>
+                <span class="market-status" id="session-status">Active</span>
+            </div>
+        </div>
+
+        <!-- Morning Brief -->
+        <main class="brief-container">
+            <section class="brief" id="morning-brief">
+                <div class="brief-header">
+                    <span class="brief-label">MORNING BRIEF</span>
+                    <span class="brief-time" id="brief-timestamp">6:00 AM EST</span>
+                </div>
+                
+                <h1 class="brief-headline" id="brief-headline">The Momentum Machine Breaks Down</h1>
+                
+                <div class="brief-meta">
+                    <span class="brief-author">L/tmus AI Editorial</span>
+                    <span class="brief-date" id="brief-date">2 Dec 2025</span>
+                </div>
+
+                <article class="brief-content" id="brief-content">
+                    <section class="brief-section">
+                        <h2>Overnight</h2>
+                        <p id="section-overnight">November's $3.5 billion ETF outflow wasn't just profit-taking—it was the institutional bid stepping away. Bitcoin's 6% overnight decline to $85,945 reveals what happens when algorithmic momentum strategies all hit the same exit.</p>
+                    </section>
+
+                    <section class="brief-section">
+                        <h2>The Setup</h2>
+                        <p id="section-setup">The US session inherits a market searching for new buyers. ETF flows turned negative for the first time in three weeks, and the options market has flipped to put-heavy positioning. The $95,000 level—previously support—now acts as resistance.</p>
+                    </section>
+
+                    <section class="brief-section">
+                        <h2>What Matters Today</h2>
+                        <p id="section-matters">Fed Chair Powell speaks at 14:00 EST. Markets are pricing 65% odds of a December cut, but any hawkish surprise could accelerate the de-risking. Watch the ETF flow data at market close—two consecutive outflow days would confirm distribution.</p>
+                    </section>
+
+                    <section class="brief-section the-take">
+                        <h2>The Take</h2>
+                        <p id="section-take">The bull market isn't over, but the easy phase is. What comes next requires patience and conviction that most retail participants don't have.</p>
+                    </section>
+                </article>
+            </section>
+
+            <!-- The Week Ahead -->
+            <section class="week-ahead" id="week-ahead">
+                <div class="brief-header">
+                    <span class="brief-label">THE WEEK AHEAD</span>
+                </div>
+
+                <div class="week-content" id="week-content">
+                    <section class="brief-section">
+                        <h2>This Week's Fulcrum</h2>
+                        <p id="week-fulcrum">Friday's jobs report looms as the macro fulcrum. Weak data strengthens the rate-cut case; strong data gives the Fed cover to pause. Either outcome moves crypto—the question is which direction.</p>
+                    </section>
+
+                    <section class="brief-section">
+                        <h2>Levels Worth Knowing</h2>
+                        <p id="week-levels">BTC $92,000 is the line. Below it, momentum traders capitulate and the next support is $85,000. Above $98,500, the squeeze resumes. ETH faces its own test at $3,400—a break below suggests rotation out of alts continues.</p>
+                    </section>
+
+                    <section class="brief-section">
+                        <h2>The Unpriced Story</h2>
+                        <p id="week-unpriced">Stablecoin supply is quietly expanding while prices fall. This divergence historically precedes accumulation phases. The market is focused on price; the smart money is watching liquidity.</p>
+                    </section>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="footer-text">Intelligence for the informed investor</p>
+            <p class="footer-disclaimer">Not financial advice. Analysis generated by AI, edited for quality.</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

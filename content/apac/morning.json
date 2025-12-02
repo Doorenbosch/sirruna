@@ -1,0 +1,16 @@
+{
+    "region": "apac",
+    "type": "morning",
+    "generated_at": "2025-12-02T06:00:00+08:00",
+    "headline": "Wall Street Hits the Exit",
+    "sections": {
+        "overnight": "The US session delivered the sharpest single-day decline since the election rally began. $637 million in liquidations cleared leveraged longs as Bitcoin dropped from $91,000 to $85,945. ETF outflows hit $540 million—the largest daily exit in two months.",
+        "the_setup": "Asia inherits a damaged chart. The rally's trendline from November is broken, and the first meaningful support sits at $82,000. Perpetual funding has normalized, suggesting the leverage flush is complete, but that doesn't mean buyers are ready.",
+        "what_matters": "Hong Kong spot ETF volumes will signal regional institutional appetite. Japan's FSA meets this week on crypto custody rules—any tightening could pressure regional sentiment. Watch whether Korean retail, often a leading indicator, steps in or stays away.",
+        "the_take": "The overnight move was violent but healthy. Markets needed to reset positioning. The next 48 hours will reveal whether this is a buying opportunity or the start of something worse."
+    },
+    "btc_price": 85945,
+    "eth_price": 3180,
+    "total_market_cap": 3200000000000,
+    "btc_24h_change": -6.2
+}
