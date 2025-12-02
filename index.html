@@ -12,223 +12,186 @@
 <body>
     <div class="container">
         <!-- Header -->
-        <header class="header">
-            <div class="logo">
-                <span class="logo-icon">/</span>
-                <span class="logo-text">THE L/TMUS</span>
+        <header class="masthead">
+            <div class="masthead-left">
+                <div class="logo">
+                    <span class="logo-mark">/</span>
+                    <span class="logo-type">THE L/TMUS</span>
+                </div>
             </div>
-            <nav class="region-selector">
-                <button class="region-btn active" data-region="americas">Americas</button>
-                <button class="region-btn" data-region="emea">EMEA</button>
-                <button class="region-btn" data-region="apac">APAC</button>
+            <nav class="edition-picker">
+                <button class="edition active" data-region="americas">Americas</button>
+                <button class="edition" data-region="emea">EMEA</button>
+                <button class="edition" data-region="apac">APAC</button>
             </nav>
         </header>
 
-        <!-- Market Bar -->
-        <div class="market-bar">
-            <div class="market-item">
-                <span class="market-label">Bitcoin</span>
-                <span class="market-price" id="btc-price">$97,245</span>
+        <!-- Market Strip -->
+        <div class="market-strip">
+            <div class="ticker">
+                <span class="ticker-label">Bitcoin</span>
+                <span class="ticker-value" id="btc-price">$97,245</span>
+                <span class="ticker-change down" id="btc-change">-2.4%</span>
             </div>
-            <div class="market-item">
-                <span class="market-label">Market</span>
-                <span class="market-price" id="total-market">$3.2T</span>
+            <div class="ticker">
+                <span class="ticker-label">Ether</span>
+                <span class="ticker-value" id="eth-price">$3,180</span>
+                <span class="ticker-change down" id="eth-change">-3.1%</span>
             </div>
-            <div class="market-item">
-                <span class="market-label">Session</span>
-                <span class="market-status" id="session-status">Active</span>
+            <div class="ticker">
+                <span class="ticker-label">Total Market</span>
+                <span class="ticker-value" id="total-market">$3.2T</span>
+            </div>
+            <div class="ticker">
+                <span class="ticker-label">Updated</span>
+                <span class="ticker-value" id="last-updated">6:00 AM EST</span>
             </div>
         </div>
 
-        <!-- Navigation Bar -->
-        <nav class="nav-bar">
-            <span class="nav-item active">Today's Intelligence</span>
-            <span class="nav-divider">|</span>
-            <span class="nav-item">The Week Ahead</span>
-            <span class="nav-divider">|</span>
-            <span class="nav-item">Audio</span>
-            <span class="nav-divider">|</span>
-            <span class="nav-item">Archive</span>
+        <!-- Section Navigation -->
+        <nav class="section-nav">
+            <a href="#" class="section-link active">Intelligence</a>
+            <a href="#" class="section-link">Week Ahead</a>
+            <a href="#" class="section-link">Audio</a>
+            <a href="#" class="section-link">Archive</a>
         </nav>
 
-        <!-- Three Column Layout -->
-        <main class="news-grid">
+        <!-- Main Grid -->
+        <main class="editorial-grid">
             
-            <!-- Left Column: Article List -->
-            <aside class="sidebar-left">
-                <div class="sidebar-header">
-                    <span class="sidebar-label">MORNING BRIEF</span>
-                    <span class="sidebar-time" id="brief-timestamp">6:00 AM EST</span>
-                </div>
+            <!-- Left: Article Index -->
+            <aside class="article-index">
+                <header class="index-header">
+                    <h2 class="index-title">Morning Brief</h2>
+                    <time class="index-date" id="brief-date">December 2, 2025</time>
+                </header>
 
-                <!-- Article Card: Overnight -->
-                <article class="article-card" data-section="overnight">
-                    <h3 class="article-card-title" id="card-overnight-title">The Institutional Bid Steps Away</h3>
-                    <p class="article-card-excerpt" id="card-overnight-excerpt">November's $3.5 billion ETF outflow wasn't just profit-taking—it was the institutional bid stepping away.</p>
-                    <div class="article-card-meta">
-                        <span class="article-card-category">Overnight</span>
-                        <span class="article-card-time">33 minutes ago</span>
-                    </div>
-                </article>
+                <nav class="index-list">
+                    <article class="index-card active" data-section="lead">
+                        <span class="card-label">THE LEAD</span>
+                        <h3 class="card-headline" id="index-lead-headline">The Exhaustion Trade</h3>
+                        <p class="card-excerpt" id="index-lead-excerpt">The market is lying about what it wants. Bitcoin's drift toward $95,000 amid record ETF outflows suggests not momentum but exhaustion...</p>
+                    </article>
 
-                <!-- Article Card: The Setup -->
-                <article class="article-card" data-section="setup">
-                    <h3 class="article-card-title" id="card-setup-title">Markets Search for New Buyers</h3>
-                    <p class="article-card-excerpt" id="card-setup-excerpt">The US session inherits a market searching for new buyers. ETF flows turned negative for the first time in three weeks.</p>
-                    <div class="article-card-meta">
-                        <span class="article-card-category">The Setup</span>
-                        <span class="article-card-time">35 minutes ago</span>
-                    </div>
-                </article>
+                    <article class="index-card" data-section="mechanism">
+                        <span class="card-label">THE MECHANISM</span>
+                        <h3 class="card-headline" id="index-mechanism-headline">Institutional Exit</h3>
+                        <p class="card-excerpt" id="index-mechanism-excerpt">November's $3.5 billion ETF outflow wasn't just profit-taking—it was the institutional bid stepping away...</p>
+                    </article>
 
-                <!-- Article Card: What Matters -->
-                <article class="article-card" data-section="matters">
-                    <h3 class="article-card-title" id="card-matters-title">Powell Speaks at 14:00 EST</h3>
-                    <p class="article-card-excerpt" id="card-matters-excerpt">Markets are pricing 65% odds of a December cut, but any hawkish surprise could accelerate the de-risking.</p>
-                    <div class="article-card-meta">
-                        <span class="article-card-category">What Matters</span>
-                        <span class="article-card-time">38 minutes ago</span>
-                    </div>
-                </article>
+                    <article class="index-card" data-section="complication">
+                        <span class="card-label">THE COMPLICATION</span>
+                        <h3 class="card-headline" id="index-complication-headline">Liquidity Divergence</h3>
+                        <p class="card-excerpt" id="index-complication-excerpt">However, the picture isn't uniformly bearish. Stablecoin supply continues expanding—USDT market cap hit a new all-time high...</p>
+                    </article>
 
-                <!-- Newsletter Signup -->
-                <div class="newsletter-box">
-                    <h4>Subscribe</h4>
-                    <p>Daily intelligence, delivered.</p>
-                    <input type="email" placeholder="Enter your email">
-                    <button class="newsletter-btn">→</button>
-                </div>
+                    <article class="index-card" data-section="behavior">
+                        <span class="card-label">THE BEHAVIORAL ANGLE</span>
+                        <h3 class="card-headline" id="index-behavior-headline">Narrative Exhaustion</h3>
+                        <p class="card-excerpt" id="index-behavior-excerpt">What we're witnessing is classic narrative exhaustion. The 'institutional adoption' story has been fully absorbed...</p>
+                    </article>
+
+                    <article class="index-card" data-section="outlook">
+                        <span class="card-label">LOOKING AHEAD</span>
+                        <h3 class="card-headline" id="index-outlook-headline">The Jobs Report Fulcrum</h3>
+                        <p class="card-excerpt" id="index-outlook-excerpt">Watch Friday's jobs report as the macro fulcrum. Weak data strengthens the rate-cut case...</p>
+                    </article>
+
+                    <article class="index-card" data-section="takeaway">
+                        <span class="card-label">THE TAKEAWAY</span>
+                        <h3 class="card-headline" id="index-takeaway-headline">Patience Required</h3>
+                        <p class="card-excerpt" id="index-takeaway-excerpt">The bull market isn't over, but the easy phase is. What comes next requires patience and conviction...</p>
+                    </article>
+                </nav>
             </aside>
 
-            <!-- Center Column: Main Story -->
-            <section class="main-story">
-                <span class="main-story-label">MAIN STORY</span>
+            <!-- Center: Reading Pane -->
+            <section class="reading-pane">
                 
-                <h1 class="main-story-headline" id="brief-headline">The Momentum Machine Breaks Down</h1>
-                
-                <p class="main-story-lead" id="brief-lead">The market is lying about what it wants. Bitcoin's drift toward $95,000 amid record ETF outflows suggests not momentum but exhaustion—capital departing without panic, vacating positions that new buyers aren't filling.</p>
-
-                <div class="main-story-meta">
-                    <span class="main-story-author">By <a href="#">L/tmus AI Editorial</a></span>
-                    <span class="main-story-date" id="brief-date">Dec 2, 2025</span>
+                <!-- Audio Bar -->
+                <div class="audio-bar">
+                    <div class="audio-artwork">
+                        <img src="https://is1-ssl.mzstatic.com/image/thumb/Podcasts116/v4/50/cf/92/50cf9200-0060-3f98-cc0c-2c032a67528c/mza_7907752030028388498.jpg/600x600bb.jpg" alt="The Breakdown">
+                    </div>
+                    <div class="audio-info">
+                        <span class="audio-show">THE BREAKDOWN</span>
+                        <span class="audio-episode" id="podcast-title">Bitcoin's Fragile Recovery</span>
+                    </div>
+                    <button class="audio-play">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    </button>
+                    <span class="audio-duration">12 min</span>
                 </div>
 
-                <article class="main-story-content" id="brief-content">
-                    <section class="story-section">
-                        <h2>The Mechanism</h2>
-                        <p id="section-mechanism">November's $3.5 billion ETF outflow wasn't just profit-taking—it was the institutional bid stepping away. Bitcoin's 6% overnight decline to $85,945 reveals what happens when algorithmic momentum strategies all hit the same exit. The reflexive loop that drove prices higher has shifted into reverse: falling prices trigger systematic selling, which produces more falling prices.</p>
-                    </section>
+                <!-- Article Content -->
+                <article class="article-content">
+                    <header class="article-header">
+                        <span class="article-label" id="reading-label">THE LEAD</span>
+                        <h1 class="article-headline" id="reading-headline">The Momentum Machine Breaks Down</h1>
+                        <div class="article-meta">
+                            <span class="article-byline">L/tmus Intelligence</span>
+                            <span class="article-timestamp" id="reading-timestamp">December 2, 2025 · 6:00 AM EST</span>
+                        </div>
+                    </header>
 
-                    <section class="story-section">
-                        <h2>The Complication</h2>
-                        <p id="section-complication">However, the picture isn't uniformly bearish. Stablecoin supply continues expanding—USDT market cap hit a new all-time high this week. This divergence between price weakness and liquidity growth has historically preceded accumulation phases. Someone is preparing to buy; they're just not buying yet.</p>
-                    </section>
-
-                    <section class="story-section">
-                        <h2>The Behavioral Layer</h2>
-                        <p id="section-behavioral">What we're witnessing is classic narrative exhaustion. The "institutional adoption" story that powered the rally has been fully absorbed—priced in, as they say. Markets need new stories to move, and the current environment offers only macro uncertainty. In the absence of a fresh catalyst, the path of least resistance is down.</p>
-                    </section>
-
-                    <section class="story-section">
-                        <h2>The Forward View</h2>
-                        <p id="section-forward">Watch Friday's jobs report as the macro fulcrum. Weak data strengthens the rate-cut case; strong data gives the Fed cover to pause. BTC $82,000 is the line—below it, momentum traders capitulate. Above $92,000, the squeeze resumes. The setup favors patience over action.</p>
-                    </section>
-
-                    <section class="story-section the-take">
-                        <p id="section-closing">The bull market isn't over, but the easy phase is. What comes next requires patience and conviction that most retail participants don't have.</p>
-                    </section>
+                    <div class="article-body" id="reading-body">
+                        <p>The market is lying about what it wants. Bitcoin's drift toward $95,000 amid record ETF outflows suggests not momentum but exhaustion—capital departing without panic, vacating positions that new buyers aren't filling.</p>
+                        <p>This is the uncomfortable truth that the headline number obscures: the rally's engine has shifted into neutral. Price holds, but conviction doesn't. The buyers who drove November's surge have become December's sellers, and the bid that remains is thin, mechanical, unconvinced.</p>
+                        <p>For sophisticated investors, the signal is clear: this is not the moment for bold action. It's the moment for observation—watching whether the next wave of capital arrives before the current holders lose patience.</p>
+                    </div>
                 </article>
-
-                <!-- Secondary Stories -->
-                <div class="secondary-stories">
-                    <article class="secondary-story">
-                        <img src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=120&h=80&fit=crop" alt="Crypto chart" class="secondary-story-img">
-                        <div class="secondary-story-content">
-                            <h3>ETF Flows Turn Negative for First Time in Three Weeks</h3>
-                            <p>The $540 million single-day outflow marks the largest exit since October.</p>
-                            <span class="secondary-story-meta">41 minutes ago</span>
-                        </div>
-                    </article>
-                    
-                    <article class="secondary-story">
-                        <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=120&h=80&fit=crop" alt="Trading desk" class="secondary-story-img">
-                        <div class="secondary-story-content">
-                            <h3>Options Market Flips to Put-Heavy Positioning</h3>
-                            <p>Traders are now paying premium for downside protection.</p>
-                            <span class="secondary-story-meta">56 minutes ago</span>
-                        </div>
-                    </article>
-                </div>
             </section>
 
-            <!-- Right Column: Week Ahead / Trending -->
-            <aside class="sidebar-right">
-                <div class="sidebar-tabs">
-                    <button class="sidebar-tab active">THE WEEK AHEAD</button>
-                    <button class="sidebar-tab">AUDIO</button>
-                </div>
+            <!-- Right: Context Sidebar -->
+            <aside class="context-sidebar">
+                <header class="sidebar-header">
+                    <h2 class="sidebar-title">The Week Ahead</h2>
+                </header>
 
-                <!-- Week Ahead Content -->
-                <div class="sidebar-content" id="week-ahead-content">
-                    <article class="trending-item">
-                        <span class="trending-number">#1</span>
-                        <div class="trending-text">
-                            <h4 id="week-fulcrum-title">Friday's Jobs Report: The Macro Fulcrum</h4>
-                            <p id="week-fulcrum-excerpt">Weak data strengthens the rate-cut case; strong data gives the Fed cover to pause.</p>
+                <div class="context-list">
+                    <article class="context-item">
+                        <span class="context-rank">#1</span>
+                        <div class="context-content">
+                            <h4 class="context-headline" id="week-1-headline">Friday's Jobs Report</h4>
+                            <p class="context-excerpt" id="week-1-excerpt">The macro fulcrum. Weak data supports rate cuts; strong data extends the pause.</p>
                         </div>
                     </article>
 
-                    <article class="trending-item">
-                        <span class="trending-number">#2</span>
-                        <div class="trending-text">
-                            <h4 id="week-levels-title">BTC $82,000: The Line in the Sand</h4>
-                            <p id="week-levels-excerpt">Below it, momentum traders capitulate. Above $92,000, the squeeze resumes.</p>
+                    <article class="context-item">
+                        <span class="context-rank">#2</span>
+                        <div class="context-content">
+                            <h4 class="context-headline" id="week-2-headline">BTC $82,000</h4>
+                            <p class="context-excerpt" id="week-2-excerpt">The line in the sand. Below it, momentum traders capitulate.</p>
                         </div>
                     </article>
 
-                    <article class="trending-item">
-                        <span class="trending-number">#3</span>
-                        <div class="trending-text">
-                            <h4 id="week-unpriced-title">The Unpriced Story: Stablecoin Expansion</h4>
-                            <p id="week-unpriced-excerpt">USDT market cap at all-time high while prices fall. Smart money is watching liquidity.</p>
+                    <article class="context-item">
+                        <span class="context-rank">#3</span>
+                        <div class="context-content">
+                            <h4 class="context-headline" id="week-3-headline">Stablecoin Supply</h4>
+                            <p class="context-excerpt" id="week-3-excerpt">USDT at all-time high. Liquidity expansion amid price weakness.</p>
                         </div>
                     </article>
 
-                    <article class="trending-item">
-                        <span class="trending-number">#4</span>
-                        <div class="trending-text">
-                            <h4 id="week-wildcard-title">MicroStrategy Joins Nasdaq-100</h4>
-                            <p id="week-wildcard-excerpt">December 23 inclusion could create forced buying from index funds.</p>
+                    <article class="context-item">
+                        <span class="context-rank">#4</span>
+                        <div class="context-content">
+                            <h4 class="context-headline" id="week-4-headline">MicroStrategy Nasdaq-100</h4>
+                            <p class="context-excerpt" id="week-4-excerpt">December 23 inclusion. Forced index buying ahead.</p>
                         </div>
                     </article>
                 </div>
 
-                <!-- Audio Content (hidden by default) -->
-                <div class="sidebar-content hidden" id="audio-content">
-                    <div class="audio-feature">
-                        <div class="audio-artwork-small">
-                            <img src="https://i.scdn.co/image/ab6765630000ba8a2a3a4a7b1e5d4c8f3e6a9b0c" alt="The Breakdown">
-                        </div>
-                        <div class="audio-info">
-                            <h4>The Breakdown</h4>
-                            <p>Daily crypto analysis with NLW</p>
-                            <span class="audio-duration">~20 min</span>
-                        </div>
-                    </div>
-                    <a href="#" class="audio-play-btn" target="_blank">
-                        ▶ Listen to Today's Episode
-                    </a>
-                    <p class="audio-description">The podcast institutional investors actually listen to. Daily macro and crypto analysis without the noise.</p>
-                </div>
+                <div class="sidebar-divider"></div>
 
-                <!-- Video/Featured Box -->
-                <div class="featured-box">
-                    <div class="featured-video-placeholder">
-                        <span class="play-icon">▶</span>
-                        <span class="video-duration">3:40</span>
-                    </div>
-                    <h4>Markets in 90 Seconds</h4>
-                    <p>Quick video briefing on today's setup</p>
+                <!-- Newsletter -->
+                <div class="newsletter">
+                    <h4 class="newsletter-title">Daily Intelligence</h4>
+                    <p class="newsletter-desc">Join 12,000+ investors</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="your@email.com" class="newsletter-input">
+                        <button type="submit" class="newsletter-submit">→</button>
+                    </form>
                 </div>
             </aside>
 
@@ -236,8 +199,8 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <p class="footer-text">Intelligence for the informed investor</p>
-            <p class="footer-disclaimer">Not financial advice. Analysis generated by AI, edited for quality.</p>
+            <p class="footer-tagline">Intelligence for the informed investor</p>
+            <p class="footer-legal">Analysis generated by AI. Not financial advice.</p>
         </footer>
     </div>
 

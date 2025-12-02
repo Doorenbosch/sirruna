@@ -4,15 +4,16 @@
     "generated_at": "2025-12-02T06:00:00-05:00",
     "headline": "The Momentum Machine Breaks Down",
     "sections": {
-        "the_lead": "The market is lying about what it wants. Bitcoin's drift toward $95,000 amid record ETF outflows suggests not momentum but exhaustion—capital departing without panic, vacating positions that new buyers aren't filling.",
-        "the_mechanism": "November's $3.5 billion ETF outflow wasn't just profit-taking—it was the institutional bid stepping away. Bitcoin's 6% overnight decline to $85,945 reveals what happens when algorithmic momentum strategies all hit the same exit. The reflexive loop that drove prices higher has shifted into reverse: falling prices trigger systematic selling, which produces more falling prices. Perpetual funding has flipped negative for the first time since October, confirming that leveraged longs have been flushed.",
+        "the_lead": "The market is lying about what it wants. Bitcoin's drift toward $95,000 amid record ETF outflows suggests not momentum but exhaustion—capital departing without panic, vacating positions that new buyers aren't filling. This is the uncomfortable truth the headline number obscures.",
+        "the_mechanism": "November's $3.5 billion ETF outflow wasn't just profit-taking—it was the institutional bid stepping away. Bitcoin's 6% overnight decline to $85,945 reveals what happens when algorithmic momentum strategies all hit the same exit. The reflexive loop that drove prices higher has shifted into reverse: falling prices trigger systematic selling, which produces more falling prices. Perpetual funding flipped negative for the first time since October, confirming leveraged longs have been flushed. The market's internal plumbing is now working against price.",
         "the_complication": "However, the picture isn't uniformly bearish. Stablecoin supply continues expanding—USDT market cap hit a new all-time high this week. This divergence between price weakness and liquidity growth has historically preceded accumulation phases. Someone is preparing to buy; they're just not buying yet. The question is whether patient capital will step in before momentum traders capitulate entirely.",
-        "the_behavioral_layer": "What we're witnessing is classic narrative exhaustion. The 'institutional adoption' story that powered the rally has been fully absorbed—priced in, as they say. Markets need new stories to move, and the current environment offers only macro uncertainty. In the absence of a fresh catalyst, the path of least resistance is down.",
-        "the_forward_view": "Watch Friday's jobs report as the macro fulcrum. Weak data strengthens the rate-cut case and likely supports risk assets; strong data gives the Fed cover to pause. BTC $82,000 is the line—below it, momentum traders capitulate and we test $75,000. Above $92,000, shorts get squeezed and the narrative flips.",
+        "the_behavioral_layer": "What we're witnessing is classic narrative exhaustion. The 'institutional adoption' story that powered the rally has been fully absorbed—priced in, as they say. Markets need new stories to move, and the current environment offers only macro uncertainty. In the absence of a fresh catalyst, the path of least resistance is down. This is not panic; it's indifference, which can be worse.",
+        "the_forward_view": "Watch Friday's jobs report as the macro fulcrum. Weak data strengthens the rate-cut case and likely supports risk assets; strong data gives the Fed cover to pause. BTC $82,000 is the line—below it, momentum traders capitulate and we test $75,000. Above $92,000, shorts squeeze and narrative flips. The setup favors patience over action; conviction will be rewarded, but timing matters.",
         "the_closing_line": "The bull market isn't over, but the easy phase is. What comes next requires patience and conviction that most retail participants don't have."
     },
     "btc_price": 85945,
     "eth_price": 3180,
     "total_market_cap": 3200000000000,
-    "btc_24h_change": -6.2
+    "btc_24h_change": -6.2,
+    "eth_24h_change": -7.1
 }
