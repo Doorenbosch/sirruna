@@ -1,0 +1,70 @@
+name: Generate Daily Briefs
+
+on:
+  schedule:
+    - cron: '0 22 * * *'
+    - cron: '0 6 * * *'
+    - cron: '0 11 * * *'
+    - cron: '0 10 * * *'
+    - cron: '0 18 * * *'
+    - cron: '0 23 * * *'
+  workflow_dispatch:
+
+jobs:
+  generate-brief:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install anthropic requests
+      
+      - name: Determine which brief to generate
+        id: brief-type
+        run: |
+          HOUR=$(date -u +%H)
+          if [ "$HOUR" = "22" ]; then
+            echo "region=apac" >> $GITHUB_OUTPUT
+            echo "type=morning" >> $GITHUB_OUTPUT
+          elif [ "$HOUR" = "06" ]; then
+            echo "region=emea" >> $GITHUB_OUTPUT
+            echo "type=morning" >> $GITHUB_OUTPUT
+          elif [ "$HOUR" = "11" ]; then
+            echo "region=americas" >> $GITHUB_OUTPUT
+            echo "type=morning" >> $GITHUB_OUTPUT
+          elif [ "$HOUR" = "10" ]; then
+            echo "region=apac" >> $GITHUB_OUTPUT
+            echo "type=evening" >> $GITHUB_OUTPUT
+          elif [ "$HOUR" = "18" ]; then
+            echo "region=emea" >> $GITHUB_OUTPUT
+            echo "type=evening" >> $GITHUB_OUTPUT
+          elif [ "$HOUR" = "23" ]; then
+            echo "region=americas" >> $GITHUB_OUTPUT
+            echo "type=evening" >> $GITHUB_OUTPUT
+          else
+            echo "region=americas" >> $GITHUB_OUTPUT
+            echo "type=morning" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Generate brief
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          REGION: ${{ steps.brief-type.outputs.region }}
+          BRIEF_TYPE: ${{ steps.brief-type.outputs.type }}
+        run: python scripts/generate_brief.py
+      
+      - name: Commit and push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add content/
+          git diff --staged --quiet || git commit -m "Update ${{ steps.brief-type.outputs.region }} ${{ steps.brief-type.outputs.type }} brief"
+          git push
