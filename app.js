@@ -162,10 +162,11 @@ async function loadMarketData() {
             if (totalMarketCap) {
                 setText('total-market', formatMarketCap(totalMarketCap));
             }
+            
+            if (marketCapChange !== undefined) {
+                updateChangeElement('market-change', marketCapChange);
+            }
         }
-        
-        // Update timestamp
-        setText('last-updated', formatTimeNow());
         
     } catch (error) {
         console.error('Error loading market data:', error);
@@ -179,15 +180,6 @@ function updateChangeElement(elementId, change) {
     
     el.textContent = formatChange(change);
     el.className = `ticker-change ${change >= 0 ? 'up' : 'down'}`;
-}
-
-// Format current time
-function formatTimeNow() {
-    return new Date().toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-    });
 }
 
 // Load Week Ahead
