@@ -3,7 +3,10 @@
 const CONFIG = {
     contentPath: './content',
     defaultRegion: 'americas',
-    breakdownAPI: '/api/breakdown'
+    breakdownAPI: '/api/breakdown',
+    coinGeckoAPI: 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum&order=market_cap_desc&sparkline=false&price_change_percentage=24h',
+    globalAPI: 'https://api.coingecko.com/api/v3/global',
+    marketUpdateInterval: 60000 // 1 minute
 };
 
 // Data store
@@ -57,6 +60,12 @@ document.addEventListener('DOMContentLoaded', () => {
     initAudioPlayer();
     loadContent(currentRegion);
     loadBreakdownPodcast();
+    
+    // Load live market data
+    loadMarketData();
+    
+    // Update market data every minute
+    setInterval(loadMarketData, CONFIG.marketUpdateInterval);
 });
 
 // Edition (Region) Picker
@@ -108,7 +117,6 @@ async function loadContent(region) {
         
         briefData = await response.json();
         
-        renderMarketData(briefData);
         renderIndexCards(briefData);
         renderReadingPane(currentSection);
         renderTimestamp(briefData);
@@ -119,6 +127,67 @@ async function loadContent(region) {
     } catch (error) {
         console.error('Error loading content:', error);
     }
+}
+
+// Load Live Market Data from CoinGecko
+async function loadMarketData() {
+    try {
+        // Fetch coin data (BTC, ETH)
+        const coinsResponse = await fetch(CONFIG.coinGeckoAPI);
+        if (!coinsResponse.ok) throw new Error('Failed to fetch coin data');
+        
+        const coins = await coinsResponse.json();
+        
+        // Find BTC and ETH
+        const btc = coins.find(c => c.id === 'bitcoin');
+        const eth = coins.find(c => c.id === 'ethereum');
+        
+        if (btc) {
+            setText('btc-price', formatPrice(btc.current_price));
+            updateChangeElement('btc-change', btc.price_change_percentage_24h);
+        }
+        
+        if (eth) {
+            setText('eth-price', formatPrice(eth.current_price));
+            updateChangeElement('eth-change', eth.price_change_percentage_24h);
+        }
+        
+        // Fetch global market data
+        const globalResponse = await fetch(CONFIG.globalAPI);
+        if (globalResponse.ok) {
+            const globalData = await globalResponse.json();
+            const totalMarketCap = globalData.data?.total_market_cap?.usd;
+            const marketCapChange = globalData.data?.market_cap_change_percentage_24h_usd;
+            
+            if (totalMarketCap) {
+                setText('total-market', formatMarketCap(totalMarketCap));
+            }
+        }
+        
+        // Update timestamp
+        setText('last-updated', formatTimeNow());
+        
+    } catch (error) {
+        console.error('Error loading market data:', error);
+    }
+}
+
+// Update change element with color
+function updateChangeElement(elementId, change) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    
+    el.textContent = formatChange(change);
+    el.className = `ticker-change ${change >= 0 ? 'up' : 'down'}`;
+}
+
+// Format current time
+function formatTimeNow() {
+    return new Date().toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+    });
 }
 
 // Load Week Ahead
@@ -136,32 +205,6 @@ async function loadWeekAhead(region) {
 }
 
 // Render Market Data
-function renderMarketData(data) {
-    if (data.btc_price) {
-        setText('btc-price', formatPrice(data.btc_price));
-    }
-    if (data.btc_24h_change !== undefined) {
-        const el = document.getElementById('btc-change');
-        if (el) {
-            el.textContent = formatChange(data.btc_24h_change);
-            el.className = `ticker-change ${data.btc_24h_change >= 0 ? 'up' : 'down'}`;
-        }
-    }
-    if (data.eth_price) {
-        setText('eth-price', formatPrice(data.eth_price));
-    }
-    if (data.eth_24h_change !== undefined) {
-        const el = document.getElementById('eth-change');
-        if (el) {
-            el.textContent = formatChange(data.eth_24h_change);
-            el.className = `ticker-change ${data.eth_24h_change >= 0 ? 'up' : 'down'}`;
-        }
-    }
-    if (data.total_market_cap) {
-        setText('total-market', formatMarketCap(data.total_market_cap));
-    }
-}
-
 // Render Index Cards
 function renderIndexCards(data) {
     if (!data.sections) return;
