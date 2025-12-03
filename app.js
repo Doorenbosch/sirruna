@@ -280,37 +280,38 @@ function formatBriefTime(isoString) {
     if (!isoString) return '';
     
     try {
-        const date = new Date(isoString);
-        
-        // Extract timezone from ISO string if present (e.g., "+08:00" or "-05:00")
+        // Extract time and timezone from ISO string
+        // e.g., "2025-12-03T06:00:00+08:00" → "06:00 SGT"
+        const timeMatch = isoString.match(/T(\d{2}):(\d{2})/);
         const tzMatch = isoString.match(/([+-]\d{2}):?(\d{2})$/);
-        let tzAbbrev = '';
         
-        if (tzMatch) {
-            const offsetHours = parseInt(tzMatch[1]);
-            // Map common offsets to abbreviations
-            const tzMap = {
-                '-05': 'EST',
-                '-04': 'EDT', 
-                '+00': 'GMT',
-                '+01': 'CET',
-                '+08': 'SGT',
-                '+09': 'JST',
-                '+10': 'AEST',
-                '+11': 'AEDT'
-            };
-            tzAbbrev = tzMap[tzMatch[1]] || `UTC${offsetHours >= 0 ? '+' : ''}${offsetHours}`;
-        }
+        if (!timeMatch) return '';
         
-        // Format time as HH:MM
-        const hours = date.getUTCHours() + (tzMatch ? parseInt(tzMatch[1]) : 0);
-        const adjustedHours = ((hours % 24) + 24) % 24; // Handle wraparound
-        const minutes = date.getUTCMinutes();
+        const hours = timeMatch[1];
+        const minutes = timeMatch[2];
+        const timeStr = `${hours}:${minutes}`;
         
-        const timeStr = `${adjustedHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        if (!tzMatch) return timeStr;
         
-        return tzAbbrev ? `${timeStr} ${tzAbbrev}` : timeStr;
+        // Map timezone offset to abbreviation
+        const offsetStr = tzMatch[1];
+        const tzMap = {
+            '-05': 'EST',
+            '-04': 'EDT', 
+            '+00': 'GMT',
+            '+01': 'CET',
+            '+02': 'EET',
+            '+08': 'SGT',
+            '+09': 'JST',
+            '+10': 'AEST',
+            '+11': 'AEDT'
+        };
+        
+        const tzAbbrev = tzMap[offsetStr] || `UTC${offsetStr}`;
+        
+        return `${timeStr} ${tzAbbrev}`;
     } catch (e) {
+        console.error('Error formatting brief time:', e);
         return '';
     }
 }

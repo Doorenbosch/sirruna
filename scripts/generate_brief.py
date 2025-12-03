@@ -370,6 +370,40 @@ Return ONLY valid JSON with this exact structure:
 Return ONLY the JSON object, no other text."""
 
 
+def get_publication_timestamp(region: str, brief_type: str) -> str:
+    """Generate the intended publication timestamp with correct regional timezone"""
+    from datetime import datetime, timedelta
+    
+    # Timezone offsets for each region
+    tz_offsets = {
+        "apac": "+08:00",      # SGT/HKT
+        "emea": "+00:00",      # GMT
+        "americas": "-05:00"   # EST
+    }
+    
+    # Publication hours
+    pub_hours = {
+        "morning": 6,
+        "evening": 18
+    }
+    
+    offset = tz_offsets.get(region, "+00:00")
+    hour = pub_hours.get(brief_type, 6)
+    
+    # Get today's date in UTC
+    now_utc = datetime.utcnow()
+    
+    # Parse offset to calculate local date
+    offset_hours = int(offset[:3])
+    local_now = now_utc + timedelta(hours=offset_hours)
+    
+    # Use local date with intended publication hour
+    pub_time = local_now.replace(hour=hour, minute=0, second=0, microsecond=0)
+    
+    # Format as ISO string with timezone
+    return f"{pub_time.strftime('%Y-%m-%dT%H:%M:%S')}{offset}"
+
+
 def generate_brief(region: str, brief_type: str):
     """Generate a brief using Claude API"""
     
@@ -409,10 +443,17 @@ def generate_brief(region: str, brief_type: str):
     
     brief_data = json.loads(response_text)
     
-    # Add metadata
+    # Add metadata with intended publication time (not actual generation time)
     brief_data["region"] = region if brief_type != "week-ahead" else "global"
     brief_data["type"] = brief_type
-    brief_data["generated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    if brief_type == "week-ahead":
+        # Week ahead uses GMT 12:00
+        now = datetime.utcnow()
+        brief_data["generated_at"] = f"{now.strftime('%Y-%m-%dT')}12:00:00+00:00"
+    else:
+        brief_data["generated_at"] = get_publication_timestamp(region, brief_type)
+    
     brief_data["btc_price"] = market_data["btc_price"]
     brief_data["eth_price"] = market_data["eth_price"]
     brief_data["total_market_cap"] = market_data["total_market_cap"]
