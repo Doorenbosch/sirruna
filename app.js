@@ -110,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initIndexCards();
     initAudioPlayer();
     initSettings();
-    initStickyHeader();
     loadUserCoins();
     
     // Check brief availability first, then load content
@@ -131,34 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(loadYourCoins, CONFIG.marketUpdateInterval);
 });
 
-// Initialize Sticky Header
-function initStickyHeader() {
-    const stickyHeader = document.getElementById('sticky-header');
-    const sectionNav = document.querySelector('.section-nav');
-    
-    if (!stickyHeader || !sectionNav) return;
-    
-    // Get the bottom of section nav as threshold
-    let threshold = sectionNav.offsetTop + sectionNav.offsetHeight;
-    
-    // Update threshold on resize
-    window.addEventListener('resize', () => {
-        threshold = sectionNav.offsetTop + sectionNav.offsetHeight;
-    });
-    
-    // Show/hide on scroll
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > threshold) {
-            stickyHeader.classList.add('visible');
-        } else {
-            stickyHeader.classList.remove('visible');
-        }
-    });
-    
-    // Update region display
-    updateStickyRegion();
-}
-
 // Edition (Region) Picker
 function initEditionPicker() {
     const buttons = document.querySelectorAll('.edition');
@@ -168,9 +139,6 @@ function initEditionPicker() {
             buttons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentRegion = btn.dataset.region;
-            
-            // Update sticky header region
-            updateStickyRegion();
             
             // Reset to morning brief when switching regions
             currentBriefType = 'morning';
@@ -483,17 +451,11 @@ async function loadMarketData() {
         if (btc) {
             setText('btc-price', formatPrice(btc.current_price));
             updateChangeElement('btc-change', btc.price_change_percentage_24h);
-            // Update sticky header
-            setText('sticky-btc-price', formatPriceCompact(btc.current_price));
-            updateStickyChange('sticky-btc-change', btc.price_change_percentage_24h);
         }
         
         if (eth) {
             setText('eth-price', formatPrice(eth.current_price));
             updateChangeElement('eth-change', eth.price_change_percentage_24h);
-            // Update sticky header
-            setText('sticky-eth-price', formatPriceCompact(eth.current_price));
-            updateStickyChange('sticky-eth-change', eth.price_change_percentage_24h);
         }
         
         // Fetch global market data
@@ -505,7 +467,6 @@ async function loadMarketData() {
             
             if (totalMarketCap) {
                 setText('total-market', formatMarketCap(totalMarketCap));
-                setText('sticky-market', formatMarketCap(totalMarketCap));
             }
             
             if (marketCapChange !== undefined) {
@@ -515,31 +476,6 @@ async function loadMarketData() {
         
     } catch (error) {
         console.error('Error loading market data:', error);
-    }
-}
-
-// Format price compact (e.g., $92.1K)
-function formatPriceCompact(price) {
-    if (price >= 1000) {
-        return '$' + (price / 1000).toFixed(1) + 'K';
-    }
-    return '$' + price.toFixed(0);
-}
-
-// Update sticky change element
-function updateStickyChange(elementId, change) {
-    const el = document.getElementById(elementId);
-    if (!el) return;
-    
-    el.textContent = formatChange(change);
-    el.className = `sticky-change ${change >= 0 ? 'up' : 'down'}`;
-}
-
-// Update sticky region display
-function updateStickyRegion() {
-    const el = document.getElementById('sticky-region');
-    if (el) {
-        el.textContent = currentRegion.toUpperCase();
     }
 }
 
@@ -743,7 +679,7 @@ function getMarketZone(breadth, mv, mvRange) {
 // Update Market Activity indicator in header
 function updateMarketActivity(mvRatio, mvRange) {
     const el = document.getElementById('market-activity');
-    const stickyEl = document.getElementById('sticky-activity');
+    if (!el) return;
     
     // Calculate activity level based on M/V ratio
     // Lower M/V = more volume relative to market cap = more active
@@ -764,15 +700,8 @@ function updateMarketActivity(mvRatio, mvRange) {
         cssClass = 'quiet';
     }
     
-    if (el) {
-        el.textContent = activity;
-        el.className = 'ticker-value ticker-activity ' + cssClass;
-    }
-    
-    if (stickyEl) {
-        stickyEl.textContent = activity;
-        stickyEl.className = 'sticky-activity ' + cssClass;
-    }
+    el.textContent = activity;
+    el.className = 'ticker-value ticker-activity ' + cssClass;
 }
 
 // Load Week Ahead
@@ -1405,16 +1334,14 @@ function closeSettingsModal() {
     }
 }
 
-// Load all coins from static file (faster, no API rate limits)
+// Load all coins from CoinGecko
 async function loadCoinList() {
     if (allCoins.length > 0) return; // Already loaded
     
     try {
-        const response = await fetch('./data/coins.json');
+        const response = await fetch(CONFIG.topCoinsAPI);
         if (response.ok) {
             allCoins = await response.json();
-            // Sort alphabetically by symbol
-            allCoins.sort((a, b) => a.symbol.localeCompare(b.symbol));
         }
     } catch (error) {
         console.error('Error loading coin list:', error);
