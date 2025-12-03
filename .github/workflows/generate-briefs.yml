@@ -106,9 +106,7 @@ jobs:
       - name: Generate brief
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          REGION: ${{ steps.brief-type.outputs.region }}
-          BRIEF_TYPE: ${{ steps.brief-type.outputs.type }}
-        run: python scripts/generate_brief.py
+        run: python scripts/generate_brief.py ${{ steps.brief-type.outputs.region }} ${{ steps.brief-type.outputs.type }}
       
       - name: Commit and push
         run: |
