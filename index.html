@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Litmus | Crypto Intelligence</title>
+    
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RL4ZYLE5G9"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-RL4ZYLE5G9');
+    </script>
+    
     <link rel="icon" type="image/png" href="litmuslogo.png">
     <link rel="apple-touch-icon" href="litmuslogo.png">
     <link rel="stylesheet" href="style.css">
@@ -283,59 +293,6 @@
             <!-- Center: Reading Pane -->
             <section class="reading-pane">
                 
-                <!-- Audio Card - The Breakdown -->
-                <div class="audio-card" id="audio-card">
-                    <div class="audio-card-content">
-                        <div class="audio-header">
-                            <span class="audio-label">DAILY AUDIO BRIEF</span>
-                            <span class="audio-duration" id="audio-duration">12 MIN</span>
-                        </div>
-                        
-                        <div class="audio-episode">
-                            <div class="audio-artwork" id="audio-artwork">
-                                <img src="https://megaphone.imgix.net/podcasts/bcb63e62-d56f-11eb-9e47-43b3c17dbba3/image/The_Breakdown_Show_Art.jpg" alt="The Breakdown">
-                            </div>
-                            <h3 class="audio-title" id="audio-title">Loading...</h3>
-                        </div>
-                        
-                        <div class="audio-source">
-                            <span class="audio-show-name">THE BREAKDOWN</span>
-                            <span class="audio-dot">•</span>
-                            <span class="audio-recency" id="audio-recency">Loading...</span>
-                            <span class="audio-links">
-                                <a href="https://podcasts.apple.com/us/podcast/the-breakdown/id1438693620" target="_blank" rel="noopener" class="audio-link" title="Apple Podcasts">
-                                    <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/></svg>
-                                </a>
-                                <a href="https://open.spotify.com/show/538vuul1PuorUDwgkVYO6u" target="_blank" rel="noopener" class="audio-link" title="Spotify">
-                                    <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 14.36c-.18.28-.56.37-.84.2-2.3-1.4-5.2-1.72-8.62-.94-.33.08-.66-.13-.73-.46-.08-.33.13-.66.46-.73 3.74-.86 6.95-.49 9.53 1.09.28.17.37.55.2.84zm1.22-2.7c-.23.35-.72.46-1.07.23-2.63-1.62-6.64-2.09-9.75-1.14-.42.13-.86-.11-.99-.52-.13-.42.11-.86.52-.99 3.55-1.08 7.96-.56 10.97 1.35.35.23.46.72.23 1.07h.09zm.11-2.81c-3.16-1.88-8.36-2.05-11.37-1.14-.48.15-1-.13-1.15-.61-.15-.48.13-1 .61-1.15 3.47-1.05 9.23-.85 12.87 1.31.44.26.58.84.32 1.28-.26.44-.84.58-1.28.31z"/></svg>
-                                </a>
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <div class="audio-player">
-                        <button class="audio-play-btn" id="audio-play-btn" aria-label="Play">
-                            <svg class="play-icon" id="play-icon" viewBox="0 0 24 24" width="22" height="22">
-                                <path d="M8 5v14l11-7z"/>
-                            </svg>
-                            <svg class="pause-icon" id="pause-icon" viewBox="0 0 24 24" width="22" height="22">
-                                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-                            </svg>
-                        </button>
-                        <div class="audio-progress-container">
-                            <div class="audio-progress-bar">
-                                <div class="audio-progress" id="audio-progress"></div>
-                            </div>
-                            <div class="audio-times">
-                                <span class="audio-current-time" id="audio-current-time">0:00</span>
-                                <span class="audio-total-time" id="audio-total-time">0:00</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <audio id="audio-element" preload="none"></audio>
-                </div>
-
                 <!-- Article Content -->
                 <article class="article-content">
                     <!-- Lead Image (shown for lead section only) -->
@@ -360,6 +317,59 @@
                         <p>The market is lying about what it wants. Bitcoin's drift toward $95,000 amid record ETF outflows suggests not momentum but exhaustion—capital departing without panic, vacating positions that new buyers aren't filling.</p>
                         <p>This is the uncomfortable truth that the headline number obscures: the rally's engine has shifted into neutral. Price holds, but conviction doesn't. The buyers who drove November's surge have become December's sellers, and the bid that remains is thin, mechanical, unconvinced.</p>
                         <p>For sophisticated investors, the signal is clear: this is not the moment for bold action. It's the moment for observation—watching whether the next wave of capital arrives before the current holders lose patience.</p>
+                    </div>
+                    
+                    <!-- Audio Card - The Breakdown (below article) -->
+                    <div class="audio-card" id="audio-card">
+                        <div class="audio-card-content">
+                            <div class="audio-header">
+                                <span class="audio-label">DAILY AUDIO BRIEF</span>
+                                <span class="audio-duration" id="audio-duration">12 MIN</span>
+                            </div>
+                            
+                            <div class="audio-episode">
+                                <div class="audio-artwork" id="audio-artwork">
+                                    <img src="https://megaphone.imgix.net/podcasts/bcb63e62-d56f-11eb-9e47-43b3c17dbba3/image/The_Breakdown_Show_Art.jpg" alt="The Breakdown">
+                                </div>
+                                <h3 class="audio-title" id="audio-title">Loading...</h3>
+                            </div>
+                            
+                            <div class="audio-source">
+                                <span class="audio-show-name">THE BREAKDOWN</span>
+                                <span class="audio-dot">•</span>
+                                <span class="audio-recency" id="audio-recency">Loading...</span>
+                                <span class="audio-links">
+                                    <a href="https://podcasts.apple.com/us/podcast/the-breakdown/id1438693620" target="_blank" rel="noopener" class="audio-link" title="Apple Podcasts">
+                                        <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/></svg>
+                                    </a>
+                                    <a href="https://open.spotify.com/show/538vuul1PuorUDwgkVYO6u" target="_blank" rel="noopener" class="audio-link" title="Spotify">
+                                        <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 14.36c-.18.28-.56.37-.84.2-2.3-1.4-5.2-1.72-8.62-.94-.33.08-.66-.13-.73-.46-.08-.33.13-.66.46-.73 3.74-.86 6.95-.49 9.53 1.09.28.17.37.55.2.84zm1.22-2.7c-.23.35-.72.46-1.07.23-2.63-1.62-6.64-2.09-9.75-1.14-.42.13-.86-.11-.99-.52-.13-.42.11-.86.52-.99 3.55-1.08 7.96-.56 10.97 1.35.35.23.46.72.23 1.07h.09zm.11-2.81c-3.16-1.88-8.36-2.05-11.37-1.14-.48.15-1-.13-1.15-.61-.15-.48.13-1 .61-1.15 3.47-1.05 9.23-.85 12.87 1.31.44.26.58.84.32 1.28-.26.44-.84.58-1.28.31z"/></svg>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="audio-player">
+                            <button class="audio-play-btn" id="audio-play-btn" aria-label="Play">
+                                <svg class="play-icon" id="play-icon" viewBox="0 0 24 24" width="22" height="22">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                                <svg class="pause-icon" id="pause-icon" viewBox="0 0 24 24" width="22" height="22">
+                                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                                </svg>
+                            </button>
+                            <div class="audio-progress-container">
+                                <div class="audio-progress-bar">
+                                    <div class="audio-progress" id="audio-progress"></div>
+                                </div>
+                                <div class="audio-times">
+                                    <span class="audio-current-time" id="audio-current-time">0:00</span>
+                                    <span class="audio-total-time" id="audio-total-time">0:00</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <audio id="audio-element" preload="none"></audio>
                     </div>
                 </article>
             </section>

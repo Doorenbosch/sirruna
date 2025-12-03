@@ -762,6 +762,7 @@ a {
     align-items: stretch;
     background: var(--white);
     border-radius: 12px;
+    margin-top: 40px;
     margin-bottom: var(--xl);
     box-shadow: 0 2px 12px rgba(0,0,0,0.06);
     overflow: hidden;
