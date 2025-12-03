@@ -505,21 +505,23 @@ a {
 /* ========== THE TAKEAWAY - Rory-style Quote Box ========== */
 .takeaway-quote {
     margin-top: var(--lg);
-    padding: var(--md) var(--lg);
+    padding: var(--lg) var(--lg) var(--md);
+    padding-left: 50px;
     background: linear-gradient(135deg, var(--burgundy) 0%, var(--burgundy-dark) 100%);
     border-radius: 8px;
     position: relative;
+    overflow: hidden;
 }
 
 .takeaway-quote::before {
     content: '"';
     position: absolute;
-    top: -8px;
-    left: 12px;
+    top: 8px;
+    left: 10px;
     font-family: Georgia, serif;
-    font-size: 4rem;
+    font-size: 5rem;
     line-height: 1;
-    color: rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.25);
     pointer-events: none;
 }
 
