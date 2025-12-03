@@ -1017,7 +1017,7 @@ a {
     bottom: 0;
     left: 0;
     right: 0;
-    padding: var(--xxl) var(--lg) var(--lg);
+    padding: 80px 32px 28px 32px;
     background: linear-gradient(
         to bottom,
         rgba(0, 0, 0, 0) 0%,
@@ -1048,7 +1048,7 @@ a {
     color: var(--white);
     margin: 0;
     text-shadow: 0 2px 8px rgba(0,0,0,0.4);
-    max-width: 90%;
+    max-width: 85%;
 }
 
 @media (max-width: 768px) {
