@@ -192,18 +192,21 @@ async function checkBriefAvailability(region) {
     const morningTab = document.querySelector('.brief-tab[data-brief="morning"]');
     const eveningTab = document.querySelector('.brief-tab[data-brief="evening"]');
     
+    let morningAvailable = false;
+    let eveningAvailable = false;
+    
     // Check morning brief
     try {
         const morningResponse = await fetch(`${CONFIG.contentPath}/${region}/morning.json`);
         if (morningResponse.ok) {
             const morningData = await morningResponse.json();
+            morningAvailable = true;
+            
             if (morningTab) {
                 morningTab.classList.remove('unavailable');
-                // Update time display based on actual data
                 const timeEl = morningTab.querySelector('.brief-tab-time');
                 if (timeEl && morningData.generated_at) {
-                    const date = new Date(morningData.generated_at);
-                    timeEl.textContent = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+                    timeEl.textContent = formatBriefTime(morningData.generated_at);
                 }
             }
         } else {
@@ -218,28 +221,37 @@ async function checkBriefAvailability(region) {
         const eveningResponse = await fetch(`${CONFIG.contentPath}/${region}/evening.json`);
         if (eveningResponse.ok) {
             const eveningData = await eveningResponse.json();
-            // Check if evening brief is from today
-            const today = new Date().toISOString().split('T')[0];
-            const briefDate = eveningData.generated_at ? eveningData.generated_at.split('T')[0] : null;
             
-            if (briefDate === today) {
+            // Evening brief exists - check if it's from today or later than the morning brief
+            if (eveningData.generated_at) {
+                eveningAvailable = true;
+                
                 if (eveningTab) {
                     eveningTab.classList.remove('unavailable');
                     const timeEl = eveningTab.querySelector('.brief-tab-time');
-                    if (timeEl && eveningData.generated_at) {
-                        const date = new Date(eveningData.generated_at);
-                        timeEl.textContent = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+                    if (timeEl) {
+                        timeEl.textContent = formatBriefTime(eveningData.generated_at);
                     }
                 }
-            } else {
-                // Evening brief exists but from a previous day - mark as unavailable
-                if (eveningTab) eveningTab.classList.add('unavailable');
             }
         } else {
-            if (eveningTab) eveningTab.classList.add('unavailable');
+            // No evening brief file exists
+            if (eveningTab) {
+                eveningTab.classList.add('unavailable');
+                const timeEl = eveningTab.querySelector('.brief-tab-time');
+                if (timeEl) {
+                    timeEl.textContent = '18:00 · Soon';
+                }
+            }
         }
     } catch (e) {
-        if (eveningTab) eveningTab.classList.add('unavailable');
+        if (eveningTab) {
+            eveningTab.classList.add('unavailable');
+            const timeEl = eveningTab.querySelector('.brief-tab-time');
+            if (timeEl) {
+                timeEl.textContent = '18:00 · Soon';
+            }
+        }
     }
     
     // If current tab is unavailable, switch to available one
@@ -249,6 +261,46 @@ async function checkBriefAvailability(region) {
         if (availableTab) {
             availableTab.click();
         }
+    }
+}
+
+// Format brief time with timezone indicator
+function formatBriefTime(isoString) {
+    if (!isoString) return '';
+    
+    try {
+        const date = new Date(isoString);
+        
+        // Extract timezone from ISO string if present (e.g., "+08:00" or "-05:00")
+        const tzMatch = isoString.match(/([+-]\d{2}):?(\d{2})$/);
+        let tzAbbrev = '';
+        
+        if (tzMatch) {
+            const offsetHours = parseInt(tzMatch[1]);
+            // Map common offsets to abbreviations
+            const tzMap = {
+                '-05': 'EST',
+                '-04': 'EDT', 
+                '+00': 'GMT',
+                '+01': 'CET',
+                '+08': 'SGT',
+                '+09': 'JST',
+                '+10': 'AEST',
+                '+11': 'AEDT'
+            };
+            tzAbbrev = tzMap[tzMatch[1]] || `UTC${offsetHours >= 0 ? '+' : ''}${offsetHours}`;
+        }
+        
+        // Format time as HH:MM
+        const hours = date.getUTCHours() + (tzMatch ? parseInt(tzMatch[1]) : 0);
+        const adjustedHours = ((hours % 24) + 24) % 24; // Handle wraparound
+        const minutes = date.getUTCMinutes();
+        
+        const timeStr = `${adjustedHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        
+        return tzAbbrev ? `${timeStr} ${tzAbbrev}` : timeStr;
+    } catch (e) {
+        return '';
     }
 }
 
@@ -820,11 +872,44 @@ function formatShortDate(date) {
 // Render Timestamp
 function renderTimestamp(data) {
     if (data.generated_at) {
-        const date = new Date(data.generated_at);
-        setText('brief-date', formatDate(date));
-        setText('last-updated', formatTime(date));
-        setText('reading-timestamp', `${formatDate(date)} · ${formatTime(date)}`);
+        const isoString = data.generated_at;
+        const date = new Date(isoString);
+        
+        // Extract timezone abbreviation from the ISO string
+        const tzAbbrev = getTimezoneAbbrev(isoString);
+        
+        // Format date
+        const dateStr = date.toLocaleDateString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+        });
+        
+        // Format time with the original timezone (not converted to local)
+        const timeStr = formatBriefTime(isoString);
+        
+        setText('brief-date', dateStr);
+        setText('reading-timestamp', `${dateStr} · ${timeStr}`);
     }
+}
+
+// Get timezone abbreviation from ISO string
+function getTimezoneAbbrev(isoString) {
+    const tzMatch = isoString.match(/([+-]\d{2}):?(\d{2})$/);
+    if (!tzMatch) return '';
+    
+    const offsetHours = parseInt(tzMatch[1]);
+    const tzMap = {
+        '-05': 'EST',
+        '-04': 'EDT', 
+        '+00': 'GMT',
+        '+01': 'CET',
+        '+08': 'SGT',
+        '+09': 'JST',
+        '+10': 'AEST',
+        '+11': 'AEDT'
+    };
+    return tzMap[tzMatch[1]] || `UTC${offsetHours >= 0 ? '+' : ''}${offsetHours}`;
 }
 
 // Helper: Set text content

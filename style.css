@@ -317,13 +317,6 @@ a {
     background: transparent;
 }
 
-.brief-tab.unavailable .brief-tab-time::after {
-    content: ' · Soon';
-    font-size: 0.55rem;
-    text-transform: uppercase;
-    color: var(--ink-tertiary);
-}
-
 .index-list {
     display: flex;
     flex-direction: column;
