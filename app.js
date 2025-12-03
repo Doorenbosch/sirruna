@@ -192,15 +192,15 @@ async function checkBriefAvailability(region) {
     const morningTab = document.querySelector('.brief-tab[data-brief="morning"]');
     const eveningTab = document.querySelector('.brief-tab[data-brief="evening"]');
     
-    let morningAvailable = false;
-    let eveningAvailable = false;
+    let morningTimestamp = null;
+    let eveningTimestamp = null;
     
     // Check morning brief
     try {
         const morningResponse = await fetch(`${CONFIG.contentPath}/${region}/morning.json`);
         if (morningResponse.ok) {
             const morningData = await morningResponse.json();
-            morningAvailable = true;
+            morningTimestamp = morningData.generated_at ? new Date(morningData.generated_at) : null;
             
             if (morningTab) {
                 morningTab.classList.remove('unavailable');
@@ -221,16 +221,27 @@ async function checkBriefAvailability(region) {
         const eveningResponse = await fetch(`${CONFIG.contentPath}/${region}/evening.json`);
         if (eveningResponse.ok) {
             const eveningData = await eveningResponse.json();
+            eveningTimestamp = eveningData.generated_at ? new Date(eveningData.generated_at) : null;
             
-            // Evening brief exists - check if it's from today or later than the morning brief
-            if (eveningData.generated_at) {
-                eveningAvailable = true;
-                
+            // Evening brief is only valid if it's AFTER the morning brief
+            // This prevents showing yesterday's evening brief after today's morning brief
+            const eveningIsValid = eveningTimestamp && morningTimestamp && (eveningTimestamp > morningTimestamp);
+            
+            if (eveningIsValid) {
                 if (eveningTab) {
                     eveningTab.classList.remove('unavailable');
                     const timeEl = eveningTab.querySelector('.brief-tab-time');
-                    if (timeEl) {
+                    if (timeEl && eveningData.generated_at) {
                         timeEl.textContent = formatBriefTime(eveningData.generated_at);
+                    }
+                }
+            } else {
+                // Evening exists but is older than morning - mark as unavailable
+                if (eveningTab) {
+                    eveningTab.classList.add('unavailable');
+                    const timeEl = eveningTab.querySelector('.brief-tab-time');
+                    if (timeEl) {
+                        timeEl.textContent = '18:00 · Soon';
                     }
                 }
             }
