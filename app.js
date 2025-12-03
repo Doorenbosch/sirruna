@@ -1334,14 +1334,16 @@ function closeSettingsModal() {
     }
 }
 
-// Load all coins from CoinGecko
+// Load all coins from static file (faster, no API rate limits)
 async function loadCoinList() {
     if (allCoins.length > 0) return; // Already loaded
     
     try {
-        const response = await fetch(CONFIG.topCoinsAPI);
+        const response = await fetch('./data/coins.json');
         if (response.ok) {
             allCoins = await response.json();
+            // Sort alphabetically by symbol
+            allCoins.sort((a, b) => a.symbol.localeCompare(b.symbol));
         }
     } catch (error) {
         console.error('Error loading coin list:', error);
