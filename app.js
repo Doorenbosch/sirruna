@@ -806,18 +806,30 @@ function renderIndexCards(data) {
         const section = sections[key];
         const content = data.sections[section.field] || '';
         
-        // Use brief's main headline for first section, generate for others
+        // Get section-specific title if available (new format)
+        // Falls back to: main headline for lead, or default headline
         let headline;
+        const sectionTitle = data.sections[`${section.field}_title`];
+        
         if (key === firstSectionKey && data.headline) {
+            // Lead uses main headline
             headline = data.headline;
+        } else if (sectionTitle) {
+            // New format: use per-section title
+            headline = sectionTitle;
         } else {
-            headline = generateHeadline(content, section.defaultHeadline);
+            // Fallback: use default headline from config
+            headline = section.defaultHeadline;
         }
         
-        const excerpt = truncate(content, 120);
-        
         setText(`index-${key}-headline`, headline);
-        setText(`index-${key}-excerpt`, excerpt);
+        
+        // FT style: no excerpt, just label + headline
+        // Hide excerpt if it exists
+        const excerptEl = document.getElementById(`index-${key}-excerpt`);
+        if (excerptEl) {
+            excerptEl.style.display = 'none';
+        }
     });
 }
 
@@ -839,16 +851,21 @@ function renderReadingPane(sectionKey) {
         labelEl.style.color = 'var(--burgundy)';
     }
     
-    // Update headline
-    // Use main brief headline for first section (lead or session), generate for others
+    // Get headline: section title (new) > main headline (lead) > default
     const isFirstSection = (currentBriefType === 'morning' && sectionKey === 'lead') ||
                            (currentBriefType === 'evening' && sectionKey === 'session');
+    const sectionTitle = briefData.sections[`${section.field}_title`];
     
-    if (isFirstSection) {
-        setText('reading-headline', briefData.headline || (currentBriefType === 'evening' ? 'Evening Brief' : 'Morning Brief'));
+    let headline;
+    if (isFirstSection && briefData.headline) {
+        headline = briefData.headline;
+    } else if (sectionTitle) {
+        headline = sectionTitle;
     } else {
-        setText('reading-headline', generateHeadline(content, section.defaultHeadline));
+        headline = section.defaultHeadline;
     }
+    
+    setText('reading-headline', headline);
     
     // Reset byline color
     const bylineAuthor = document.querySelector('.byline-author');
@@ -856,10 +873,20 @@ function renderReadingPane(sectionKey) {
         bylineAuthor.style.color = 'var(--burgundy)';
     }
     
+    // Handle lead image if present (for lead section only)
+    const imageContainer = document.getElementById('reading-image');
+    if (imageContainer) {
+        if (isFirstSection && briefData.image_keywords) {
+            // Show image placeholder or fetch from Unsplash
+            imageContainer.style.display = 'block';
+        } else {
+            imageContainer.style.display = 'none';
+        }
+    }
+    
     // Update body - split into paragraphs for better reading
     const bodyEl = document.getElementById('reading-body');
     if (bodyEl) {
-        // For longer sections, split by sentence groups; for short, keep as one
         const paragraphs = splitIntoParagraphs(content);
         bodyEl.innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
     }

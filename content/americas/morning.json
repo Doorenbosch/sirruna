@@ -2,12 +2,19 @@
   "headline": "Conviction Arrives Late to the Party",
   "sections": {
     "the_lead": "Bitcoin's 6.5% rally and Ethereum's 8.5% surge tell a story not of new momentum, but of capitulation to existing trends. This is what distribution masquerading as accumulation looks like—price rising as the last cohort of sidelined capital abandons patience. The speed suggests not conviction but resignation: investors who spent weeks waiting for a better entry finally accepting that waiting has a cost.",
+    "the_lead_title": "Late Money Chases the Move",
     "the_mechanism": "ETF flows reveal the mechanism. Institutional allocators are filling positions not because the setup improved, but because quarter-end rebalancing demands it. January's 4.8% equity rally triggered systematic crypto allocations from multi-asset portfolios—mechanical buying untethered from conviction about crypto's fundamentals. Meanwhile, on-chain data shows long-term holders reducing positions into this strength, a classic late-cycle transfer from strong hands to weak. The bid isn't coming from believers; it's coming from asset allocators executing mandates. That distinction matters because the former holds through volatility while the latter sells on policy.",
+    "the_mechanism_title": "Mandates, Not Conviction, Drive the Bid",
     "the_complication": "Yet volatility itself contradicts the exhaustion thesis. Realized volatility compressed to 38 annualized—the lowest since October—while price advanced. Typically, late-cycle rallies feature expanding volatility as marginal buyers panic to enter. This calm ascent suggests either exceptional liquidity absorption or, more troubling, indifference from leverage traders. Futures open interest grew only 2.1% despite the rally, indicating spot-driven movement. That's structurally healthier than leverage-fueled pumps, but raises the question: if derivatives traders aren't excited, who's left to push this higher?",
+    "the_complication_title": "The Volatility That Isn't There",
     "the_behavioral_layer": "The Federal Reserve's continued restrictive stance hasn't changed, yet crypto decoupled from rate sensitivity this week. Bitcoin's correlation to the Nasdaq dropped to 0.31—the lowest since November. This suggests either a narrative shift toward crypto as a portfolio diversifier, or temporary flow dynamics overwhelming macro sensitivity. The SEC's softer enforcement tone under new leadership provides cover for this rally, but policy changes take months to translate into structural capital. We're likely seeing positioning ahead of regime change, not the regime change itself.",
+    "the_behavioral_layer_title": "Decoupling or Just Different Timing?",
     "the_forward_view": "Watch whether Asian sessions validate or fade this move. The last three times US hours pushed Bitcoin above $92K, Asia sold it back down within twelve hours—a pattern suggesting regional disagreement about fair value. If Tokyo and Singapore buyers support these levels, it confirms broadening demand. If they fade, it exposes this rally as regionally isolated. Also monitor equity futures: if the Nasdaq weakens overnight and crypto holds, that decoupling becomes meaningful.",
-    "the_closing_line": "Capital is arriving, but it's arriving because it has nowhere else to go, not because it sees something new. That's a rally you rent, not one you marry."
+    "the_forward_view_title": "Asia Will Render the Verdict",
+    "the_closing_line": "Capital is arriving, but it's arriving because it has nowhere else to go, not because it sees something new. That's a rally you rent, not one you marry.",
+    "the_closing_line_title": "The Bottom Line"
   },
+  "image_keywords": "institutional investors boardroom late arrival party champagne",
   "region": "americas",
   "type": "morning",
   "generated_at": "2025-12-03T06:00:00-05:00",
