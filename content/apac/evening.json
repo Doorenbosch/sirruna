@@ -1,18 +1,18 @@
 {
-  "headline": "Conviction Returns with Short Squeeze Velocity",
+  "headline": "Risk Assets Rally on Fed Clarity",
   "sections": {
-    "the_session": "Asia-Pacific delivered the kind of session that changes positioning. Bitcoin's 6.6% advance wasn't gradual accumulation\u2014it moved with the velocity of forced covering, clearing $93k with Ethereum outpacing at 8.3%. Volume accompanied price, and the character was decisive rather than tentative. This wasn't drift with diminishing conviction; it was a break from range compression that had defined the prior week.",
-    "the_flows": "Perpetual funding rates spiked into positive territory after weeks of neutral-to-negative readings, suggesting new leveraged longs rather than pure spot demand. The velocity hints at liquidation cascades on the short side, particularly in the $88k-$90k zone where open interest had concentrated. Ethereum's outperformance relative to Bitcoin\u2014unusual in recent sessions\u2014indicates rotation beyond majors into higher-beta assets. Stablecoin reserves on exchanges declined modestly, consistent with conversion to risk assets rather than fresh capital entering. The spot-perpetual basis widened, confirming derivatives led this move initially, though spot volume in Asian hours was materially above the seven-day average.",
-    "the_divergence": "Bitcoin dominance actually declined slightly to 57.4% despite the rally\u2014a divergence from recent patterns where BTC strength coincided with dominance expansion. This suggests broader participation rather than safety-seeking flows into the largest asset. Additionally, the rally occurred without meaningful headlines or catalyst events, which makes the timing curious. On-chain metrics show exchange outflows were modest, not the aggressive withdrawal pattern typical of conviction-driven accumulation. The move has technical characteristics of a short squeeze more than organic demand discovery, yet it held gains rather than immediately retracing.",
-    "the_regime_check": "The question is whether this breaks the consolidation regime or merely tests its upper boundary. The past three weeks established a pattern: rallies fade, conviction remains scarce, and the market returns to range. Today's session had different character\u2014faster, more decisive, with broader participation. But one session doesn't establish a new regime. The test comes in European and US hours: does this hold, or does Western selling pressure reassert the range? We're still inside the broader $85k-$95k structure until proven otherwise.",
-    "the_overnight_setup": "The immediate test is whether $93k holds through European morning liquidity. A failure back below $91k would suggest today was simply range noise with higher amplitude. Watch Ethereum's $3,050 level\u2014breaking below would signal the outperformance was temporary. US equity futures and the dollar index matter more than usual given the absence of crypto-specific catalysts. If this was purely technical short covering, the lack of fundamental support means vulnerability to reversal on any macro headline.",
-    "the_takeaway": "Today had the velocity of regime change but lacks the fundamental foundation to confirm it. The overnight session determines whether this was a breakout or an expensive trap for late longs."
+    "the_session": "Crypto markets posted their strongest single-day gains in weeks, with Bitcoin pushing toward $94k and Ethereum outpacing at +9.3%. The rally mirrored broader risk asset strength across equities and commodities. Volume was consistent with genuine buying rather than short covering, though remained below levels seen during previous breakouts.",
+    "the_flows": "Institutional flows showed conviction rather than speculation. ETF inflows across the major Bitcoin products totaled over $200 million, with BlackRock's IBIT leading. Perpetual funding rates normalized after yesterday's flush, suggesting leveraged positioning has reset to healthier levels. Stablecoin flows into exchanges picked up meaningfully in the final hours of trading.",
+    "the_divergence": "The day's most notable divergence: Ethereum's outperformance wasn't driven by any ETH-specific catalyst. When ETH leads in a risk-on environment, it typically signals rotation down the risk curve rather than a flight to quality. Korean exchange premiums returned to positive territory for the first time this week.",
+    "the_regime_check": "Today's move suggests the correction phase may be ending, but one day doesn't make a trend. The market absorbed recent Fed commentary suggesting rate policy has reached terminal hawkishness for this cycle. The dollar weakened correspondingly, removing a key headwind for digital assets.",
+    "the_overnight_setup": "Asian markets open to positive momentum, though liquidity typically thins into the weekend. The psychological $95k level for Bitcoin remains the near-term test. A clean break above with volume would suggest the correction is definitively over.",
+    "the_takeaway": "Today was pure macro correlation working in crypto's favor. Enjoy it, but remember: the fundamental thesis hasn't changed—we're still waiting for the next catalyst."
   },
   "region": "apac",
   "type": "evening",
   "generated_at": "2025-12-03T18:00:00+08:00",
-  "btc_price": 93025,
-  "eth_price": 3059.59,
-  "total_market_cap": 3230106020797.557,
-  "btc_24h_change": 6.559716430832448
+  "btc_price": 93311,
+  "eth_price": 3069.32,
+  "total_market_cap": 3236160114938,
+  "btc_24h_change": 7.4
 }
