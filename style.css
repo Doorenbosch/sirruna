@@ -56,7 +56,14 @@ a {
 .container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: var(--lg);
+    padding: var(--lg) var(--xl);
+}
+
+/* Center content on very wide screens */
+@media (min-width: 1500px) {
+    .container {
+        padding: var(--lg) calc((100vw - 1400px) / 2 + var(--xl));
+    }
 }
 
 /* ========== MASTHEAD ========== */
@@ -758,6 +765,7 @@ a {
     margin-bottom: var(--xl);
     box-shadow: 0 2px 12px rgba(0,0,0,0.06);
     overflow: hidden;
+    max-width: 720px;
 }
 
 .audio-card-content {
@@ -985,13 +993,14 @@ a {
 
 /* Article Content */
 .article-content {
-    max-width: 640px;
+    max-width: 720px;
 }
 
 /* Article Lead Image - FT Style with Gradient Overlay */
 .article-image {
     position: relative;
     width: 100%;
+    max-width: 720px;
     height: 360px;
     margin-bottom: var(--lg);
     border-radius: 0;
@@ -1065,6 +1074,7 @@ a {
     margin-bottom: var(--xl);
     padding-bottom: var(--lg);
     border-bottom: 1px solid var(--rule);
+    max-width: 720px;
 }
 
 /* When image is shown, reduce header styling */
@@ -1110,6 +1120,7 @@ a {
     font-size: 1.15rem;
     line-height: 1.75;
     color: var(--ink-secondary);
+    max-width: 720px;
 }
 
 .article-body p {
@@ -1560,6 +1571,8 @@ a {
 }
 
 /* ========== RESPONSIVE ========== */
+
+/* Large tablets and small laptops */
 @media (max-width: 1200px) {
     .editorial-grid {
         grid-template-columns: 260px 1fr;
@@ -1570,6 +1583,31 @@ a {
     }
 }
 
+/* iPad Pro landscape and similar (1024px) */
+@media (max-width: 1024px) {
+    .container {
+        padding: var(--lg) var(--lg);
+    }
+    
+    .editorial-grid {
+        grid-template-columns: 240px 1fr;
+        gap: var(--lg);
+    }
+    
+    .audio-card {
+        max-width: 100%;
+    }
+    
+    .article-image {
+        max-width: 100%;
+    }
+    
+    .masthead {
+        padding: var(--sm) 0;
+    }
+}
+
+/* iPad portrait (768px - 900px) */
 @media (max-width: 900px) {
     .editorial-grid {
         grid-template-columns: 1fr;
