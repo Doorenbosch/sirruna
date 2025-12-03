@@ -7,6 +7,7 @@
 const CONFIG = {
     contentPath: './content/weekend',
     moodHistoryPath: './data/mood-history.json',
+    marketMoodAPI: '/api/market-mood',  // Same as Today page
     segmentsPath: './data/segments.json'
 };
 
@@ -45,6 +46,7 @@ const MAGAZINE_SECTIONS = {
 // State
 let magazineData = null;
 let moodHistory = [];
+let liveMood = null;  // Real-time mood data (same as Today page)
 let segmentsData = null;
 let currentSection = 'week_review';
 
@@ -58,6 +60,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load content
     await loadMagazineContent();
     await loadMoodHistory();
+    await loadLiveMood();  // Fetch real-time data for current dot
     await loadSegmentsData();
     
     // Initialize UI
@@ -188,6 +191,22 @@ function generateMockMoodHistory() {
     return history;
 }
 
+// Load live mood data (same source as Today page)
+async function loadLiveMood() {
+    try {
+        const response = await fetch(CONFIG.marketMoodAPI);
+        if (!response.ok) throw new Error('API not available');
+        
+        liveMood = await response.json();
+        console.log('[Weekend] Live mood loaded:', liveMood);
+        
+    } catch (error) {
+        console.log('[Weekend] Live mood API not available, using historical data');
+        // Fall back to last hourly data point if available
+        liveMood = null;
+    }
+}
+
 // Zone labels for mood
 const MOOD_ZONES = {
     'strong-rally': { label: 'Strong Rally' },
@@ -264,8 +283,22 @@ function renderMoodTrail() {
         trailPath.setAttribute('d', d);
     }
     
-    // Position current dot (last point in history = today)
-    const current = moodHistory[moodHistory.length - 1];
+    // Position current dot - use LIVE data if available, otherwise last historical point
+    // This ensures Weekend shows the same current position as Today page
+    let current;
+    if (liveMood && liveMood.breadth !== undefined) {
+        // Use real-time data from /api/market-mood (same as Today)
+        current = {
+            breadth: liveMood.breadth,
+            mv: liveMood.mvRatio24h || liveMood.mv || 18
+        };
+        console.log('[Weekend] Using live mood data for current dot');
+    } else {
+        // Fall back to last historical data point
+        current = moodHistory[moodHistory.length - 1];
+        console.log('[Weekend] Using historical data for current dot');
+    }
+    
     if (currentDot && current) {
         currentDot.style.left = `${mapX(current.breadth)}%`;
         currentDot.style.top = `${mapY(current.mv)}%`;
