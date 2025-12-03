@@ -1031,12 +1031,21 @@ function splitIntoParagraphs(content) {
     // If content is short, return as single paragraph
     if (content.length < 300) return [content];
     
-    // Split by sentences, group into paragraphs of 2-3 sentences
-    const sentences = content.match(/[^.!?]+[.!?]+/g) || [content];
-    const paragraphs = [];
+    // Split by sentences, but protect decimal numbers (e.g., 6.5%, $3.2T)
+    // Replace decimal points temporarily with a placeholder
+    const placeholder = '<<<DECIMAL>>>';
+    const protectedContent = content.replace(/(\d)\.(\d)/g, `$1${placeholder}$2`);
     
-    for (let i = 0; i < sentences.length; i += 2) {
-        const para = sentences.slice(i, i + 2).join(' ').trim();
+    // Split on sentence endings (. ! ?) followed by space
+    const sentences = protectedContent.match(/[^.!?]+[.!?]+/g) || [protectedContent];
+    
+    // Restore decimal points
+    const restoredSentences = sentences.map(s => s.replace(new RegExp(placeholder, 'g'), '.'));
+    
+    // Group into paragraphs of 2-3 sentences
+    const paragraphs = [];
+    for (let i = 0; i < restoredSentences.length; i += 2) {
+        const para = restoredSentences.slice(i, i + 2).join(' ').trim();
         if (para) paragraphs.push(para);
     }
     
