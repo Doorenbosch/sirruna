@@ -488,12 +488,60 @@ a {
     font-weight: 600;
     line-height: 1.25;
     color: var(--ink);
-    margin-bottom: 0;
+    margin-bottom: var(--xs);
 }
 
-/* FT style: no excerpts in index cards */
+/* Excerpt shown only for THE LEAD via JS */
 .card-excerpt {
-    display: none;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--ink-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ========== THE TAKEAWAY - Rory-style Quote Box ========== */
+.takeaway-quote {
+    margin-top: var(--lg);
+    padding: var(--md) var(--lg);
+    background: linear-gradient(135deg, var(--burgundy) 0%, var(--burgundy-dark) 100%);
+    border-radius: 8px;
+    position: relative;
+}
+
+.takeaway-quote::before {
+    content: '"';
+    position: absolute;
+    top: -8px;
+    left: 12px;
+    font-family: Georgia, serif;
+    font-size: 4rem;
+    line-height: 1;
+    color: rgba(255,255,255,0.15);
+    pointer-events: none;
+}
+
+.takeaway-label {
+    font-family: var(--sans);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.7);
+    display: block;
+    margin-bottom: var(--sm);
+}
+
+.takeaway-text {
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    font-style: italic;
+    line-height: 1.55;
+    color: var(--white);
+    margin: 0;
+    position: relative;
+    z-index: 1;
 }
 
 /* ========== READING PANE (Center) ========== */

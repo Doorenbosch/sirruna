@@ -56,12 +56,8 @@ const SECTIONS_MORNING = {
         label: 'LOOKING AHEAD',
         field: 'the_forward_view',
         defaultHeadline: 'What to Watch'
-    },
-    takeaway: {
-        label: 'THE TAKEAWAY',
-        field: 'the_closing_line',
-        defaultHeadline: 'The Bottom Line'
     }
+    // THE TAKEAWAY is now a separate quote box, not clickable
 };
 
 // Section definitions - Evening Brief
@@ -90,12 +86,8 @@ const SECTIONS_EVENING = {
         label: 'THE OVERNIGHT SETUP',
         field: 'the_overnight_setup',
         defaultHeadline: 'What\'s Ahead'
-    },
-    takeaway: {
-        label: 'THE TAKEAWAY',
-        field: 'the_takeaway',
-        defaultHeadline: 'The Bottom Line'
     }
+    // THE TAKEAWAY is now a separate quote box, not clickable
 };
 
 // Get current sections based on brief type
@@ -807,30 +799,47 @@ function renderIndexCards(data) {
         const content = data.sections[section.field] || '';
         
         // Get section-specific title if available (new format)
-        // Falls back to: main headline for lead, or default headline
         let headline;
         const sectionTitle = data.sections[`${section.field}_title`];
         
         if (key === firstSectionKey && data.headline) {
-            // Lead uses main headline
             headline = data.headline;
         } else if (sectionTitle) {
-            // New format: use per-section title
             headline = sectionTitle;
         } else {
-            // Fallback: use default headline from config
             headline = section.defaultHeadline;
         }
         
         setText(`index-${key}-headline`, headline);
         
-        // FT style: no excerpt, just label + headline
-        // Hide excerpt if it exists
+        // FT style: excerpt ONLY for THE LEAD
         const excerptEl = document.getElementById(`index-${key}-excerpt`);
         if (excerptEl) {
-            excerptEl.style.display = 'none';
+            if (key === firstSectionKey) {
+                excerptEl.style.display = 'block';
+                excerptEl.textContent = truncate(content, 150);
+            } else {
+                excerptEl.style.display = 'none';
+            }
         }
     });
+    
+    // Render THE TAKEAWAY quote box
+    renderTakeawayQuote(data);
+}
+
+// Render THE TAKEAWAY as a stylish quote box
+function renderTakeawayQuote(data) {
+    const takeawayContent = data.sections?.the_closing_line || data.sections?.the_takeaway || '';
+    const quoteBox = document.getElementById('takeaway-quote');
+    const quoteText = document.getElementById('takeaway-text');
+    
+    if (quoteBox && quoteText && takeawayContent) {
+        quoteText.textContent = takeawayContent;
+        quoteBox.style.display = 'block';
+    } else if (quoteBox) {
+        quoteBox.style.display = 'none';
+    }
 }
 
 // Render Reading Pane
@@ -873,14 +882,34 @@ function renderReadingPane(sectionKey) {
         bylineAuthor.style.color = 'var(--burgundy)';
     }
     
-    // Handle lead image if present (for lead section only)
+    // Handle lead image (for lead section only)
     const imageContainer = document.getElementById('reading-image');
-    if (imageContainer) {
+    const imageEl = document.getElementById('reading-image-src');
+    const imageLabelEl = document.getElementById('image-label');
+    const imageHeadlineEl = document.getElementById('image-headline');
+    const articleLabel = document.getElementById('reading-label');
+    const articleHeadline = document.getElementById('reading-headline');
+    
+    if (imageContainer && imageEl) {
         if (isFirstSection && briefData.image_keywords) {
-            // Show image placeholder or fetch from Unsplash
+            // Use Unsplash Source API for free editorial images
+            const keywords = encodeURIComponent(briefData.image_keywords);
+            imageEl.src = `https://source.unsplash.com/1200x600/?${keywords}`;
+            
+            // Update overlay text
+            if (imageLabelEl) imageLabelEl.textContent = section.label;
+            if (imageHeadlineEl) imageHeadlineEl.textContent = headline;
+            
             imageContainer.style.display = 'block';
+            
+            // Hide label and headline in header (shown in image overlay instead)
+            if (articleLabel) articleLabel.style.display = 'none';
+            if (articleHeadline) articleHeadline.style.display = 'none';
         } else {
             imageContainer.style.display = 'none';
+            // Show regular header for non-lead sections
+            if (articleLabel) articleLabel.style.display = 'block';
+            if (articleHeadline) articleHeadline.style.display = 'block';
         }
     }
     
