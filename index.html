@@ -201,45 +201,47 @@
                     
                     <div class="nine-box-container">
                         <div class="nine-box-y-axis">
-                            <span>Frenzied</span>
-                            <span>Market Volume Activity</span>
-                            <span>Quiet</span>
+                            <span class="y-label-top">Frenzied</span>
+                            <span class="y-label-mid">M/V ratio</span>
+                            <span class="y-label-bottom">Quiet</span>
                         </div>
-                        <div class="nine-box-grid" id="nine-box-grid">
-                            <!-- Row 1: Frenzied -->
-                            <div class="box box-neutral" data-zone="concentration">CONCENTRATION</div>
-                            <div class="box box-positive" data-zone="leadership">LEADERSHIP</div>
-                            <div class="box box-positive-strong" data-zone="strong-rally">STRONG RALLY</div>
-                            <!-- Row 2: Normal -->
-                            <div class="box box-negative" data-zone="rotation">ROTATION</div>
-                            <div class="box box-neutral" data-zone="consolidation">CONSOLIDATION</div>
-                            <div class="box box-positive" data-zone="steady-advance">STEADY ADVANCE</div>
-                            <!-- Row 3: Quiet -->
-                            <div class="box box-negative-strong" data-zone="capitulation">CAPITULATION</div>
-                            <div class="box box-negative" data-zone="drift">DRIFT</div>
-                            <div class="box box-neutral" data-zone="weak-rally">WEAK RALLY</div>
-                            
-                            <!-- Trail path (SVG overlay) -->
-                            <svg class="mood-trail" id="mood-trail" viewBox="0 0 100 100" preserveAspectRatio="none">
-                                <defs>
-                                    <linearGradient id="trailGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                        <stop offset="0%" style="stop-color:#126C8A;stop-opacity:0.2" />
-                                        <stop offset="50%" style="stop-color:#126C8A;stop-opacity:0.5" />
-                                        <stop offset="100%" style="stop-color:#126C8A;stop-opacity:1" />
-                                    </linearGradient>
-                                </defs>
-                                <path id="trail-path" class="trail-line" d="" />
-                            </svg>
-                            
-                            <!-- Dots -->
-                            <div class="mood-dot mood-dot-start" id="mood-dot-start"></div>
-                            <div class="mood-dot mood-dot-teal" id="mood-dot-teal"></div>
-                            <div class="mood-dot mood-dot-burgundy" id="mood-dot-burgundy"></div>
-                        </div>
-                        <div class="nine-box-x-axis">
-                            <span>0%</span>
-                            <span id="breadth-value">88% of coins are green</span>
-                            <span>100%</span>
+                        <div class="nine-box-wrapper">
+                            <div class="nine-box-grid" id="nine-box-grid">
+                                <!-- Row 1: Frenzied (top) -->
+                                <div class="box box-neutral" data-zone="concentration">CONCENTRATION</div>
+                                <div class="box box-positive" data-zone="leadership">LEADERSHIP</div>
+                                <div class="box box-positive-strong" data-zone="strong-rally">STRONG RALLY</div>
+                                <!-- Row 2: Normal -->
+                                <div class="box box-negative" data-zone="rotation">ROTATION</div>
+                                <div class="box box-neutral" data-zone="consolidation">CONSOLIDATION</div>
+                                <div class="box box-positive" data-zone="steady-advance">STEADY ADVANCE</div>
+                                <!-- Row 3: Quiet (bottom) -->
+                                <div class="box box-negative-strong" data-zone="capitulation">CAPITULATION</div>
+                                <div class="box box-negative" data-zone="drift">DRIFT</div>
+                                <div class="box box-neutral" data-zone="weak-rally">WEAK RALLY</div>
+                                
+                                <!-- Trail path (SVG overlay) -->
+                                <svg class="mood-trail" id="mood-trail" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                    <defs>
+                                        <linearGradient id="trailGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" style="stop-color:#126C8A;stop-opacity:0.2" />
+                                            <stop offset="50%" style="stop-color:#126C8A;stop-opacity:0.5" />
+                                            <stop offset="100%" style="stop-color:#126C8A;stop-opacity:1" />
+                                        </linearGradient>
+                                    </defs>
+                                    <path id="trail-path" class="trail-line" d="" />
+                                </svg>
+                                
+                                <!-- Dots -->
+                                <div class="mood-dot mood-dot-start" id="mood-dot-start"></div>
+                                <div class="mood-dot mood-dot-teal" id="mood-dot-teal"></div>
+                                <div class="mood-dot mood-dot-burgundy" id="mood-dot-burgundy"></div>
+                            </div>
+                            <div class="nine-box-x-axis">
+                                <span>0%</span>
+                                <span id="breadth-value">88% of coins green</span>
+                                <span>100%</span>
+                            </div>
                         </div>
                     </div>
                     
