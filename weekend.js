@@ -307,36 +307,6 @@ function renderSection(sectionKey) {
             const paragraphs = data.content.split('\n\n').filter(p => p.trim());
             bodyEl.innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
         }
-        
-        // Update section image
-        const sectionImg = document.getElementById('section-image-src');
-        const caption = document.getElementById('image-caption');
-        if (sectionImg && data.image) {
-            sectionImg.src = data.image;
-            if (caption && data.image_caption) {
-                caption.textContent = data.image_caption;
-            }
-        }
-        
-        // Update inline figure if present
-        if (data.inline_image) {
-            const figure = document.getElementById('inline-figure');
-            if (figure) {
-                const img = figure.querySelector('img');
-                const figcaption = figure.querySelector('figcaption');
-                if (img) img.src = data.inline_image;
-                if (figcaption && data.inline_caption) {
-                    figcaption.textContent = data.inline_caption;
-                }
-            }
-        }
-        
-        // Update continued body if present
-        const bodyContEl = document.getElementById('reading-body-continued');
-        if (bodyContEl && data.content_continued) {
-            const paragraphs = data.content_continued.split('\n\n').filter(p => p.trim());
-            bodyContEl.innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
-        }
     }
 }
 
