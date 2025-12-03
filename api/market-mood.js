@@ -45,6 +45,9 @@ export default async function handler(req, res) {
         // Trail shows movement over last 24 hours
         const trail = generateMockTrail(breadth, mvRatio24h);
         
+        // Calculate average breadth from trail (in production, use actual 24h data)
+        const breadthAvg24h = trail.reduce((sum, p) => sum + p.breadth, 0) / trail.length;
+        
         // M/V range for visualization
         // These bounds should be calibrated based on historical data
         // Typical crypto M/V ratios range from ~10x (frenzied) to ~40x (quiet)
@@ -54,6 +57,7 @@ export default async function handler(req, res) {
             success: true,
             lastUpdated: new Date().toISOString(),
             breadth: Math.round(breadth * 10) / 10,
+            breadthAvg24h: Math.round(breadthAvg24h * 10) / 10,
             mvRatio24h: Math.round(mvRatio24h * 10) / 10,
             mvRatio7d: Math.round(mvRatio7d * 10) / 10,
             trail,
@@ -75,6 +79,7 @@ export default async function handler(req, res) {
             error: error.message,
             // Fallback values
             breadth: 55,
+            breadthAvg24h: 52,
             mvRatio24h: 22,
             mvRatio7d: 25,
             trail: [

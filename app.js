@@ -375,9 +375,10 @@ async function loadMarketMood() {
 // Mock data for development
 function getMockMarketMood() {
     return {
-        breadth: 88,
-        mvRatio24h: 18.7,      // M/V using 24h volume (teal dot)
-        mvRatio7d: 22.0,       // M/V using 7d avg volume (burgundy dot)
+        breadth: 88,                // Current breadth (teal dot X)
+        breadthAvg24h: 75,          // Average breadth over 24h (burgundy dot X)
+        mvRatio24h: 18.7,           // M/V using 24h volume (teal dot Y)
+        mvRatio7d: 22.0,            // M/V using 7d avg volume (burgundy dot Y)
         trail: [
             { breadth: 72, mv: 24.5 },
             { breadth: 75, mv: 21.2 },
@@ -394,9 +395,12 @@ function renderMarketMood(data) {
     const grid = document.getElementById('nine-box-grid');
     if (!grid) return;
     
-    const { breadth, mvRatio24h, mvRatio7d, trail, mvRange } = data;
+    const { breadth, breadthAvg24h, mvRatio24h, mvRatio7d, trail, mvRange } = data;
     
-    // Calculate zone
+    // Use average breadth if available, otherwise fall back to current
+    const avgBreadth = breadthAvg24h !== undefined ? breadthAvg24h : breadth;
+    
+    // Calculate zone based on current position (teal dot)
     const zone = getMarketZone(breadth, mvRatio24h, mvRange);
     
     // Update title and description
@@ -423,17 +427,17 @@ function renderMarketMood(data) {
         return Math.max(0, Math.min(100, normalized * 100));
     };
     
-    // Position teal dot (24h M/V)
+    // Position teal dot (current breadth, 24h M/V)
     const tealDot = document.getElementById('mood-dot-teal');
     if (tealDot) {
         tealDot.style.left = `${mapX(breadth)}%`;
         tealDot.style.top = `${mapY(mvRatio24h)}%`;
     }
     
-    // Position burgundy dot (7d avg M/V)
+    // Position burgundy dot (average breadth 24h, 7d avg M/V)
     const burgundyDot = document.getElementById('mood-dot-burgundy');
     if (burgundyDot) {
-        burgundyDot.style.left = `${mapX(breadth)}%`;
+        burgundyDot.style.left = `${mapX(avgBreadth)}%`;
         burgundyDot.style.top = `${mapY(mvRatio7d)}%`;
     }
     
