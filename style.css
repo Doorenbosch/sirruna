@@ -992,10 +992,11 @@ a {
 .article-image {
     position: relative;
     width: 100%;
-    max-height: 400px;
+    height: 360px;
     margin-bottom: var(--lg);
-    border-radius: 4px;
+    border-radius: 0;
     overflow: hidden;
+    background: var(--ink);
 }
 
 .article-image img {
@@ -1003,6 +1004,12 @@ a {
     height: 100%;
     object-fit: cover;
     display: block;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.article-image img.loading {
+    opacity: 0;
 }
 
 .image-overlay {
@@ -1010,12 +1017,12 @@ a {
     bottom: 0;
     left: 0;
     right: 0;
-    padding: var(--xl) var(--lg) var(--lg);
+    padding: var(--xxl) var(--lg) var(--lg);
     background: linear-gradient(
         to bottom,
         rgba(0, 0, 0, 0) 0%,
-        rgba(0, 0, 0, 0.4) 30%,
-        rgba(0, 0, 0, 0.8) 100%
+        rgba(0, 0, 0, 0.3) 40%,
+        rgba(0, 0, 0, 0.85) 100%
     );
 }
 
@@ -1023,29 +1030,48 @@ a {
     font-family: var(--sans);
     font-size: 0.7rem;
     font-weight: 600;
-    letter-spacing: 0.1em;
-    color: var(--burgundy);
-    background: var(--paper);
-    padding: 4px 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--white);
+    background: var(--burgundy);
+    padding: 5px 12px;
     border-radius: 2px;
     display: inline-block;
-    margin-bottom: var(--sm);
+    margin-bottom: var(--md);
 }
 
 .image-headline {
     font-family: var(--serif);
-    font-size: 1.75rem;
+    font-size: 1.85rem;
     font-weight: 600;
-    line-height: 1.2;
+    line-height: 1.25;
     color: var(--white);
     margin: 0;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    max-width: 90%;
+}
+
+@media (max-width: 768px) {
+    .article-image {
+        height: 280px;
+    }
+    
+    .image-headline {
+        font-size: 1.4rem;
+    }
 }
 
 .article-header {
     margin-bottom: var(--xl);
     padding-bottom: var(--lg);
     border-bottom: 1px solid var(--rule);
+}
+
+/* When image is shown, reduce header styling */
+.article-header.with-image {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: var(--md);
 }
 
 .article-label {

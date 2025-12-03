@@ -161,6 +161,9 @@ function initEditionPicker() {
             btn.classList.add('active');
             currentRegion = btn.dataset.region;
             
+            // Track region change in GA4
+            trackEvent('region_change', { region: currentRegion });
+            
             // Update sticky header region
             updateStickyRegion();
             
@@ -191,6 +194,12 @@ function initBriefSelector() {
             }
             
             const briefType = tab.dataset.brief;
+            
+            // Track brief type change in GA4
+            trackEvent('brief_type_change', { 
+                brief_type: briefType,
+                region: currentRegion 
+            });
             
             // Update active state
             tabs.forEach(t => t.classList.remove('active'));
@@ -383,6 +392,15 @@ function initIndexCards() {
 // Set Active Section
 function setActiveSection(sectionKey) {
     currentSection = sectionKey;
+    
+    // Track section view in GA4
+    const sections = getCurrentSections();
+    trackEvent('section_view', { 
+        section: sectionKey,
+        section_label: sections[sectionKey]?.label || sectionKey,
+        brief_type: currentBriefType,
+        region: currentRegion
+    });
     
     // Update card active states
     document.querySelectorAll('.index-card').forEach(card => {
@@ -889,12 +907,38 @@ function renderReadingPane(sectionKey) {
     const imageHeadlineEl = document.getElementById('image-headline');
     const articleLabel = document.getElementById('reading-label');
     const articleHeadline = document.getElementById('reading-headline');
+    const articleHeader = document.querySelector('.article-header');
     
     if (imageContainer && imageEl) {
         if (isFirstSection && briefData.image_keywords) {
+            // Show loading state
+            imageEl.classList.add('loading');
+            
             // Use Unsplash Source API for free editorial images
             const keywords = encodeURIComponent(briefData.image_keywords);
-            imageEl.src = `https://source.unsplash.com/1200x600/?${keywords}`;
+            const imageUrl = `https://source.unsplash.com/1200x600/?${keywords}`;
+            
+            // Fallback images based on market sentiment
+            const fallbackImages = [
+                'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200&h=600&fit=crop', // Trading floor
+                'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=1200&h=600&fit=crop', // Bitcoin coins
+                'https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=1200&h=600&fit=crop', // Crypto chart
+                'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=1200&h=600&fit=crop', // Ethereum
+            ];
+            
+            // Try to load the image
+            const tempImg = new Image();
+            tempImg.onload = function() {
+                imageEl.src = this.src;
+                imageEl.classList.remove('loading');
+            };
+            tempImg.onerror = function() {
+                // Use fallback image
+                const fallback = fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
+                imageEl.src = fallback;
+                imageEl.classList.remove('loading');
+            };
+            tempImg.src = imageUrl;
             
             // Update overlay text
             if (imageLabelEl) imageLabelEl.textContent = section.label;
@@ -905,11 +949,16 @@ function renderReadingPane(sectionKey) {
             // Hide label and headline in header (shown in image overlay instead)
             if (articleLabel) articleLabel.style.display = 'none';
             if (articleHeadline) articleHeadline.style.display = 'none';
+            if (articleHeader) articleHeader.classList.add('with-image');
+            
+            // Track image view
+            trackEvent('lead_image_view', { keywords: briefData.image_keywords });
         } else {
             imageContainer.style.display = 'none';
             // Show regular header for non-lead sections
             if (articleLabel) articleLabel.style.display = 'block';
             if (articleHeadline) articleHeadline.style.display = 'block';
+            if (articleHeader) articleHeader.classList.remove('with-image');
         }
     }
     
@@ -1195,9 +1244,17 @@ function togglePlayPause() {
     
     if (isPlaying) {
         audioElement.pause();
+        trackEvent('audio_pause', { 
+            episode_title: currentEpisode.title,
+            current_time: Math.floor(audioElement.currentTime)
+        });
     } else {
         audioElement.play().catch(err => {
             console.error('Playback error:', err);
+        });
+        trackEvent('audio_play', { 
+            episode_title: currentEpisode.title,
+            current_time: Math.floor(audioElement.currentTime || 0)
         });
     }
 }
@@ -1657,3 +1714,26 @@ window.setRegion = function(region) {
         loadBrief();
     }
 };
+
+// ========== GOOGLE ANALYTICS 4 TRACKING ==========
+// Helper function to track custom events
+function trackEvent(eventName, params = {}) {
+    if (typeof gtag === 'function') {
+        gtag('event', eventName, params);
+        console.log('[GA4] Event:', eventName, params);
+    }
+}
+
+// Track initial page load with region
+document.addEventListener('DOMContentLoaded', () => {
+    // Wait a moment for everything to load
+    setTimeout(() => {
+        trackEvent('page_view_enhanced', {
+            initial_region: currentRegion,
+            initial_brief_type: currentBriefType
+        });
+    }, 1000);
+});
+
+// Export for use in other modules
+window.trackEvent = trackEvent;
