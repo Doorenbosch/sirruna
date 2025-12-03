@@ -1679,15 +1679,12 @@ function updateCoinCount() {
 
 // Load and display user's coins
 async function loadYourCoins() {
-    if (userCoins.length === 0) {
-        const container = document.getElementById('relative-performance');
-        if (container) container.style.display = 'none';
-        return;
-    }
-    
     try {
-        // Fetch user's coins
-        const coinIds = userCoins.join(',');
+        // Always include BTC and ETH, plus user's coins
+        const baseCoinIds = ['bitcoin', 'ethereum'];
+        const allCoinIds = [...new Set([...baseCoinIds, ...userCoins])]; // Dedupe
+        
+        const coinIds = allCoinIds.join(',');
         const coinsResponse = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coinIds}&order=market_cap_desc&sparkline=false&price_change_percentage=24h`);
         
         // Fetch market data for baseline
@@ -1697,6 +1694,15 @@ async function loadYourCoins() {
         
         const coins = await coinsResponse.json();
         
+        // Sort: BTC first, ETH second, then rest by market cap
+        const sortedCoins = coins.sort((a, b) => {
+            if (a.id === 'bitcoin') return -1;
+            if (b.id === 'bitcoin') return 1;
+            if (a.id === 'ethereum') return -1;
+            if (b.id === 'ethereum') return 1;
+            return (a.market_cap_rank || 999) - (b.market_cap_rank || 999);
+        });
+        
         // Get market 24h change (fallback to 0 if unavailable)
         let marketChange = 0;
         if (globalResponse.ok) {
@@ -1704,7 +1710,7 @@ async function loadYourCoins() {
             marketChange = globalData.data?.market_cap_change_percentage_24h_usd || 0;
         }
         
-        renderRelativePerformance(coins, marketChange);
+        renderRelativePerformance(sortedCoins, marketChange);
         
     } catch (error) {
         console.error('Error loading your coins:', error);
@@ -1717,11 +1723,6 @@ function renderRelativePerformance(coins, marketChange) {
     const chartContainer = document.getElementById('relative-chart');
     
     if (!container || !chartContainer) return;
-    
-    if (coins.length === 0) {
-        container.style.display = 'none';
-        return;
-    }
     
     container.style.display = 'block';
     

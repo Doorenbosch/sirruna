@@ -49,10 +49,26 @@ let moodHistory = [];
 let liveMood = null;  // Real-time mood data (same as Today page)
 let segmentsData = null;
 let currentSection = 'week_review';
+let userCoins = [];  // User's selected coins
+
+// Load user coins from localStorage
+function loadUserCoins() {
+    try {
+        const saved = localStorage.getItem('litmus_user_coins');
+        if (saved) {
+            userCoins = JSON.parse(saved);
+        }
+    } catch (e) {
+        userCoins = [];
+    }
+}
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('[Weekend] Initializing...');
+    
+    // Load user preferences
+    loadUserCoins();
     
     // Set current date
     setMagazineDate();
@@ -62,6 +78,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadMoodHistory();
     await loadLiveMood();  // Fetch real-time data for current dot
     await loadSegmentsData();
+    await loadRelativePerformance7d();  // 7-day coin performance
     
     // Initialize UI
     initIndexCards();
@@ -463,3 +480,129 @@ window.addEventListener('resize', () => {
         renderMoodTrail();
     }, 250);
 });
+
+// ===== 7-Day Relative Performance =====
+
+// Load 7-day coin performance data
+async function loadRelativePerformance7d() {
+    try {
+        // Always include BTC and ETH, plus user's coins
+        const baseCoinIds = ['bitcoin', 'ethereum'];
+        const allCoinIds = [...new Set([...baseCoinIds, ...userCoins])]; // Dedupe
+        
+        const coinIds = allCoinIds.join(',');
+        
+        // Fetch coins with 7-day price change
+        const coinsResponse = await fetch(
+            `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coinIds}&order=market_cap_desc&sparkline=false&price_change_percentage=7d`
+        );
+        
+        if (!coinsResponse.ok) {
+            console.log('[Weekend] Failed to fetch coin data');
+            return;
+        }
+        
+        const coins = await coinsResponse.json();
+        
+        // Sort: BTC first, ETH second, then rest by market cap
+        const sortedCoins = coins.sort((a, b) => {
+            if (a.id === 'bitcoin') return -1;
+            if (b.id === 'bitcoin') return 1;
+            if (a.id === 'ethereum') return -1;
+            if (b.id === 'ethereum') return 1;
+            return (a.market_cap_rank || 999) - (b.market_cap_rank || 999);
+        });
+        
+        // Calculate market 7d change from mood history
+        let market7dChange = 0;
+        if (moodHistory.length >= 2) {
+            // Use first and last market cap to calculate % change
+            const first = moodHistory[0];
+            const last = moodHistory[moodHistory.length - 1];
+            if (first.market_cap && last.market_cap) {
+                market7dChange = ((last.market_cap - first.market_cap) / first.market_cap) * 100;
+            }
+        }
+        
+        // If we don't have historical data, try to get from global API
+        if (market7dChange === 0) {
+            try {
+                const globalRes = await fetch('https://api.coingecko.com/api/v3/global');
+                if (globalRes.ok) {
+                    const globalData = await globalRes.json();
+                    // CoinGecko doesn't provide 7d market change directly, 
+                    // so we'll estimate from BTC's 7d change as proxy
+                    const btc = sortedCoins.find(c => c.id === 'bitcoin');
+                    if (btc && btc.price_change_percentage_7d_in_currency) {
+                        // Use a weighted estimate (BTC dominance adjusted)
+                        const btcDom = globalData.data?.market_cap_percentage?.btc || 50;
+                        market7dChange = btc.price_change_percentage_7d_in_currency * (btcDom / 100) * 1.5;
+                    }
+                }
+            } catch (e) {
+                console.log('[Weekend] Could not estimate market change');
+            }
+        }
+        
+        renderRelativePerformance7d(sortedCoins, market7dChange);
+        
+    } catch (error) {
+        console.error('[Weekend] Error loading 7d performance:', error);
+    }
+}
+
+// Render 7-day Relative Performance section
+function renderRelativePerformance7d(coins, marketChange) {
+    const container = document.getElementById('relative-performance-7d');
+    const chartContainer = document.getElementById('relative-chart-7d');
+    
+    if (!container || !chartContainer) return;
+    
+    container.style.display = 'block';
+    
+    // Update market change display
+    const marketChangeEl = document.getElementById('market-7d-change');
+    if (marketChangeEl) {
+        const sign = marketChange >= 0 ? '+' : '';
+        marketChangeEl.textContent = `${sign}${marketChange.toFixed(1)}%`;
+    }
+    
+    // Build coin rows
+    const coinRows = coins.map(coin => {
+        const coinChange = coin.price_change_percentage_7d_in_currency || 0;
+        const relativeChange = coinChange - marketChange;
+        const isOutperforming = relativeChange >= 0;
+        
+        // Bar width: scale relative change to percentage of half the container
+        // For 7d, use larger scale since weekly moves are bigger
+        const maxRelative = 10; // ±10% relative = full bar
+        const barWidth = Math.min(Math.abs(relativeChange) / maxRelative * 50, 50);
+        
+        const sign = coinChange >= 0 ? '+' : '';
+        const relSign = relativeChange >= 0 ? '+' : '';
+        
+        return `
+            <div class="relative-row">
+                <span class="rel-name">${coin.symbol.toUpperCase()}</span>
+                <span class="rel-change">${sign}${coinChange.toFixed(1)}%</span>
+                <div class="rel-bar-container">
+                    <div class="rel-baseline"></div>
+                    <div class="rel-bar ${isOutperforming ? 'outperform' : 'underperform'}" 
+                         style="width: ${barWidth}%"></div>
+                </div>
+                <span class="rel-vs ${isOutperforming ? 'positive' : 'negative'}">${relSign}${relativeChange.toFixed(1)}%</span>
+            </div>
+        `;
+    }).join('');
+    
+    // Keep market row, add coin rows after
+    const marketRow = chartContainer.querySelector('.market-row');
+    if (marketRow) {
+        // Remove old coin rows
+        chartContainer.querySelectorAll('.relative-row:not(.market-row)').forEach(el => el.remove());
+        // Add new coin rows
+        marketRow.insertAdjacentHTML('afterend', coinRows);
+    }
+    
+    console.log('[Weekend] 7d relative performance rendered');
+}
