@@ -82,12 +82,11 @@ a {
 }
 
 .brand-name {
-    font-family: var(--serif);
+    font-family: 'Libre Baskerville', Georgia, serif;
     font-weight: 700;
     font-size: 2rem;
-    color: var(--burgundy);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+    color: var(--ink);
+    letter-spacing: 0;
 }
 
 .masthead-actions {
