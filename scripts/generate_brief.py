@@ -324,48 +324,14 @@ Return ONLY valid JSON with this exact structure:
 {{
     "headline": "Compelling 5-7 word headline that captures your thesis",
     "sections": {{
-        "the_lead": "Your 60-90 word opening thesis",
-        "the_mechanism": "Your 150-200 word structural explanation",
-        "the_complication": "Your 120-160 word counterpoint",
-        "the_behavioral_layer": "Your 100-140 word psychological insight",
-        "the_forward_view": "Your 100-140 word decision framework",
-        "the_closing_line": "Your 20-35 word crystallizing statement"
+        "the_session": "Your 70-100 word opening analysis of today's character",
+        "the_flows": "Your 120-160 word analysis of where money moved",
+        "the_divergence": "Your 100-140 word analysis of what doesn't fit the narrative",
+        "the_regime_check": "Your 80-120 word assessment of whether anything fundamental changed",
+        "the_overnight_setup": "Your 80-120 word preview of what to watch overnight",
+        "the_takeaway": "Your 20-35 word crystallizing statement"
     }}
 }}
-
-Return ONLY the JSON object, no other text."""
-
-
-def get_evening_prompt(region: str, market_data: dict) -> str:
-    """Generate the evening brief prompt for a specific region"""
-    
-    return f"""You are the evening intelligence editor for The Litmus, a premium crypto publication with the editorial standards of the Financial Times and the behavioral insight of Rory Sutherland.
-
-Generate the Evening Update for investors ending their day.
-
-**PURPOSE:**
-The morning brief said "here's what to watch." The evening update says "here's what happened." Close the loop.
-
-**CURRENT MARKET DATA:**
-- Bitcoin: ${market_data['btc_price']:,.0f} ({market_data['btc_24h_change']:+.1f}% 24h)
-- Ethereum: ${market_data['eth_price']:,.0f} ({market_data['eth_24h_change']:+.1f}% 24h)
-- Total Market Cap: ${market_data['total_market_cap']/1e12:.2f}T
-
-**OUTPUT FORMAT (JSON):**
-Return ONLY valid JSON with this exact structure:
-{{
-    "headline": "Compelling 4-6 word headline summarizing the day",
-    "sections": {{
-        "the_day": "3-4 sentences on what actually happened. Price action, catalysts, any surprises.",
-        "the_move_explained": "2-3 sentences on WHY it happened. Causation where identifiable.",
-        "into_tonight": "2 sentences on what carries into the overnight session."
-    }}
-}}
-
-**EDITORIAL STANDARDS:**
-- Maximum 150 words total
-- Acknowledge when the day was uneventful - don't manufacture drama
-- Write with conviction but intellectual honesty
 
 Return ONLY the JSON object, no other text."""
 
