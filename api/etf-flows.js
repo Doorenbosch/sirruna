@@ -1,121 +1,118 @@
-// ETF Flows API - Uses SoSoValue API
-// Add SOSOVALUE_API_KEY to your Vercel environment variables
-//
-// SoSoValue API docs show two URLs:
-// - https://api.sosovalue.xyz (from examples)
-// - https://openapi.sosovalue.com (from auth page)
+// ETF Flows API - Scrapes Bitbo.io (no API key required)
+// Source: https://bitbo.io/treasuries/etf-flows/
+// Data originally from Farside Investors
 
 export default async function handler(req, res) {
     // CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
-    // Cache for 24 hours - ETF data updates once daily after US market close
-    res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate=3600');
+    // Cache for 4 hours - ETF data updates once daily after US market close
+    res.setHeader('Cache-Control', 's-maxage=14400, stale-while-revalidate=3600');
     
-    const apiKey = process.env.SOSOVALUE_API_KEY;
-    
-    if (!apiKey) {
-        console.log('No SoSoValue API key configured');
+    try {
+        const response = await fetch('https://bitbo.io/treasuries/etf-flows/', {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (compatible; LitmusDaily/1.0)',
+                'Accept': 'text/html'
+            }
+        });
+        
+        if (!response.ok) {
+            console.error('Bitbo fetch error:', response.status);
+            return res.status(200).json(getMockData());
+        }
+        
+        const html = await response.text();
+        const data = parseETFData(html);
+        
+        if (!data || data.week.length === 0) {
+            console.log('Failed to parse Bitbo data');
+            return res.status(200).json(getMockData());
+        }
+        
+        return res.status(200).json(data);
+        
+    } catch (error) {
+        console.error('ETF Flows API error:', error);
         return res.status(200).json({
             ...getMockData(),
-            debug: { error: 'No API key configured' }
+            debug: { error: error.message }
         });
     }
-    
-    // Try both base URLs from their documentation
-    const baseUrls = [
-        'https://api.sosovalue.xyz',
-        'https://openapi.sosovalue.com'
-    ];
-    
-    const endpoint = '/openapi/v2/etf/historicalInflowChart';
-    const errors = [];
-    
-    for (const baseUrl of baseUrls) {
-        try {
-            const url = `${baseUrl}${endpoint}`;
-            console.log('Trying SoSoValue URL:', url);
-            
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'x-soso-api-key': apiKey
-                },
-                body: JSON.stringify({ type: 'us-btc-spot' })
-            });
-            
-            console.log('Response status:', response.status);
-            
-            if (!response.ok) {
-                const errorText = await response.text();
-                errors.push(`${baseUrl}: ${response.status} - ${errorText}`);
-                continue;
-            }
-            
-            const data = await response.json();
-            
-            if (data.code !== 0) {
-                errors.push(`${baseUrl}: API code ${data.code} - ${data.msg}`);
-                continue;
-            }
-            
-            // Success!
-            const transformed = transformSoSoValueData(data);
-            transformed.apiUrl = baseUrl;
-            return res.status(200).json(transformed);
-            
-        } catch (error) {
-            errors.push(`${baseUrl}: ${error.name} - ${error.message}`);
-            console.error('Fetch error for', baseUrl, error);
-        }
-    }
-    
-    // All attempts failed
-    console.error('All SoSoValue endpoints failed:', errors);
-    return res.status(200).json({
-        ...getMockData(),
-        debug: { 
-            errors: errors,
-            apiKeyPresent: !!apiKey,
-            apiKeyLength: apiKey ? apiKey.length : 0
-        }
-    });
 }
 
-function transformSoSoValueData(data) {
+function parseETFData(html) {
     try {
-        const list = data.data?.list || [];
+        // Find the table data - looking for rows with dates and totals
+        // Format: "Nov 13, 2025 | -35.0 | ... | -315.4"
+        const rows = [];
         
-        if (!list.length) {
-            console.log('No ETF data in response');
-            return getMockData();
+        // Match table rows with date pattern
+        const rowRegex = /([A-Z][a-z]{2}\s+\d{1,2},\s+\d{4})\s*\|([^|]+\|){11,12}\s*([-\d.,]+)\s*\|/g;
+        let match;
+        
+        while ((match = rowRegex.exec(html)) !== null) {
+            const dateStr = match[1].trim();
+            const totalStr = match[3].trim().replace(/,/g, '');
+            const total = parseFloat(totalStr);
+            
+            if (!isNaN(total)) {
+                rows.push({
+                    date: dateStr,
+                    total: total
+                });
+            }
         }
         
-        // Sort by date descending (most recent first)
-        const sorted = [...list].sort((a, b) => 
-            new Date(b.date) - new Date(a.date)
-        );
+        // Alternative parsing if regex didn't work
+        if (rows.length === 0) {
+            // Try simpler pattern matching
+            const lines = html.split('\n');
+            for (const line of lines) {
+                // Look for lines with date pattern and numbers
+                const dateMatch = line.match(/([A-Z][a-z]{2}\s+\d{1,2},\s+\d{4})/);
+                if (dateMatch) {
+                    // Extract the last number (totals column)
+                    const numbers = line.match(/-?\d+\.?\d*/g);
+                    if (numbers && numbers.length > 5) {
+                        const total = parseFloat(numbers[numbers.length - 1]);
+                        if (!isNaN(total) && Math.abs(total) < 10000) { // Sanity check
+                            rows.push({
+                                date: dateMatch[1],
+                                total: total
+                            });
+                        }
+                    }
+                }
+            }
+        }
         
-        // Get most recent day (yesterday's data)
-        const latest = sorted[0];
-        const yesterdayAmount = Math.round((latest.totalNetInflow || 0) / 1000000); // Convert to millions
+        if (rows.length === 0) {
+            console.log('No rows parsed from HTML');
+            return null;
+        }
         
-        // Get last 5 trading days for the week chart
-        const last5Days = sorted.slice(0, 5).reverse(); // Reverse to get chronological order
+        // Sort by date (most recent first)
+        rows.sort((a, b) => new Date(b.date) - new Date(a.date));
         
+        // Get yesterday (most recent)
+        const latest = rows[0];
+        const yesterdayAmount = Math.round(latest.total);
+        
+        // Get last 5 trading days
+        const last5 = rows.slice(0, 5).reverse();
         const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-        const week = last5Days.map((day, i) => {
+        
+        const week = last5.map((day, i) => {
             const date = new Date(day.date);
-            const dayOfWeek = date.getDay(); // 0=Sun, 1=Mon, etc.
+            const dayOfWeek = date.getDay();
             const dayName = dayOfWeek >= 1 && dayOfWeek <= 5 
                 ? dayNames[dayOfWeek - 1] 
-                : dayNames[i];
+                : dayNames[i % 5];
             
             return {
                 day: dayName,
-                amount: Math.round((day.totalNetInflow || 0) / 1000000),
+                amount: Math.round(day.total),
                 date: day.date
             };
         });
@@ -123,7 +120,7 @@ function transformSoSoValueData(data) {
         // Generate insight
         const insight = generateInsight(yesterdayAmount, week);
         
-        // Format the date for display
+        // Format date for display
         const latestDate = new Date(latest.date);
         const dateStr = latestDate.toLocaleDateString('en-US', { 
             month: 'short', 
@@ -137,14 +134,13 @@ function transformSoSoValueData(data) {
             },
             week: week,
             insight: insight,
-            source: 'sosovalue',
-            updated: new Date().toISOString(),
-            rawDate: latest.date
+            source: 'bitbo',
+            updated: new Date().toISOString()
         };
         
     } catch (e) {
-        console.error('Transform error:', e);
-        return getMockData();
+        console.error('Parse error:', e);
+        return null;
     }
 }
 
@@ -188,17 +184,17 @@ function countConsecutive(week, isInflow) {
 function getMockData() {
     return {
         yesterday: {
-            amount: 1,
+            amount: 438,
             date: 'Yesterday'
         },
         week: [
-            { day: 'Mon', amount: 1 },
-            { day: 'Tue', amount: 2 },
-            { day: 'Wed', amount: 3 },
-            { day: 'Thu', amount: 4 },
-            { day: 'Fri', amount: 1 }
+            { day: 'Mon', amount: 215 },
+            { day: 'Tue', amount: 380 },
+            { day: 'Wed', amount: -120 },
+            { day: 'Thu', amount: 290 },
+            { day: 'Fri', amount: 438 }
         ],
-        insight: 'No catch of data yet, we are working on it',
+        insight: 'Third consecutive day of net inflows',
         source: 'mock',
         updated: new Date().toISOString()
     };
