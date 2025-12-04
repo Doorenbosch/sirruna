@@ -1491,6 +1491,164 @@ a {
     color: var(--ink-tertiary);
 }
 
+/* ===== ETF Flows Section ===== */
+.etf-flows {
+    margin-top: var(--lg);
+    padding-top: var(--lg);
+    border-top: 1px solid var(--rule);
+}
+
+.etf-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--sm);
+}
+
+.etf-label {
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--burgundy);
+}
+
+.etf-date {
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    color: var(--ink-tertiary);
+}
+
+.etf-main {
+    display: flex;
+    align-items: center;
+    gap: var(--sm);
+    margin-bottom: var(--sm);
+}
+
+.etf-bar-container {
+    flex: 1;
+    height: 20px;
+    background: var(--surface);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.etf-bar {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+}
+
+.etf-bar.etf-inflow {
+    background: var(--teal);
+}
+
+.etf-bar.etf-outflow {
+    background: var(--burgundy);
+}
+
+.etf-amount {
+    font-family: var(--sans);
+    font-size: 1rem;
+    font-weight: 700;
+    min-width: 70px;
+    text-align: right;
+}
+
+.etf-amount.positive {
+    color: var(--teal);
+}
+
+.etf-amount.negative {
+    color: var(--burgundy);
+}
+
+.etf-week {
+    display: flex;
+    gap: 4px;
+    margin-bottom: var(--xs);
+}
+
+.etf-day {
+    flex: 1;
+    height: 6px;
+    border-radius: 2px;
+    background: var(--surface);
+    cursor: help;
+    transition: transform 0.15s;
+}
+
+.etf-day:hover {
+    transform: scaleY(1.5);
+}
+
+.etf-day.inflow {
+    background: var(--teal);
+    opacity: 0.6;
+}
+
+.etf-day.inflow.strong {
+    opacity: 1;
+}
+
+.etf-day.outflow {
+    background: var(--burgundy);
+    opacity: 0.6;
+}
+
+.etf-day.outflow.strong {
+    opacity: 1;
+}
+
+.etf-insight {
+    font-family: var(--serif);
+    font-size: 0.8rem;
+    font-style: italic;
+    color: var(--ink-secondary);
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* ===== The Number Section ===== */
+.the-number {
+    margin-bottom: var(--lg);
+    padding-bottom: var(--lg);
+    border-bottom: 1px solid var(--rule);
+    text-align: center;
+}
+
+.number-header {
+    margin-bottom: var(--sm);
+}
+
+.number-label {
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--burgundy);
+}
+
+.number-value {
+    font-family: var(--serif);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.1;
+    margin-bottom: var(--xs);
+}
+
+.number-context {
+    font-family: var(--serif);
+    font-size: 0.85rem;
+    color: var(--ink-secondary);
+    line-height: 1.4;
+    margin: 0;
+}
+
 /* Sidebar Divider */
 .sidebar-divider {
     height: 1px;
