@@ -84,9 +84,9 @@ function generateStablecoinInsight(stableCap) {
 
 function getFallbackNumber() {
     return {
-        value: '$311B',
+        value: '$---B',
         raw: 311000000000,
-        context: 'Stablecoin market cap—liquidity ready for deployment',
+        context: 'Loading Stablecoin market cap',
         source: 'fallback',
         updated: new Date().toISOString()
     };
