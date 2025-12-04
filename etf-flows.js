@@ -1,5 +1,10 @@
 // ETF Flows API - Uses SoSoValue API
 // Add SOSOVALUE_API_KEY to your Vercel environment variables
+// 
+// CONFIGURATION - Update these based on SoSoValue API docs:
+const SOSOVALUE_BASE_URL = 'https://api.sosovalue.com';  // Update if different
+const ETF_ENDPOINT = '/etf/v1/us-btc-spot';              // Update based on docs
+const AUTH_TYPE = 'bearer';                               // 'bearer' or 'header'
 
 export default async function handler(req, res) {
     // CORS headers
@@ -10,29 +15,56 @@ export default async function handler(req, res) {
     const apiKey = process.env.SOSOVALUE_API_KEY;
     
     if (!apiKey) {
-        // Return mock data if no API key configured
+        console.log('No SoSoValue API key configured, using mock data');
         return res.status(200).json(getMockData());
     }
     
     try {
-        // SoSoValue ETF endpoint - adjust based on their actual docs
-        // Common patterns: /api/v1/etf/btc/flows or /etf/us-btc-spot
-        const response = await fetch('https://api.sosovalue.com/etf/us-btc-spot/flows', {
-            headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json'
-            }
-        });
+        // Build headers based on auth type
+        const headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        };
         
-        if (!response.ok) {
-            console.error('SoSoValue API error:', response.status);
+        if (AUTH_TYPE === 'bearer') {
+            headers['Authorization'] = `Bearer ${apiKey}`;
+        } else {
+            headers['X-API-Key'] = apiKey;
+        }
+        
+        // Try multiple potential endpoint patterns
+        const endpoints = [
+            `${SOSOVALUE_BASE_URL}${ETF_ENDPOINT}`,
+            `${SOSOVALUE_BASE_URL}/api/v1/etf/btc/flows`,
+            `${SOSOVALUE_BASE_URL}/v1/etf/us-btc-spot/flows`,
+            `${SOSOVALUE_BASE_URL}/etf/bitcoin/daily`
+        ];
+        
+        let data = null;
+        let successEndpoint = null;
+        
+        for (const endpoint of endpoints) {
+            try {
+                const response = await fetch(endpoint, { headers });
+                if (response.ok) {
+                    data = await response.json();
+                    successEndpoint = endpoint;
+                    console.log('SoSoValue API success:', endpoint);
+                    break;
+                }
+            } catch (e) {
+                continue;
+            }
+        }
+        
+        if (!data) {
+            console.log('All SoSoValue endpoints failed, using mock data');
             return res.status(200).json(getMockData());
         }
         
-        const data = await response.json();
-        
         // Transform SoSoValue response to our format
         const transformed = transformSoSoValueData(data);
+        transformed.endpoint = successEndpoint;
         
         return res.status(200).json(transformed);
         
@@ -43,33 +75,65 @@ export default async function handler(req, res) {
 }
 
 // Transform SoSoValue data to our app format
+// Adjust field names based on actual API response
 function transformSoSoValueData(data) {
-    // Adjust based on actual SoSoValue response structure
-    // Their dashboard shows: daily net inflow, cumulative, trading volume
-    
-    // Expected SoSoValue fields (approximate):
-    // - dailyNetInflow or daily_net_inflow
-    // - historicalFlows or flows_history
-    
     try {
-        const yesterday = data.dailyNetInflow || data.daily_net_inflow || 0;
-        const weekData = data.historicalFlows || data.flows_history || [];
+        // Common field patterns from ETF APIs:
+        // - data.dailyNetInflow / data.daily_net_inflow / data.netFlow
+        // - data.flows / data.historicalFlows / data.history
         
-        // Get last 5 days
-        const week = weekData.slice(-5).map((day, i) => ({
-            day: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'][i],
-            amount: day.netInflow || day.net_inflow || day.amount || 0
+        const rawData = data.data || data;
+        
+        // Extract yesterday's flow
+        let yesterdayAmount = 0;
+        if (rawData.dailyNetInflow !== undefined) {
+            yesterdayAmount = rawData.dailyNetInflow;
+        } else if (rawData.daily_net_inflow !== undefined) {
+            yesterdayAmount = rawData.daily_net_inflow;
+        } else if (rawData.netFlow !== undefined) {
+            yesterdayAmount = rawData.netFlow;
+        } else if (rawData.totalDailyNetflow !== undefined) {
+            yesterdayAmount = rawData.totalDailyNetflow;
+        } else if (Array.isArray(rawData) && rawData.length > 0) {
+            // If array, get most recent
+            const latest = rawData[rawData.length - 1];
+            yesterdayAmount = latest.netInflow || latest.net_inflow || latest.flow || 0;
+        }
+        
+        // Extract weekly data
+        let weekData = [];
+        const historyFields = ['flows', 'historicalFlows', 'history', 'dailyFlows'];
+        for (const field of historyFields) {
+            if (rawData[field] && Array.isArray(rawData[field])) {
+                weekData = rawData[field].slice(-5);
+                break;
+            }
+        }
+        
+        // If rawData is already an array
+        if (Array.isArray(rawData)) {
+            weekData = rawData.slice(-5);
+        }
+        
+        // Format week data
+        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+        const week = weekData.map((day, i) => ({
+            day: days[i] || `Day ${i + 1}`,
+            amount: Math.round((day.netInflow || day.net_inflow || day.flow || day.amount || 0) / 1000000)
         }));
         
-        // Generate insight based on pattern
-        const insight = generateInsight(yesterday, week);
+        // Convert to millions
+        const yesterdayMillions = Math.round(yesterdayAmount / 1000000);
+        
+        // Generate insight
+        const insight = generateInsight(yesterdayMillions, week);
         
         return {
             yesterday: {
-                amount: Math.round(yesterday / 1000000), // Convert to millions
+                amount: yesterdayMillions,
                 date: 'Yesterday'
             },
-            week: week.length ? week : getMockData().week,
+            week: week.length >= 5 ? week : getMockData().week,
             insight: insight,
             source: 'sosovalue',
             updated: new Date().toISOString()
@@ -93,7 +157,7 @@ function generateInsight(yesterday, week) {
     } else if (weekTotal > 500) {
         return `Strong weekly accumulation: +$${Math.round(weekTotal)}M net`;
     } else if (weekTotal < -500) {
-        return `Weekly outflows signal caution: -$${Math.abs(Math.round(weekTotal))}M`;
+        return `Weekly outflows signal caution: $${Math.abs(Math.round(weekTotal))}M out`;
     } else {
         return isInflow ? 'Steady institutional interest continues' : 'Mixed signals from institutional flows';
     }
