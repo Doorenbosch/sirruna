@@ -91,7 +91,7 @@ function renderGraph(data) {
     // Update range text
     const rangeEl = document.getElementById('graph-range');
     if (rangeEl) {
-        rangeEl.textContent = `12-month range: ${minRatio.toFixed(1)}% – ${maxRatio.toFixed(1)}%`;
+        rangeEl.textContent = `12M L-H: ${minRatio.toFixed(1)}% – ${maxRatio.toFixed(1)}%`;
     }
     
     // Update insight
