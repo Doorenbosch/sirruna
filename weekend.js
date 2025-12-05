@@ -312,20 +312,42 @@ function renderKeyDates(dates) {
 }
 
 function renderSectors(sectors) {
-    // Update sector data if provided in magazine.json
-    for (const [key, data] of Object.entries(sectors)) {
-        const changeEl = document.getElementById(`sector-${key}-change`);
-        const weeklyEl = document.getElementById(`sector-${key}-weekly`);
+    if (!sectors) return;
+    
+    // Handle new structure where sectors contain AI commentary strings
+    // Maps JSON keys to HTML element IDs
+    const sectorMap = {
+        'payment': 'payment',
+        'stablecoin': 'stablecoin',
+        'infrastructure': 'infrastructure',
+        'defi': 'defi',
+        'utility': 'utility',
+        'entertainment': 'entertainment',
+        'ai': 'ai'
+    };
+    
+    for (const [key, value] of Object.entries(sectors)) {
+        const htmlKey = sectorMap[key] || key;
+        const weeklyEl = document.getElementById(`sector-${htmlKey}-weekly`);
         
-        if (changeEl && data.change !== undefined) {
-            const change = data.change;
-            const sign = change >= 0 ? '+' : '';
-            changeEl.textContent = `${sign}${change.toFixed(1)}%`;
-            changeEl.className = 'sector-change ' + (change > 0.5 ? 'positive' : change < -0.5 ? 'negative' : 'neutral');
+        if (weeklyEl) {
+            // Handle both old structure {weekly: "..."} and new structure "..."
+            const commentary = typeof value === 'string' ? value : (value.weekly || '');
+            if (commentary) {
+                weeklyEl.textContent = commentary;
+                weeklyEl.style.display = 'block';
+            }
         }
         
-        if (weeklyEl && data.weekly) {
-            weeklyEl.textContent = data.weekly;
+        // Also handle change if provided in old format
+        if (typeof value === 'object' && value.change !== undefined) {
+            const changeEl = document.getElementById(`sector-${htmlKey}-change`);
+            if (changeEl) {
+                const change = value.change;
+                const sign = change >= 0 ? '+' : '';
+                changeEl.textContent = `${sign}${change.toFixed(1)}%`;
+                changeEl.className = 'sector-change ' + (change > 0.5 ? 'positive' : change < -0.5 ? 'negative' : 'neutral');
+            }
         }
     }
 }
