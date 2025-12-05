@@ -57,6 +57,14 @@ async function loadMagazineContent() {
         if (magazineData.hero) {
             setText('hero-headline', magazineData.hero.headline);
             setText('hero-subtitle', magazineData.hero.subtitle);
+            
+            // Set hero image from curated library
+            if (magazineData.hero.image_url) {
+                const heroImg = document.getElementById('hero-image-src');
+                if (heroImg) {
+                    heroImg.src = magazineData.hero.image_url;
+                }
+            }
         }
         
         // Populate index card headlines
@@ -223,7 +231,7 @@ function loadMechanismSection(mechanism) {
         // Show the timing as the header of the box
         const timingEl = document.getElementById('mechanism-timing');
         if (timingEl && mechanism.timing) {
-            timingEl.textContent = 'WHY NOW: ' + mechanism.timing;
+            timingEl.textContent = 'Why now: ' + mechanism.timing;
         }
         
         // Populate the content
