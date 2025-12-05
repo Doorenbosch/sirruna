@@ -25,38 +25,81 @@ ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 COINGECKO_API = "https://api.coingecko.com/api/v3"
 
 # ============================================
-# DYNAMIC HERO IMAGES - Keyword-based Unsplash
+# DYNAMIC HERO IMAGES - Keyword-based with curated fallbacks
 # ============================================
 
-# Fallback images for when keywords might return poor results
-FALLBACK_IMAGES = {
-    "default": "photo-1639762681485-074b7f938ba0",      # Abstract blue
-    "weekend": "photo-1507003211169-0a1dd7228f2d",      # Calm lake - reflective
+# Curated high-quality images mapped to moods/themes
+CURATED_IMAGES = {
+    # Calm/reflection moods
+    "calm": "photo-1507003211169-0a1dd7228f2d",
+    "still": "photo-1507003211169-0a1dd7228f2d",
+    "reflection": "photo-1502101872923-d48509bff386",
+    "water": "photo-1507003211169-0a1dd7228f2d",
+    "lake": "photo-1507003211169-0a1dd7228f2d",
+    
+    # Optimistic/sunrise moods  
+    "sunrise": "photo-1470252649378-9c29740c9fa8",
+    "dawn": "photo-1470252649378-9c29740c9fa8",
+    "morning": "photo-1470252649378-9c29740c9fa8",
+    "mountain": "photo-1519681393784-d120267933ba",
+    "peak": "photo-1507090960745-b32f65d3113a",
+    "horizon": "photo-1502101872923-d48509bff386",
+    
+    # Uncertainty/fog moods
+    "fog": "photo-1489549132488-d00b7eee80f1",
+    "mist": "photo-1489549132488-d00b7eee80f1",
+    "uncertainty": "photo-1489549132488-d00b7eee80f1",
+    "clouds": "photo-1534088568595-a066f410bcda",
+    
+    # Storm/dramatic moods
+    "storm": "photo-1534088568595-a066f410bcda",
+    "dramatic": "photo-1534274988757-a28bf1a57c17",
+    "tension": "photo-1534274988757-a28bf1a57c17",
+    "dark": "photo-1534088568595-a066f410bcda",
+    
+    # Urban/city moods
+    "city": "photo-1480714378408-67cf0d13bc1b",
+    "skyline": "photo-1534430480872-3498386e7856",
+    "urban": "photo-1486406146926-c627a92ad1ab",
+    "building": "photo-1486406146926-c627a92ad1ab",
+    
+    # Path/decision moods
+    "crossroads": "photo-1470071459604-3b5ec3a7fe05",
+    "path": "photo-1470071459604-3b5ec3a7fe05",
+    "forest": "photo-1470071459604-3b5ec3a7fe05",
+    "road": "photo-1506905925346-21bda4d32df4",
+    
+    # Default
+    "default": "photo-1639762681485-074b7f938ba0"
 }
 
-# Keywords to avoid (return bad stock photos)
-BAD_KEYWORDS = {"crypto", "bitcoin", "trading", "chart", "graph", "money", "coin", "currency", "stock", "market"}
+# Fallback images
+FALLBACK_IMAGES = {
+    "default": "photo-1639762681485-074b7f938ba0",
+    "weekend": "photo-1507003211169-0a1dd7228f2d",
+}
 
 def build_image_url(keywords: str, fallback: str = "default") -> str:
-    """Build Unsplash URL from AI-generated keywords"""
-    from urllib.parse import quote
+    """Build Unsplash URL from AI-generated keywords using curated images"""
     
     if not keywords:
         photo_id = FALLBACK_IMAGES.get(fallback, FALLBACK_IMAGES["default"])
         return f"https://images.unsplash.com/{photo_id}?w=1400&h=500&fit=crop&q=80"
     
-    # Clean and filter keywords
+    # Clean keywords
     keyword_list = [k.strip().lower() for k in keywords.split(",")]
-    filtered = [k for k in keyword_list if k and k not in BAD_KEYWORDS]
     
-    if not filtered:
-        photo_id = FALLBACK_IMAGES.get(fallback, FALLBACK_IMAGES["default"])
-        return f"https://images.unsplash.com/{photo_id}?w=1400&h=500&fit=crop&q=80"
+    # Find first matching curated image
+    for keyword in keyword_list:
+        # Check each word in multi-word keywords
+        for word in keyword.split():
+            if word in CURATED_IMAGES:
+                photo_id = CURATED_IMAGES[word]
+                return f"https://images.unsplash.com/{photo_id}?w=1400&h=500&fit=crop&q=80"
     
-    # Build Unsplash source URL with proper encoding
-    query = ",".join(filtered[:4])  # Max 4 keywords
-    encoded_query = quote(query, safe=',')  # Keep commas, encode spaces
-    return f"https://source.unsplash.com/1400x500/?{encoded_query}"
+    # No match found, use fallback
+    photo_id = FALLBACK_IMAGES.get(fallback, FALLBACK_IMAGES["default"])
+    return f"https://images.unsplash.com/{photo_id}?w=1400&h=500&fit=crop&q=80"
 
 
 # ============================================
@@ -237,12 +280,15 @@ def fetch_weekly_market_data():
                     "change_30d": coin.get("price_change_percentage_30d_in_currency", 0)
                 })
         
-        # Segment performance (simplified categories)
+        # Segment performance - matches UI categories
         segments = {
-            "layer1": ["ethereum", "solana", "cardano", "avalanche-2"],
-            "defi": ["uniswap", "aave", "chainlink", "maker"],
-            "infrastructure": ["polygon", "arbitrum", "optimism"],
-            "ai": ["render-token", "fetch-ai", "akash-network"]
+            "payment": ["bitcoin", "litecoin", "monero", "bitcoin-cash"],
+            "stablecoin": ["tether", "usd-coin", "dai"],
+            "infrastructure": ["ethereum", "solana", "avalanche-2", "polkadot"],
+            "defi": ["aave", "uniswap", "compound-governance-token", "maker"],
+            "utility": ["chainlink", "filecoin", "render-token", "the-graph"],
+            "entertainment": ["apecoin", "decentraland", "the-sandbox", "axie-infinity"],
+            "ai": ["render-token", "fetch-ai", "akash-network", "bittensor"]
         }
         
         for segment, coin_ids in segments.items():
@@ -253,6 +299,9 @@ def fetch_weekly_market_data():
                     "change": round(avg_change, 1),
                     "coins": len(segment_coins)
                 }
+            else:
+                # Fallback if coins not in top 20
+                data["segments"][segment] = {"change": 0, "coins": 0}
     
     except Exception as e:
         print(f"Warning: Error fetching market data: {e}")
@@ -278,6 +327,7 @@ def get_magazine_prompt(market_data, mechanism):
     btc = next((c for c in market_data.get("top_coins", []) if c["id"] == "bitcoin"), {})
     eth = next((c for c in market_data.get("top_coins", []) if c["id"] == "ethereum"), {})
     sol = next((c for c in market_data.get("top_coins", []) if c["id"] == "solana"), {})
+    segments = market_data.get("segments", {})
     
     market_context = f"""
 CURRENT MARKET DATA:
@@ -288,10 +338,14 @@ CURRENT MARKET DATA:
 - BTC Dominance: {market_data.get('btc_dominance', 0):.1f}%
 
 SEGMENT PERFORMANCE (7-day):
+- PAYMENT: {segments.get('payment', {}).get('change', 0):+.1f}%
+- STABLECOIN: {segments.get('stablecoin', {}).get('change', 0):+.1f}%
+- INFRASTRUCTURE: {segments.get('infrastructure', {}).get('change', 0):+.1f}%
+- DEFI: {segments.get('defi', {}).get('change', 0):+.1f}%
+- UTILITY: {segments.get('utility', {}).get('change', 0):+.1f}%
+- ENTERTAINMENT: {segments.get('entertainment', {}).get('change', 0):+.1f}%
+- AI & COMPUTE: {segments.get('ai', {}).get('change', 0):+.1f}%
 """
-    
-    for segment, seg_data in market_data.get("segments", {}).items():
-        market_context += f"- {segment.upper()}: {seg_data['change']:+.1f}%\n"
 
     return f"""You are the editorial team at The Litmus, a premium crypto intelligence publication combining Financial Times editorial quality with behavioral economics insight.
 
@@ -341,14 +395,16 @@ Structure your explanation:
 Tone: Authoritative but accessible. Think FT Alphaville explaining bond market plumbing. No hype, no predictions—just clear explanation of how things work.
 
 9. SECTOR COMMENTARY (1-2 sentences each)
-For each sector, write a brief weekly insight explaining what drove performance:
-- Payment (BTC, LTC, XMR): What moved Bitcoin and payment rails this week?
-- Stablecoins (USDT, USDC): Any notable flows, regulatory news, or supply changes?
-- Infrastructure (ETH, SOL, AVAX): L1 performance, network activity, developer trends?
-- DeFi (AAVE, UNI, COMP): TVL changes, yield dynamics, protocol developments?
-- Utility (LINK, FIL, RNDR): Oracle demand, storage adoption, real-world usage?
-- Entertainment (APE, MANA, SAND): Gaming/metaverse sentiment, user metrics?
-- AI & Compute (RNDR, AKT, TAO): AI narrative momentum, compute demand?
+For each sector, write a brief insight explaining what drove this week's performance.
+IMPORTANT: Use the EXACT percentages from the SEGMENT PERFORMANCE data above in your commentary.
+
+- Payment ({segments.get('payment', {}).get('change', 0):+.1f}%): What moved BTC, LTC this week?
+- Stablecoins ({segments.get('stablecoin', {}).get('change', 0):+.1f}%): Notable flows, regulatory news, supply changes?
+- Infrastructure ({segments.get('infrastructure', {}).get('change', 0):+.1f}%): ETH, SOL, L1 performance drivers?
+- DeFi ({segments.get('defi', {}).get('change', 0):+.1f}%): TVL changes, yield dynamics, protocol news?
+- Utility ({segments.get('utility', {}).get('change', 0):+.1f}%): LINK, FIL adoption, real-world usage?
+- Entertainment ({segments.get('entertainment', {}).get('change', 0):+.1f}%): Gaming/metaverse sentiment?
+- AI & Compute ({segments.get('ai', {}).get('change', 0):+.1f}%): AI narrative momentum?
 
 10. KEY DATES
 Provide 5 specific market-moving events for the upcoming week (Mon-Fri). Include actual dates and specific events like "FOMC Decision 2pm ET", "US CPI Release", "Options Expiry", etc.

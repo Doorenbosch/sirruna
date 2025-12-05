@@ -33,40 +33,86 @@ COINGECKO_COINS = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=us
 SCRIPT_DIR = Path(__file__).parent
 CONTENT_DIR = SCRIPT_DIR.parent / "content"
 
-# ============================================================================
-# DYNAMIC HERO IMAGES - Keyword-based Unsplash
-# ============================================================================
+# ============================================
+# DYNAMIC HERO IMAGES - Keyword-based with curated fallbacks  
+# ============================================
 
-# Fallback images for when keywords might return poor results
-FALLBACK_IMAGES = {
-    "default": "photo-1639762681485-074b7f938ba0",      # Abstract blue
-    "morning": "photo-1470252649378-9c29740c9fa8",      # Sunrise
-    "evening": "photo-1472120435266-53107fd0c44a",      # Sunset city
+# Curated high-quality images mapped to moods/themes
+CURATED_IMAGES = {
+    # Calm/reflection moods
+    "calm": "photo-1507003211169-0a1dd7228f2d",
+    "still": "photo-1507003211169-0a1dd7228f2d",
+    "reflection": "photo-1502101872923-d48509bff386",
+    "water": "photo-1507003211169-0a1dd7228f2d",
+    
+    # Optimistic/sunrise moods  
+    "sunrise": "photo-1470252649378-9c29740c9fa8",
+    "dawn": "photo-1470252649378-9c29740c9fa8",
+    "morning": "photo-1470252649378-9c29740c9fa8",
+    "mountain": "photo-1519681393784-d120267933ba",
+    "peak": "photo-1507090960745-b32f65d3113a",
+    "horizon": "photo-1502101872923-d48509bff386",
+    "clear": "photo-1507090960745-b32f65d3113a",
+    
+    # Uncertainty/fog moods
+    "fog": "photo-1489549132488-d00b7eee80f1",
+    "mist": "photo-1489549132488-d00b7eee80f1",
+    "uncertainty": "photo-1489549132488-d00b7eee80f1",
+    "clouds": "photo-1534088568595-a066f410bcda",
+    
+    # Storm/dramatic moods
+    "storm": "photo-1534088568595-a066f410bcda",
+    "dramatic": "photo-1534274988757-a28bf1a57c17",
+    "tension": "photo-1534274988757-a28bf1a57c17",
+    "dark": "photo-1534088568595-a066f410bcda",
+    
+    # Urban/city moods
+    "city": "photo-1480714378408-67cf0d13bc1b",
+    "skyline": "photo-1534430480872-3498386e7856",
+    "urban": "photo-1486406146926-c627a92ad1ab",
+    
+    # Evening/sunset moods
+    "sunset": "photo-1472120435266-53107fd0c44a",
+    "evening": "photo-1472120435266-53107fd0c44a",
+    "dusk": "photo-1472120435266-53107fd0c44a",
+    
+    # Flow/movement moods
+    "flow": "photo-1509023464722-18d996393ca8",
+    "movement": "photo-1509023464722-18d996393ca8",
+    "lights": "photo-1509023464722-18d996393ca8",
+    
+    # Default
+    "default": "photo-1639762681485-074b7f938ba0"
 }
 
-# Keywords to avoid (return bad stock photos)
-BAD_KEYWORDS = {"crypto", "bitcoin", "trading", "chart", "graph", "money", "coin", "currency", "stock", "market"}
+# Fallback images by time of day
+FALLBACK_IMAGES = {
+    "default": "photo-1639762681485-074b7f938ba0",
+    "morning": "photo-1470252649378-9c29740c9fa8",
+    "evening": "photo-1472120435266-53107fd0c44a",
+}
 
 def build_image_url(keywords: str, fallback: str = "default") -> str:
-    """Build Unsplash URL from AI-generated keywords"""
-    from urllib.parse import quote
+    """Build Unsplash URL from AI-generated keywords using curated images"""
     
     if not keywords:
         photo_id = FALLBACK_IMAGES.get(fallback, FALLBACK_IMAGES["default"])
         return f"https://images.unsplash.com/{photo_id}?w=1400&h=500&fit=crop&q=80"
     
-    # Clean and filter keywords
+    # Clean keywords
     keyword_list = [k.strip().lower() for k in keywords.split(",")]
-    filtered = [k for k in keyword_list if k and k not in BAD_KEYWORDS]
     
-    if not filtered:
-        photo_id = FALLBACK_IMAGES.get(fallback, FALLBACK_IMAGES["default"])
-        return f"https://images.unsplash.com/{photo_id}?w=1400&h=500&fit=crop&q=80"
+    # Find first matching curated image
+    for keyword in keyword_list:
+        # Check each word in multi-word keywords
+        for word in keyword.split():
+            if word in CURATED_IMAGES:
+                photo_id = CURATED_IMAGES[word]
+                return f"https://images.unsplash.com/{photo_id}?w=1400&h=500&fit=crop&q=80"
     
-    # Build Unsplash source URL with proper encoding
-    query = ",".join(filtered[:4])  # Max 4 keywords
-    encoded_query = quote(query, safe=',')  # Keep commas, encode spaces
-    return f"https://source.unsplash.com/1400x500/?{encoded_query}"
+    # No match found, use fallback
+    photo_id = FALLBACK_IMAGES.get(fallback, FALLBACK_IMAGES["default"])
+    return f"https://images.unsplash.com/{photo_id}?w=1400&h=500&fit=crop&q=80"
 
 
 def fetch_market_data() -> dict:
