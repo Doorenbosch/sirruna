@@ -164,6 +164,7 @@ function loadSection(sectionKey) {
     // Update label
     if (labelEl) {
         labelEl.textContent = section.label;
+        labelEl.style.color = ''; // Reset color
         // Reset classes and add region class if applicable
         labelEl.className = 'article-label';
         if (sectionKey === 'apac') labelEl.classList.add('region-apac');
@@ -189,41 +190,53 @@ function loadSection(sectionKey) {
     }
 }
 
+/**
+ * Load The Mechanism section - SIMPLIFIED
+ * No duplication: header shows label + topic, colored box shows timing + content
+ */
 function loadMechanismSection(mechanism) {
     const labelEl = document.getElementById('reading-label');
     const headlineEl = document.getElementById('reading-headline');
     const bodyEl = document.getElementById('reading-body');
     const mechanismSection = document.getElementById('mechanism-section');
     
-    // Update main article area with intro
+    // Update the article header (above the colored box)
     if (labelEl) {
         labelEl.textContent = 'THE MECHANISM';
-        labelEl.className = 'article-label mechanism-label';
+        labelEl.className = 'article-label';
+        labelEl.style.color = 'var(--teal)';
     }
     
     if (headlineEl) {
         headlineEl.textContent = mechanism.topic || 'How It Actually Works';
     }
     
-    // Clear body - mechanism content goes in its own section
+    // Clear the body - mechanism content goes in the colored section below
     if (bodyEl) {
-        bodyEl.innerHTML = `<p class="mechanism-intro">Understanding the mechanics behind market moves gives you an edge over those trading on headlines alone.</p>`;
+        bodyEl.innerHTML = '';
     }
     
-    // Show and populate mechanism section
+    // Show and populate mechanism section (the colored box)
     if (mechanismSection) {
         mechanismSection.style.display = 'block';
         
-        const topicEl = document.getElementById('mechanism-topic');
+        // Show the timing as the header of the box
         const timingEl = document.getElementById('mechanism-timing');
+        if (timingEl && mechanism.timing) {
+            timingEl.textContent = 'Why now: ' + mechanism.timing;
+        }
+        
+        // Populate the content
         const contentEl = document.getElementById('mechanism-content');
-        
-        if (topicEl) topicEl.textContent = mechanism.topic || '';
-        if (timingEl) timingEl.textContent = mechanism.timing ? `Why now: ${mechanism.timing}` : '';
-        
         if (contentEl && mechanism.content) {
             contentEl.innerHTML = formatMechanismContent(mechanism.content);
         }
+    }
+    
+    // Scroll to top
+    const readingPane = document.querySelector('.reading-pane');
+    if (readingPane) {
+        readingPane.scrollTop = 0;
     }
 }
 

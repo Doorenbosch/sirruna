@@ -789,63 +789,44 @@ color: var(--ink-tertiary);
 color: var(--ink-tertiary);
 font-style: italic;
 }
-/* ===== THE MECHANISM ===== */
-/* Add this to the END of your weekend.css file */
 
-.card-label.mechanism-label {
-    color: var(--teal);
+/* ===== THE MECHANISM - SPECIAL DESIGN ===== */
+
+/* Left Column: Special card design for Mechanism */
+.index-card[data-section="mechanism"] {
+    background: linear-gradient(135deg, rgba(26, 95, 90, 0.08) 0%, rgba(26, 95, 90, 0.04) 100%);
+    border-left: 3px solid var(--teal);
+    margin-left: -12px;
+    padding-left: 12px;
+    border-radius: 0 6px 6px 0;
 }
 
+.index-card[data-section="mechanism"]:hover {
+    background: linear-gradient(135deg, rgba(26, 95, 90, 0.12) 0%, rgba(26, 95, 90, 0.06) 100%);
+}
+
+.index-card[data-section="mechanism"] .card-label {
+    color: var(--teal);
+    font-weight: 700;
+}
+
+/* Reader: Simplified Mechanism Section */
 .mechanism-section {
-    margin-top: var(--xl);
+    margin-top: var(--lg);
     padding: var(--lg);
     background: linear-gradient(135deg, #f8f5f0 0%, #f0ebe3 100%);
     border-left: 4px solid var(--teal);
     border-radius: 0 8px 8px 0;
 }
 
-.mechanism-header {
-    display: flex;
-    align-items: center;
-    gap: var(--sm);
-    margin-bottom: var(--md);
-}
-
-.mechanism-icon {
-    font-size: 1.5rem;
-}
-
-.mechanism-header .mechanism-label {
+.mechanism-section .mechanism-timing {
     font-family: var(--sans);
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--teal);
-}
-
-.mechanism-subtitle {
-    font-family: var(--serif);
-    font-size: 0.85rem;
-    color: var(--ink-tertiary);
-    font-style: italic;
-}
-
-.mechanism-topic {
-    font-family: var(--serif);
-    font-size: 1.5rem;
+    font-size: 0.9rem;
     font-weight: 600;
-    color: var(--ink);
-    margin: 0 0 var(--xs) 0;
-    line-height: 1.3;
-}
-
-.mechanism-timing {
-    font-family: var(--sans);
-    font-size: 0.85rem;
-    color: var(--burgundy);
+    color: var(--teal);
     margin: 0 0 var(--lg) 0;
-    font-weight: 500;
+    padding-bottom: var(--md);
+    border-bottom: 1px solid rgba(26, 95, 90, 0.2);
 }
 
 .mechanism-content {
@@ -877,9 +858,4 @@ font-style: italic;
 .mechanism-content .watch-box h4 {
     color: var(--teal);
     margin-top: 0;
-}
-
-.mechanism-intro {
-    font-style: italic;
-    color: var(--ink-secondary);
 }
