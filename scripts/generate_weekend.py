@@ -447,7 +447,7 @@ def call_anthropic_api(prompt):
     }
     
     payload = {
-        "model": "claude-sonnet-4-20250514",
+        "model": "claude-opus-4-5-20251101",
         "max_tokens": 8000,
         "temperature": 0.55,
         "messages": [
