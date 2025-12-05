@@ -12,7 +12,7 @@ Sections:
 5. Capital Flows - Institutional movements
 6. Corporate Moves - Company news
 7. Week Ahead - Key dates and catalysts
-8. The Mechanism - Educational deep-dive (NEW)
+8. The Mechanism - Educational deep-dive
 """
 
 import os
@@ -23,6 +23,53 @@ import requests
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 COINGECKO_API = "https://api.coingecko.com/api/v3"
+
+# ============================================
+# CURATED HERO IMAGE LIBRARY
+# High-quality Unsplash photos mapped to themes
+# ============================================
+
+HERO_IMAGES = {
+    # Market conditions
+    "rally": "photo-1451187580459-43490279c0fa",       # Blue globe network
+    "consolidation": "photo-1507003211169-0a1dd7228f2d", # Calm lake reflection
+    "volatility": "photo-1534088568595-a066f410bcda",   # Storm clouds
+    "uncertainty": "photo-1489549132488-d00b7eee80f1",  # Fog over water
+    "breakout": "photo-1504384308090-c894fdcc538d",     # Light through clouds
+    "correction": "photo-1516912481808-3406841bd33c",   # Mountain descent path
+    
+    # Macro themes
+    "fed_macro": "photo-1526304640581-d334cdbbf45e",    # Abstract financial lines
+    "institutional": "photo-1486406146926-c627a92ad1ab", # Modern glass building
+    "regulation": "photo-1589829545856-d10d557cf95f",   # Scales of justice
+    "adoption": "photo-1551288049-bebda4e38f71",        # Network connections
+    
+    # Regional
+    "asia": "photo-1536599018102-9f803c979b5e",         # Hong Kong skyline night
+    "europe": "photo-1467269204594-9661b134dd2b",       # European architecture
+    "americas": "photo-1534430480872-3498386e7856",     # NYC skyline
+    "global": "photo-1446776811953-b23d57bd21aa",       # Earth from space
+    
+    # Flow/movement themes
+    "flows": "photo-1509023464722-18d996393ca8",        # Light trails movement
+    "accumulation": "photo-1502101872923-d48509bff386", # Sunrise over mountains
+    "distribution": "photo-1517483000871-1dbf64a6e1c6", # Sunset water reflection
+    
+    # Abstract/editorial
+    "analysis": "photo-1551288049-bebda4e38f71",        # Data visualization
+    "conviction": "photo-1507090960745-b32f65d3113a",   # Mountain peak clear sky
+    "caution": "photo-1489549132488-d00b7eee80f1",      # Misty morning
+    "opportunity": "photo-1470071459604-3b5ec3a7fe05",  # Forest path light
+    
+    # Default fallback
+    "default": "photo-1639762681485-074b7f938ba0"       # Abstract crypto-friendly
+}
+
+def get_hero_image_url(theme: str) -> str:
+    """Get Unsplash URL for the selected theme"""
+    photo_id = HERO_IMAGES.get(theme, HERO_IMAGES["default"])
+    return f"https://images.unsplash.com/{photo_id}?w=1400&h=500&fit=crop&q=80"
+
 
 # ============================================
 # THE MECHANISM - 26 Week Editorial Calendar
@@ -215,56 +262,51 @@ def fetch_weekly_market_data():
             if segment_coins:
                 avg_change = sum(c.get("change_7d", 0) for c in segment_coins) / len(segment_coins)
                 data["segments"][segment] = {
-                    "change": round(avg_change, 2),
+                    "change": round(avg_change, 1),
                     "coins": len(segment_coins)
                 }
     
     except Exception as e:
-        print(f"Warning: Could not fetch market data: {e}")
+        print(f"Warning: Error fetching market data: {e}")
     
     return data
 
 
 def get_key_dates_for_week():
-    """Generate placeholder key dates - in production, fetch from calendar API"""
-    # This would ideally fetch from an economic calendar API
+    """Generate key dates for the coming week"""
+    # This could be enhanced to pull from a calendar API or database
+    # For now, return static example - in production, you'd populate this dynamically
     return [
         {"day": "Mon", "event": "Market Open"},
-        {"day": "Tue", "event": "Fed Decision"},
-        {"day": "Wed", "event": "CPI Data"},
-        {"day": "Thu", "event": "Jobless Claims"},
+        {"day": "Wed", "event": "Fed Minutes"},
         {"day": "Fri", "event": "Options Expiry"}
     ]
 
 
 def get_magazine_prompt(market_data, mechanism):
-    """Generate the comprehensive weekend magazine prompt"""
+    """Generate the prompt for Claude to write the magazine"""
     
-    btc_data = next((c for c in market_data.get("top_coins", []) if c["id"] == "bitcoin"), {})
-    eth_data = next((c for c in market_data.get("top_coins", []) if c["id"] == "ethereum"), {})
+    # Build market context
+    btc = next((c for c in market_data.get("top_coins", []) if c["id"] == "bitcoin"), {})
+    eth = next((c for c in market_data.get("top_coins", []) if c["id"] == "ethereum"), {})
+    sol = next((c for c in market_data.get("top_coins", []) if c["id"] == "solana"), {})
     
     market_context = f"""
-CURRENT MARKET STATE:
+CURRENT MARKET DATA:
+- Bitcoin: ${btc.get('price', 0):,.0f} (7d: {btc.get('change_7d', 0):+.1f}%, 30d: {btc.get('change_30d', 0):+.1f}%)
+- Ethereum: ${eth.get('price', 0):,.0f} (7d: {eth.get('change_7d', 0):+.1f}%)
+- Solana: ${sol.get('price', 0):,.0f} (7d: {sol.get('change_7d', 0):+.1f}%)
 - Total Market Cap: ${market_data.get('total_market_cap', 0)/1e12:.2f}T
-- 24h Change: {market_data.get('market_cap_change_24h', 0):.1f}%
 - BTC Dominance: {market_data.get('btc_dominance', 0):.1f}%
-- ETH Dominance: {market_data.get('eth_dominance', 0):.1f}%
-
-BITCOIN:
-- Price: ${btc_data.get('price', 0):,.0f}
-- 7-day change: {btc_data.get('change_7d', 0):.1f}%
-- 30-day change: {btc_data.get('change_30d', 0):.1f}%
-
-ETHEREUM:
-- Price: ${eth_data.get('price', 0):,.0f}
-- 7-day change: {eth_data.get('change_7d', 0):.1f}%
-- 30-day change: {eth_data.get('change_30d', 0):.1f}%
 
 SEGMENT PERFORMANCE (7-day):
 """
     
     for segment, seg_data in market_data.get("segments", {}).items():
         market_context += f"- {segment.upper()}: {seg_data['change']:+.1f}%\n"
+
+    # Available themes for image selection
+    theme_list = ", ".join(HERO_IMAGES.keys())
 
     return f"""You are the editorial team at The Litmus, a premium crypto intelligence publication combining Financial Times editorial quality with behavioral economics insight.
 
@@ -322,11 +364,24 @@ EDITORIAL STANDARDS:
 - Specific numbers and examples over vague generalizations
 - The FT reader should feel at home
 
+HERO IMAGE THEME:
+Select ONE theme from this list that best captures the week's dominant narrative:
+{theme_list}
+
+Choose based on the market's mood and your headline. For example:
+- Market testing highs with conviction → "conviction" or "rally"
+- Fed decision looming, uncertainty → "fed_macro" or "uncertainty"  
+- Strong institutional flows → "institutional" or "flows"
+- Asia leading the narrative → "asia"
+- Volatility and liquidations → "volatility"
+- Consolidation, waiting → "consolidation" or "caution"
+
 Return as JSON with this structure:
 {{
     "hero": {{
-        "headline": "Main magazine headline",
-        "subtitle": "Supporting context",
+        "headline": "Main magazine headline (compelling, FT-style)",
+        "subtitle": "Supporting context (one sentence)",
+        "theme": "ONE theme from the list above",
         "author": "The Litmus Editorial"
     }},
     "week_in_review": {{
@@ -437,6 +492,12 @@ def generate_weekend_magazine():
         print(f"❌ Generation failed: {magazine_content['error']}")
         return None
     
+    # Process hero image
+    hero_theme = magazine_content.get("hero", {}).get("theme", "default")
+    hero_image_url = get_hero_image_url(hero_theme)
+    magazine_content["hero"]["image_url"] = hero_image_url
+    print(f"\n🖼️  Hero image theme: {hero_theme}")
+    
     # Add key dates
     print("\n📅 Adding key dates...")
     magazine_content["key_dates"] = get_key_dates_for_week()
@@ -463,6 +524,7 @@ def generate_weekend_magazine():
     
     print(f"\n✅ Magazine saved to {output_path}")
     print(f"   Hero: {magazine_content.get('hero', {}).get('headline', 'N/A')}")
+    print(f"   Theme: {hero_theme}")
     print(f"   Mechanism: {magazine_content.get('mechanism', {}).get('topic', 'N/A')}")
     
     return magazine_content
