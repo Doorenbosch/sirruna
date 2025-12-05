@@ -337,14 +337,8 @@ function updateSectorPercentages(segments) {
         ? segmentValues.reduce((sum, s) => sum + s.change, 0) / segmentValues.length 
         : 0;
     
-    // Update market baseline display
-    const marketValueEl = document.getElementById('sector-market-value');
+    // Update header market percentage
     const marketHeaderEl = document.getElementById('sectors-market-change');
-    
-    if (marketValueEl) {
-        const sign = marketAvg >= 0 ? '+' : '';
-        marketValueEl.textContent = `${sign}${marketAvg.toFixed(1)}%`;
-    }
     
     if (marketHeaderEl) {
         const sign = marketAvg >= 0 ? '+' : '';

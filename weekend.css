@@ -438,7 +438,7 @@ margin-top: var(--lg);
 
 .sectors-header-compact {
 display: flex;
-justify-content: flex-start;
+justify-content: space-between;
 align-items: center;
 margin-bottom: var(--md);
 padding-bottom: var(--sm);
@@ -458,6 +458,13 @@ color: var(--burgundy);
 color: var(--ink);
 }
 
+.sectors-baseline {
+font-family: var(--serif);
+font-size: 0.75rem;
+font-style: italic;
+color: var(--ink-tertiary);
+}
+
 .sectors-chart {
 display: flex;
 flex-direction: column;
@@ -475,7 +482,7 @@ cursor: pointer;
 transition: background 0.15s;
 }
 
-.sector-row:hover:not(.market-row) {
+.sector-row:hover {
 background: var(--paper-dark);
 margin: 0 -8px;
 padding-left: 8px;
@@ -486,22 +493,11 @@ padding-right: 8px;
 border-bottom: none;
 }
 
-.sector-row.market-row {
-border-bottom: 1px solid var(--rule);
-padding-bottom: 12px;
-margin-bottom: 4px;
-cursor: default;
-}
-
 .sector-row .sector-name {
 font-family: var(--sans);
 font-size: 0.8rem;
 font-weight: 600;
 color: var(--ink);
-}
-
-.market-row .sector-name {
-color: var(--ink-secondary);
 }
 
 .sector-row .sector-change {
