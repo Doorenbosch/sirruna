@@ -5,6 +5,8 @@ Generates FT-quality editorial briefs using Claude Opus 4.5
 
 6 briefs daily: Morning + Evening for Americas, EMEA, APAC
 Target: Institutional-grade analysis that sophisticated investors would pay for
+
+v2.0 - Improved JSON handling and error recovery
 """
 
 import json
@@ -15,11 +17,13 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import urllib.request
 import urllib.error
+import time
 
 # Configuration
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 MODEL = "claude-opus-4-5-20251101"  # Opus 4.5 for premium editorial quality
-TEMPERATURE = 0.65  # Balanced: creative enough for engaging prose, consistent enough for quality
+TEMPERATURE = 0.55  # Slightly lower for more consistent JSON output
+MAX_RETRIES = 2  # Retry on JSON parse failures
 
 # API endpoints
 COINGECKO_GLOBAL = "https://api.coingecko.com/api/v3/global"
@@ -71,6 +75,146 @@ def fetch_market_data() -> dict:
             "total_market_cap": 3200000000000, "total_volume": 150000000000,
             "market_cap_change_24h": 0, "btc_dominance": 52
         }
+
+
+# ============================================================================
+# ROBUST JSON EXTRACTION
+# ============================================================================
+
+def clean_json_string(json_str: str) -> str:
+    """Clean common JSON issues from AI-generated content"""
+    
+    # Remove markdown code blocks if present
+    json_str = re.sub(r'^```json\s*', '', json_str)
+    json_str = re.sub(r'^```\s*', '', json_str)
+    json_str = re.sub(r'\s*```$', '', json_str)
+    
+    # Fix common issues inside string values
+    # This is tricky - we need to handle quotes inside JSON string values
+    
+    # Remove control characters except newlines and tabs
+    json_str = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]', '', json_str)
+    
+    # Fix trailing commas before closing brackets (common AI mistake)
+    json_str = re.sub(r',(\s*[}\]])', r'\1', json_str)
+    
+    return json_str
+
+
+def extract_json_from_response(text: str) -> dict:
+    """Safely extract JSON from AI response with multiple fallback strategies"""
+    
+    if not text or not text.strip():
+        raise ValueError("Empty response from API")
+    
+    # Strategy 1: Try direct parse (response might be pure JSON)
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+    
+    # Strategy 2: Find JSON object in response
+    json_match = re.search(r'\{[\s\S]*\}', text)
+    if not json_match:
+        raise ValueError("No JSON object found in response")
+    
+    json_str = json_match.group()
+    
+    # Strategy 3: Try parsing the extracted JSON
+    try:
+        return json.loads(json_str)
+    except json.JSONDecodeError as e:
+        print(f"  JSON parse attempt 1 failed: {e}")
+    
+    # Strategy 4: Clean the JSON and try again
+    cleaned = clean_json_string(json_str)
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError as e:
+        print(f"  JSON parse attempt 2 failed: {e}")
+    
+    # Strategy 5: Try to fix unescaped quotes in string values
+    # This is a more aggressive approach
+    try:
+        # Find all string values and escape internal quotes
+        fixed = fix_unescaped_quotes(cleaned)
+        return json.loads(fixed)
+    except (json.JSONDecodeError, Exception) as e:
+        print(f"  JSON parse attempt 3 failed: {e}")
+    
+    # Strategy 6: Extract just the essential fields manually
+    try:
+        return extract_essential_fields(text)
+    except Exception as e:
+        print(f"  Essential field extraction failed: {e}")
+    
+    raise ValueError(f"Could not parse JSON after all attempts. First 500 chars: {text[:500]}")
+
+
+def fix_unescaped_quotes(json_str: str) -> str:
+    """Attempt to fix unescaped quotes inside JSON string values"""
+    result = []
+    in_string = False
+    escape_next = False
+    
+    for i, char in enumerate(json_str):
+        if escape_next:
+            result.append(char)
+            escape_next = False
+            continue
+        
+        if char == '\\':
+            escape_next = True
+            result.append(char)
+            continue
+        
+        if char == '"':
+            if not in_string:
+                in_string = True
+                result.append(char)
+            else:
+                # Check if this quote ends the string
+                # Look ahead for : , } ] which would indicate end of string
+                rest = json_str[i+1:i+20].lstrip()
+                if rest and rest[0] in ':,}]\n':
+                    in_string = False
+                    result.append(char)
+                else:
+                    # This might be an unescaped quote inside string
+                    result.append('\\"')
+                    continue
+        else:
+            result.append(char)
+    
+    return ''.join(result)
+
+
+def extract_essential_fields(text: str) -> dict:
+    """Last resort: extract essential fields using regex"""
+    
+    # Try to extract headline
+    headline_match = re.search(r'"headline"\s*:\s*"([^"]*(?:\\.[^"]*)*)"', text)
+    headline = headline_match.group(1) if headline_match else "Market Intelligence Brief"
+    
+    # Try to extract sections
+    sections = {}
+    section_pattern = r'"(the_\w+)"\s*:\s*\{[^}]*"content"\s*:\s*"([^"]*(?:\\.[^"]*)*)"'
+    
+    for match in re.finditer(section_pattern, text):
+        section_name = match.group(1)
+        content = match.group(2)
+        # Unescape the content
+        content = content.replace('\\n', '\n').replace('\\"', '"')
+        sections[section_name] = content
+    
+    if not sections:
+        raise ValueError("Could not extract any sections")
+    
+    return {
+        "headline": headline.replace('\\n', ' ').replace('\\"', '"'),
+        "sections": sections,
+        "image_keywords": "market analysis trading"
+    }
 
 
 # ============================================================================
@@ -136,84 +280,68 @@ THE STRUCTURE (each section needs its own compelling headline):
 1. THE LEAD (100-130 words)
 Your opening thesis. Not what happened, but what it means. This is your argument about the underlying game.
 
-Example of excellence: "The market is lying about what it wants. Bitcoin's drift toward $110,000 amid record ETF inflows suggests not momentum but exhaustion—capital arriving without conviction, filling positions that earlier buyers are quietly vacating."
-
 2. THE MECHANISM (160-200 words)
-How is this happening? What's the structural, flow-based, or behavioral explanation? This is where you show your work.
-
-Connect the dots: ETF flows → market maker positioning → price impact → who's actually buying and why.
+How is this happening? What's the structural, flow-based, or behavioral explanation? Connect the dots: ETF flows → market maker positioning → price impact.
 
 3. THE COMPLICATION (140-170 words)
 What doesn't fit? Every good thesis has a counterpoint. This is where you demonstrate intellectual honesty.
 
-"However" is the most powerful word in financial journalism. Use it.
-
 4. THE BEHAVIORAL ANGLE (140-170 words)
-The Litmus's distinctive edge. What psychological or structural dynamic explains market behavior?
-
-Channel Rory Sutherland: look for the hidden logic in apparently irrational behavior. Channel Simon Sinek: what's the underlying "why" that participants may not even recognize in themselves?
-
-Is this herding? Anchoring? Narrative exhaustion? The shift from speculation to allocation?
+The Litmus's distinctive edge. What psychological or structural dynamic explains market behavior? Channel Rory Sutherland: look for the hidden logic.
 
 5. LOOKING AHEAD (140-170 words)
 Not predictions—decision frameworks. Give readers "if X, then probably Y" structures.
 
-What would confirm your thesis? What would refute it? What should they watch in the next 24-48 hours?
-
 6. THE TAKEAWAY (30-50 words)
-One or two sentences that crystallize the insight. Something quotable. The line they remember in meetings.
+One or two sentences that crystallize the insight. Something quotable.
 
 VOICE PRINCIPLES:
 Write like a senior FT editor who respects readers' intelligence. Direct because you've done the work. Opinionated because you've earned it.
 
-ABSOLUTELY PROHIBITED (retail crypto, breathless finance):
+ABSOLUTELY PROHIBITED:
 • Bullish/bearish, moon, pump, dump, FOMO, FUD, rekt, ape
 • "Skyrockets," "plummets," "explodes," "crashes," "massive," "huge"
-• "Altcoins" (use specific names or "smaller-cap tokens")
 • Certainty about unpredictable outcomes
-• Anthropomorphizing ("Bitcoin wants to break out")
-• Empty intensifiers ("very," "really," "extremely")
 • Exclamation marks
-• Questions as headlines
 
-REQUIRED (institutional, editorial):
-• Specific numbers with context ("up 3.2% against a flat equity session")
-• Structural language: rotation, distribution, accumulation, positioning, conviction, flows
-• Conditional framing: "suggests," "indicates," "points toward," "consistent with"
-• Historical reference: "reminiscent of," "unlike the October setup"
-• Named actors where relevant: "Blackrock's iShares fund," "CME futures positioning"
+CRITICAL JSON FORMATTING RULES:
+• All string values must have quotes escaped as \\"
+• No literal newlines inside strings - use \\n instead
+• No trailing commas
+• Keep headlines under 80 characters
+• Avoid special characters like curly quotes
 
 OUTPUT FORMAT:
-Return ONLY valid JSON with this exact structure. Each section has a title (compelling 4-8 word headline) and content:
+Return ONLY valid JSON with this exact structure:
 {{
     "headline": "Main 5-8 word headline capturing your core thesis",
     "sections": {{
         "the_lead": {{
-            "title": "Compelling 4-8 word headline for this section",
-            "content": "Your 100-130 word opening thesis"
+            "title": "4-8 word headline",
+            "content": "100-130 words of content"
         }},
         "the_mechanism": {{
-            "title": "Compelling 4-8 word headline for this section",
-            "content": "Your 160-200 word structural analysis"
+            "title": "4-8 word headline",
+            "content": "160-200 words of content"
         }},
         "the_complication": {{
-            "title": "Compelling 4-8 word headline for this section",
-            "content": "Your 140-170 word counterpoint"
+            "title": "4-8 word headline", 
+            "content": "140-170 words of content"
         }},
-        "the_behavioral_layer": {{
-            "title": "Compelling 4-8 word headline for this section",
-            "content": "Your 140-170 word psychological insight"
+        "the_behavioral_angle": {{
+            "title": "4-8 word headline",
+            "content": "140-170 words of content"
         }},
-        "the_forward_view": {{
-            "title": "Compelling 4-8 word headline for this section",
-            "content": "Your 140-170 word decision framework"
+        "looking_ahead": {{
+            "title": "4-8 word headline",
+            "content": "140-170 words of content"
         }},
-        "the_closing_line": {{
+        "the_takeaway": {{
             "title": "The Bottom Line",
-            "content": "Your 30-50 word crystallizing statement"
+            "content": "30-50 words"
         }}
     }},
-    "image_keywords": "3-5 evocative keywords for finding a relevant editorial image (e.g., 'storm clouds financial district', 'chess strategy boardroom')"
+    "image_keywords": "3-5 evocative keywords for editorial image"
 }}
 
 Return ONLY the JSON object, no other text."""
@@ -224,72 +352,69 @@ Return ONLY the JSON object, no other text."""
 # ============================================================================
 
 def get_evening_prompt(region: str, market_data: dict) -> str:
-    """Generate the evening brief prompt - session review, 800-1000 words"""
+    """Generate the evening brief prompt - session review and overnight setup"""
     
     region_context = {
         "apac": {
             "name": "Asia-Pacific",
-            "timezone": "SGT/HKT", 
-            "session": "Asian trading session",
-            "readers": "investors reviewing the day before European and US markets open",
-            "next_session": "European open, then US open"
+            "session_reviewed": "Asian trading session",
+            "handoff_to": "European markets",
+            "key_hours": "Hong Kong and Singapore close"
         },
         "emea": {
             "name": "Europe, Middle East & Africa",
-            "timezone": "GMT/CET",
-            "session": "European trading session with US overlap",
-            "readers": "investors reviewing the day's action",
-            "next_session": "US afternoon into Asian open"
+            "session_reviewed": "European trading session",
+            "handoff_to": "US afternoon session",
+            "key_hours": "London close and US mid-day"
         },
         "americas": {
             "name": "Americas",
-            "timezone": "EST",
-            "session": "US trading session",
-            "readers": "investors processing the full day's price action",
-            "next_session": "Asian open, then European open"
+            "session_reviewed": "US trading session",
+            "handoff_to": "Asian open",
+            "key_hours": "NYSE close approaching"
         }
     }
     
     ctx = region_context.get(region, region_context["americas"])
     
-    return f"""You are the Evening Markets Editor at The Litmus. Your task is to help {ctx['readers']} understand what actually happened today—not the headlines, but the underlying dynamics.
+    return f"""You are the Chief Markets Editor at The Litmus writing the evening brief. Your {ctx['name']} readers are wrapping up their trading day and preparing for the {ctx['handoff_to']}.
 
-PUBLICATION IDENTITY:
-The Litmus provides institutional-grade analysis with FT editorial quality. We decode markets, not just report them.
-
-REGIONAL CONTEXT - {ctx['name']} Evening Edition ({ctx['timezone']}):
-You're reviewing the {ctx['session']}. Your readers need to understand today's character before {ctx['next_session']}.
-
-CURRENT MARKET DATA:
+MARKET DATA:
 • Bitcoin: ${market_data['btc_price']:,.0f} ({market_data['btc_24h_change']:+.1f}% 24h)
 • Ethereum: ${market_data['eth_price']:,.0f} ({market_data['eth_24h_change']:+.1f}% 24h)
-• Total Market Cap: ${market_data['total_market_cap']/1e12:.2f}T
-• 24H Volume: ${market_data['total_volume']/1e9:.0f}B
+• Solana: ${market_data['sol_price']:,.0f} ({market_data['sol_24h_change']:+.1f}% 24h)
+• Total Market Cap: ${market_data['total_market_cap']/1e12:.2f}T ({market_data['market_cap_change_24h']:+.1f}% 24h)
+• BTC Dominance: {market_data['btc_dominance']:.1f}%
 
-YOUR MANDATE:
-Write an 800-1000 word evening brief that helps readers process what just happened and position for what comes next.
+SESSION CONTEXT: {ctx['session_reviewed']} review, {ctx['key_hours']}
 
-THE STRUCTURE (each section needs its own headline):
+Write a 700-900 word evening brief analyzing today's session and setting up overnight positioning:
 
 1. THE SESSION (100-130 words)
-What was today's character? Not a recap—an interpretation. Was this accumulation or distribution? Conviction or confusion?
+What defined today's {ctx['session_reviewed']}? The dominant narrative and key price action.
 
 2. THE FLOWS (150-180 words)
-Where did money actually move? ETF flows, exchange flows, derivatives positioning. Connect the dots between price action and capital movement.
+Where did capital move? ETF flows, exchange dynamics, on-chain signals, institutional footprints.
 
 3. THE DIVERGENCE (130-160 words)
-What didn't fit the narrative? What's the interesting anomaly that sophisticated investors should note?
+What moved differently than expected? Which correlations broke? Where's the interesting signal?
 
 4. THE REGIME CHECK (110-140 words)
-Did anything fundamental change today? Policy, regulation, market structure? Or was this noise within an existing regime?
+Are we still in the same market regime as yesterday? Any structural shifts worth noting?
 
 5. THE OVERNIGHT SETUP (110-140 words)
-What should readers watch as markets hand off to the next region? Key levels, potential catalysts, positioning risks.
+What should readers watch as markets hand off to {ctx['handoff_to']}? Key levels, potential catalysts.
 
 6. THE TAKEAWAY (30-50 words)
 One crystallizing insight about what today revealed.
 
 VOICE: FT editorial quality. Direct, authoritative, intellectually honest.
+
+CRITICAL JSON FORMATTING RULES:
+• All string values must have quotes escaped as \\"
+• No literal newlines inside strings - use \\n instead
+• No trailing commas
+• Avoid special characters
 
 OUTPUT FORMAT:
 Return ONLY valid JSON:
@@ -324,7 +449,7 @@ Return ONLY valid JSON:
     "image_keywords": "3-5 evocative keywords for editorial image"
 }}
 
-Return ONLY the JSON object."""
+Return ONLY the JSON object, no other text."""
 
 
 def get_publication_timestamp(region: str, brief_type: str) -> str:
@@ -349,10 +474,14 @@ def get_publication_timestamp(region: str, brief_type: str) -> str:
     return target_local.strftime(f"%Y-%m-%dT{pub_hour:02d}:00:00{tz_str}")
 
 
-def call_anthropic_api(prompt: str) -> dict:
-    """Call Claude Opus 4.5 API"""
+def call_anthropic_api(prompt: str, attempt: int = 1) -> dict:
+    """Call Claude Opus 4.5 API with retry logic"""
     if not ANTHROPIC_API_KEY:
         raise ValueError("ANTHROPIC_API_KEY not set")
+    
+    # Add stronger JSON instruction on retries
+    if attempt > 1:
+        prompt += "\n\nIMPORTANT: Previous attempt failed JSON parsing. Please ensure valid JSON with properly escaped quotes."
     
     request_body = json.dumps({
         "model": MODEL,
@@ -376,12 +505,8 @@ def call_anthropic_api(prompt: str) -> dict:
     
     content = response.get("content", [{}])[0].get("text", "")
     
-    # Extract JSON from response
-    json_match = re.search(r'\{[\s\S]*\}', content)
-    if json_match:
-        return json.loads(json_match.group())
-    
-    raise ValueError("No valid JSON in response")
+    # Use robust JSON extraction
+    return extract_json_from_response(content)
 
 
 def transform_to_flat_structure(brief_data: dict) -> dict:
@@ -402,32 +527,44 @@ def transform_to_flat_structure(brief_data: dict) -> dict:
 
 
 def generate_brief(region: str, brief_type: str) -> dict:
-    """Generate a complete brief"""
+    """Generate a complete brief with retry logic"""
     print(f"  Fetching market data...")
     market_data = fetch_market_data()
-    
-    print(f"  Generating {brief_type} brief for {region.upper()} using {MODEL}...")
     
     if brief_type == "evening":
         prompt = get_evening_prompt(region, market_data)
     else:
         prompt = get_morning_prompt(region, market_data)
     
-    brief_data = call_anthropic_api(prompt)
+    last_error = None
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            print(f"  Generating {brief_type} brief for {region.upper()} using {MODEL}... (attempt {attempt})")
+            brief_data = call_anthropic_api(prompt, attempt)
+            
+            # Transform structure
+            transformed = transform_to_flat_structure(brief_data)
+            
+            # Add metadata
+            transformed["region"] = region
+            transformed["type"] = brief_type
+            transformed["generated_at"] = get_publication_timestamp(region, brief_type)
+            transformed["btc_price"] = market_data["btc_price"]
+            transformed["eth_price"] = market_data["eth_price"]
+            transformed["total_market_cap"] = market_data["total_market_cap"]
+            transformed["btc_24h_change"] = market_data["btc_24h_change"]
+            
+            return transformed
+            
+        except Exception as e:
+            last_error = e
+            print(f"  Attempt {attempt} failed: {e}")
+            if attempt < MAX_RETRIES:
+                print(f"  Retrying in 5 seconds...")
+                time.sleep(5)
     
-    # Transform structure
-    transformed = transform_to_flat_structure(brief_data)
-    
-    # Add metadata
-    transformed["region"] = region
-    transformed["type"] = brief_type
-    transformed["generated_at"] = get_publication_timestamp(region, brief_type)
-    transformed["btc_price"] = market_data["btc_price"]
-    transformed["eth_price"] = market_data["eth_price"]
-    transformed["total_market_cap"] = market_data["total_market_cap"]
-    transformed["btc_24h_change"] = market_data["btc_24h_change"]
-    
-    return transformed
+    # All retries failed
+    raise last_error
 
 
 def save_brief(brief: dict, region: str, brief_type: str):
