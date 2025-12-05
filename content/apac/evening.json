@@ -1,18 +1,25 @@
 {
-  "headline": "Risk Assets Rally on Fed Clarity",
+  "headline": "Bitcoin Tests $90K as Conviction Wavers",
   "sections": {
-    "the_session": "Crypto markets posted their strongest single-day gains in weeks, with Bitcoin pushing toward $94k and Ethereum outpacing at +9.3%. The rally mirrored broader risk asset strength across equities and commodities. Volume was consistent with genuine buying rather than short covering, though remained below levels seen during previous breakouts.",
-    "the_flows": "Institutional flows showed conviction rather than speculation. ETF inflows across the major Bitcoin products totaled over $200 million, with BlackRock's IBIT leading. Perpetual funding rates normalized after yesterday's flush, suggesting leveraged positioning has reset to healthier levels. Stablecoin flows into exchanges picked up meaningfully in the final hours of trading.",
-    "the_divergence": "The day's most notable divergence: Ethereum's outperformance wasn't driven by any ETH-specific catalyst. When ETH leads in a risk-on environment, it typically signals rotation down the risk curve rather than a flight to quality. Korean exchange premiums returned to positive territory for the first time this week.",
-    "the_regime_check": "Today's move suggests the correction phase may be ending, but one day doesn't make a trend. The market absorbed recent Fed commentary suggesting rate policy has reached terminal hawkishness for this cycle. The dollar weakened correspondingly, removing a key headwind for digital assets.",
-    "the_overnight_setup": "Asian markets open to positive momentum, though liquidity typically thins into the weekend. The psychological $95k level for Bitcoin remains the near-term test. A clean break above with volume would suggest the correction is definitively over.",
-    "the_takeaway": "Today was pure macro correlation working in crypto's favor. Enjoy it, but remember: the fundamental thesis hasn't changed—we're still waiting for the next catalyst."
+    "the_session": "Today's Asian session revealed a market losing its nerve. Bitcoin's slide below $92,000 wasn't panic\u2014it was methodical, the kind of controlled descent that suggests larger players reducing exposure rather than retail capitulation. The 2.3% decline masks what felt like a session of quiet repositioning. Volume at $117 billion remains elevated but not exceptional, indicating neither exodus nor fresh conviction. Ethereum's near-identical percentage drop suggests this was a beta trade, not an idiosyncratic Bitcoin story. The session's character was one of professional distribution: orderly, deliberate, and notably absent of the sharp rebounds that typically punctuate genuine accumulation zones. Smart money appears to be taking chips off the table ahead of Western opens.",
+    "the_session_title": "Distribution Dressed as Consolidation",
+    "the_flows": "The disconnect between ETF narrative and spot market behaviour grew more pronounced today. While US-listed Bitcoin ETFs have enjoyed consistent inflows through November, Asian spot markets told a different story. Exchange inflows across major venues ticked higher during the session, a classic precursor to selling pressure that materialized through the afternoon. Derivatives positioning offers the more interesting signal: funding rates on perpetual swaps have compressed notably from last week's elevated levels, suggesting leveraged longs are being unwound rather than liquidated. This is voluntary deleveraging, not forced selling\u2014an important distinction. The options market shows put buying accelerating at the $88,000 and $85,000 strikes for month-end expiry, indicating hedging activity rather than outright bearish bets. Stablecoin flows into exchanges remain positive but have slowed, suggesting dry powder exists but deployment conviction is lacking. The flow picture reads as institutional caution, not retail fear.",
+    "the_flows_title": "ETF Enthusiasm Meets Spot Market Reality",
+    "the_divergence": "Here's what doesn't fit: if this were genuine risk-off, altcoin carnage should be more severe. Instead, the broader market's beta to Bitcoin has compressed. Ethereum holding within 0.2% of Bitcoin's decline is notable discipline for an asset that typically amplifies moves. More striking, several Layer-1 alternatives and DeFi tokens posted modest gains during Asian hours despite Bitcoin's weakness. This divergence suggests either rotational behaviour\u2014capital moving down the risk curve seeking value\u2014or simply that altcoin positioning was already so light that there's little left to sell. The latter interpretation is probably more accurate. After months of Bitcoin dominance expansion, altcoin holders who remain are either committed or capitulated. This creates an interesting asymmetry: if Bitcoin stabilizes, the altcoin complex may have more torque to the upside than current positioning suggests.",
+    "the_divergence_title": "Altcoins Refuse to Capitulate",
+    "the_regime_check": "Nothing fundamental shifted today. No regulatory surprises emerged from Asian jurisdictions. The macro backdrop\u2014a Federal Reserve likely finished hiking, Bitcoin ETFs established as legitimate allocation vehicles, halving supply dynamics approaching\u2014remains intact. This was price action within an existing regime, not a regime change. The key question is whether the $90,000 level represents fair value requiring consolidation or a technical breach that invites deeper retracement. Historical analogues suggest Bitcoin frequently consolidates 15-20% after major psychological level breaches before resuming trend. A move toward $85,000 would fit this pattern without invalidating the broader bull case. Today's session was noise, but noise that may persist for weeks rather than days.",
+    "the_regime_check_title": "Noise Within the Bull Regime",
+    "the_overnight_setup": "European traders inherit a fragile technical picture. Bitcoin's $90,000 level is the obvious focus\u2014a clean break below likely triggers algorithmic selling and could accelerate toward the $87,500-$88,000 support cluster. Watch for early London session volume: heavy selling would suggest Asian weakness has legs, while muted action might indicate the move is already exhausted. US equity futures correlation has tightened recently; any pre-market weakness in Nasdaq futures could compound crypto pressure. The CME gap from last week's close near $89,400 remains unfilled and may act as a magnet. For positioning, the overnight risk is asymmetric to the downside given current technical fragility and the absence of obvious catalysts to reverse sentiment before US open.",
+    "the_overnight_setup_title": "European Open Carries the Weight",
+    "the_takeaway": "Today revealed a market that has outrun its conviction. The rally to $90,000+ was real; the willingness to defend it is now being tested. Distribution is orderly, not panicked\u2014which makes the next 48 hours more important than the last 24.",
+    "the_takeaway_title": "The Bottom Line"
   },
+  "image_keywords": "twilight, market tension, descending, threshold, uncertainty",
   "region": "apac",
   "type": "evening",
-  "generated_at": "2025-12-03T18:00:00+08:00",
-  "btc_price": 93311,
-  "eth_price": 3069.32,
-  "total_market_cap": 3236160114938,
-  "btc_24h_change": 7.4
+  "generated_at": "2025-12-05T18:00:00+08:00",
+  "btc_price": 91264,
+  "eth_price": 3131.91,
+  "total_market_cap": 3191403914835.748,
+  "btc_24h_change": -2.33352
 }
