@@ -1,476 +1,72 @@
-#!/usr/bin/env python3
-"""
-Weekend Magazine Generator - The Litmus
-Generates comprehensive weekly crypto analysis
-Runs: Saturday 07:00 SGT/GMT+8
-
-Sections:
-1. The Week in Review - Market thesis
-2. APAC Region - Asia-Pacific developments  
-3. EMEA Region - Europe & Middle East developments
-4. Americas Region - US & Latin America developments
-5. Capital Flows - Institutional movements
-6. Corporate Moves - Company news
-7. Week Ahead - Key dates and catalysts
-8. The Mechanism - Educational deep-dive (NEW)
-"""
-
-import os
-import json
-import re
-from datetime import datetime, timedelta
-import requests
-
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
-COINGECKO_API = "https://api.coingecko.com/api/v3"
-
-# ============================================
-# THE MECHANISM - 26 Week Editorial Calendar
-# ============================================
-
-MECHANISM_CALENDAR = {
-    "2024-12-07": {
-        "topic": "How Fed Rate Decisions Actually Flow Into Crypto",
-        "timing": "FOMC meeting December 9-10, CPI data December 11"
+{
+  "generated_at": "2025-12-07T07:00:00+08:00",
+  "hero": {
+    "headline": "Conviction Capital Arrives as Bitcoin Tests New Territory",
+    "subtitle": "Institutional flows reshape market structure while regulatory clarity emerges across three continents",
+    "image_keywords": "financial district sunrise manhattan"
+  },
+  "key_dates": [
+    {"day": "Mon 9", "event": "China CPI Release"},
+    {"day": "Wed 11", "event": "US CPI Inflation Data"},
+    {"day": "Wed 11", "event": "Fed Interest Rate Decision"},
+    {"day": "Thu 12", "event": "ECB Rate Decision"},
+    {"day": "Fri 13", "event": "US Retail Sales Data"}
+  ],
+  "sections": {
+    "week_review": {
+      "headline": "Where the Smart Money Actually Went",
+      "content": "Bitcoin's push toward $100,000 this week masked a more complex rotation beneath the surface. While headlines celebrated the milestone approach, the real story unfolded in the distribution of capital across the broader market—a story that reveals as much about institutional strategy as it does about price action.\n\nThe week began with ETF inflows accelerating past $500 million daily, but the character of that capital has shifted. Early ETF buyers were largely retail-adjacent: financial advisors accessing Bitcoin for the first time, small allocations from self-directed portfolios. This week's flows carry different signatures—larger average transaction sizes, more sophisticated timing around macro announcements, and notably, increased activity in options markets suggesting hedged positions rather than directional bets.\n\nThis maturation matters. Markets driven by conviction behave differently than markets driven by allocation mandates. The former can reverse quickly on sentiment shifts; the latter tends to be stickier, with rebalancing occurring on predetermined schedules rather than in response to price movements.\n\nThe altcoin market told its own story. Ethereum's relative underperformance—gaining just 4% against Bitcoin's 8%—reflects ongoing uncertainty about the layer-2 transition's impact on ETH as a value-capture mechanism. Meanwhile, Solana's 15% surge demonstrated that infrastructure narratives still command premium valuations when execution delivers.",
+      "image": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=720&h=400&fit=crop",
+      "image_caption": "Trading volumes reached levels not seen since the 2021 cycle peak"
     },
-    "2024-12-14": {
-        "topic": "The Mechanics of Bitcoin ETF Creation and Redemption",
-        "timing": "Year-end ETF flow analysis, institutional rebalancing"
+    "apac": {
+      "headline": "Hong Kong's Quiet Revolution Continues",
+      "content": "While Western headlines focused on ETF flows, Asia-Pacific quietly consolidated its position as the industry's regulatory laboratory. Hong Kong's spot Bitcoin ETF recorded its third consecutive week of net inflows—modest by American standards at $45 million, but significant as proof of concept for the broader Asian market.\n\nThe real development came from Singapore, where the Monetary Authority issued updated guidance on institutional custody requirements. The framework essentially creates a two-tier system: stricter requirements for retail-facing services, with more flexibility for qualified institutional players. Several major asset managers are reportedly restructuring their Asian operations to take advantage of this clarity.\n\nJapan's Financial Services Agency moved closer to approving spot crypto ETFs, with a decision expected in Q1. The regulator's careful approach—studying the American experience before committing—reflects a broader APAC tendency to let others pioneer and then implement more polished versions.\n\nKorean exchanges reported a notable shift in trading patterns. Premium markets that typically indicate retail speculation showed unusual stability, suggesting more sophisticated participants are entering through proper channels rather than chasing arbitrage.",
+      "image": "https://images.unsplash.com/photo-1536599018102-9f803c140fc1?w=720&h=400&fit=crop",
+      "image_caption": "Hong Kong's financial district continues to attract crypto investment"
     },
-    "2024-12-21": {
-        "topic": "What Funding Rates Actually Signal",
-        "timing": "Holiday volatility period, thin liquidity"
+    "emea": {
+      "headline": "MiCA Implementation Enters Final Phase",
+      "content": "Europe's Markets in Crypto-Assets regulation moves from theory to practice this month, and the industry is discovering that compliance costs run higher than projected. Several mid-sized exchanges have announced withdrawal from European markets, unable to justify the capital requirements for their transaction volumes.\n\nThe consolidation benefits larger players. Binance's European entity reported a 30% increase in market share as smaller competitors retreated. Coinbase's expanded European presence positions it to capture institutional flows that prefer regulated counterparties.\n\nThe United Kingdom continues its parallel path. The FCA's ongoing consultation on staking regulation generated over 200 industry responses, with most advocating for a lighter touch than MiCA's approach. The regulatory arbitrage opportunity between UK and EU frameworks will shape where crypto businesses choose to base their European operations.\n\nDubai maintained its aggressive positioning. The Virtual Assets Regulatory Authority approved three new exchange licenses this week, bringing the total to 19. The emirate's strategy of combining regulatory clarity with tax advantages continues to attract firms seeking operational bases outside traditional financial centers.",
+      "image": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=720&h=400&fit=crop",
+      "image_caption": "European regulatory frameworks are reshaping the competitive landscape"
     },
-    "2024-12-28": {
-        "topic": "Year-End Tax Loss Harvesting Dynamics",
-        "timing": "December 31 tax deadline for US investors"
+    "americas": {
+      "headline": "The ETF Machine Keeps Running",
+      "content": "American ETF inflows dominated the week's capital story. BlackRock's IBIT alone absorbed $1.2 billion, bringing total ETF holdings to approximately 1.1 million Bitcoin—roughly 5% of circulating supply now held by these instruments.\n\nThe pace raises structural questions. Each day's inflow must be matched by willing sellers. With exchange balances at multi-year lows and long-term holders showing no signs of distribution, the supply-demand imbalance grows more acute. Either prices must rise to incentivize selling, or inflows must slow.\n\nRegulatory developments offered modest positive signals. The SEC's approval of options on Bitcoin ETFs opens new hedging possibilities for institutional holders. The initial trading showed sophisticated strategies rather than speculative excess—covered calls and protective puts suggesting portfolio managers treating Bitcoin as a permanent allocation rather than a trading position.\n\nLatin America provided contrast to the institutional North American narrative. Brazil's central bank reported crypto transactions equivalent to $4 billion monthly—primarily stablecoin remittances. Argentina's informal dollar markets increasingly price in crypto availability as a pressure release valve on capital controls.",
+      "image": "https://images.unsplash.com/photo-1541411176480-4735e90d7c40?w=720&h=400&fit=crop",
+      "image_caption": "Wall Street's crypto infrastructure continues to expand"
     },
-    "2025-01-04": {
-        "topic": "How January Effect Works in Crypto",
-        "timing": "New year positioning, fresh institutional allocations"
+    "flows": {
+      "headline": "Reading the On-Chain Tea Leaves",
+      "content": "Capital flows this week painted a picture of deliberate accumulation rather than speculative frenzy. Exchange balances continued their decline, dropping another 15,000 Bitcoin to levels not seen since 2018. The coins are moving to cold storage—either institutional custody or long-term holder wallets showing no historical selling patterns.\n\nStablecoin dynamics tell a complementary story. USDC supply expanded by $800 million, largely minted on Ethereum and promptly bridged to various DeFi protocols. This suggests yield-seeking capital returning to decentralized markets after sitting on the sidelines during the bear market.\n\nWhale wallets—addresses holding between 1,000 and 10,000 Bitcoin—showed net accumulation for the eighth consecutive week. These mid-sized large holders often represent family offices or smaller institutions, their steady buying contrasting with the more volatile patterns of both smaller retail addresses and the largest corporate holders.\n\nFutures markets revealed interesting positioning. Open interest climbed to cycle highs, but funding rates remained modest. This combination suggests hedged positions rather than leveraged directional bets—consistent with the institutional theme evident across other metrics.",
+      "image": "https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=720&h=400&fit=crop",
+      "image_caption": "On-chain metrics point to accumulation rather than distribution"
     },
-    "2025-01-11": {
-        "topic": "The Mechanics Behind Token Unlocks",
-        "timing": "Major unlock schedule for Q1"
+    "corporate": {
+      "headline": "MicroStrategy's Playbook Finds Followers",
+      "content": "MicroStrategy added another 2,500 Bitcoin to its treasury this week, but the company's influence extends beyond its own balance sheet. At least three publicly-traded companies announced Bitcoin treasury programs modeled on Saylor's approach, while several more are reportedly exploring the strategy.\n\nThe corporate adoption thesis has evolved. Early arguments focused on Bitcoin as inflation hedge; current advocates emphasize balance sheet optimization and shareholder value creation through convertible debt structures. Whether this represents genuine strategic innovation or financial engineering depends largely on Bitcoin's future price path.\n\nMining companies faced a different calculus. Post-halving economics continue to pressure operators with higher electricity costs. Two mid-sized miners announced merger discussions, while Marathon Digital reported expansion plans that would increase its hash rate by 30% through 2025. The industry's consolidation trajectory appears set.\n\nCoinbase's latest earnings call revealed institutional revenue growing faster than retail—a structural shift that validates the company's pivot toward B2B services even as it maintains its consumer brand.",
+      "image": "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=720&h=400&fit=crop",
+      "image_caption": "Corporate Bitcoin adoption accelerates across sectors"
     },
-    "2025-01-18": {
-        "topic": "How Stablecoin Reserves Actually Work",
-        "timing": "Tether Q4 attestation, regulatory focus"
-    },
-    "2025-01-25": {
-        "topic": "Miner Economics and Selling Pressure Cycles",
-        "timing": "Difficulty adjustment period, hash rate analysis"
-    },
-    "2025-02-01": {
-        "topic": "How Liquidation Cascades Happen",
-        "timing": "Post-FOMC volatility, leverage buildup"
-    },
-    "2025-02-08": {
-        "topic": "The Basis Trade: Who's Doing It and Why",
-        "timing": "Quarterly futures expiry cycle"
-    },
-    "2025-02-15": {
-        "topic": "How On-Chain Whale Tracking Actually Works",
-        "timing": "Market structure education, whale activity"
-    },
-    "2025-02-22": {
-        "topic": "Options Expiry Dynamics and Max Pain",
-        "timing": "Monthly options expiry"
-    },
-    "2025-03-01": {
-        "topic": "How Exchange Reserves Signal Market Moves",
-        "timing": "Exchange flow analysis, withdrawal trends"
-    },
-    "2025-03-08": {
-        "topic": "DeFi Yield: Where Does the Money Actually Come From?",
-        "timing": "DeFi season dynamics, TVL movements"
-    },
-    "2025-03-15": {
-        "topic": "The Mechanics of a Protocol Upgrade",
-        "timing": "Network upgrade education"
-    },
-    "2025-03-22": {
-        "topic": "How Regulatory News Moves Markets",
-        "timing": "Q1 regulatory calendar, SEC activity"
-    },
-    "2025-03-29": {
-        "topic": "Quarter-End Rebalancing Effects",
-        "timing": "Q1 close, institutional portfolio adjustments"
-    },
-    "2025-04-05": {
-        "topic": "Halving Aftermath: What Actually Changed",
-        "timing": "Post-halving analysis"
-    },
-    "2025-04-12": {
-        "topic": "How MiCA Affects Different Crypto Businesses",
-        "timing": "MiCA implementation phase"
-    },
-    "2025-04-19": {
-        "topic": "The Mechanics of a Bank Run (Crypto Edition)",
-        "timing": "Historical education, risk awareness"
-    },
-    "2025-04-26": {
-        "topic": "How Airdrop Farming Distorts Metrics",
-        "timing": "Airdrop season, protocol launches"
-    },
-    "2025-05-03": {
-        "topic": "Grayscale Premium/Discount Dynamics",
-        "timing": "Trust mechanics, ETF comparison"
-    },
-    "2025-05-10": {
-        "topic": "How Correlation Regimes Shift",
-        "timing": "Macro correlation analysis, risk-on/off"
-    },
-    "2025-05-17": {
-        "topic": "The Mechanics of a Short Squeeze",
-        "timing": "Volatility education, leverage analysis"
-    },
-    "2025-05-24": {
-        "topic": "How Market Makers Actually Work",
-        "timing": "Market structure, liquidity provision"
-    },
-    "2025-05-31": {
-        "topic": "Summer Liquidity Dynamics",
-        "timing": "Pre-summer positioning, volume patterns"
+    "outlook": {
+      "headline": "The Setup for December's Final Weeks",
+      "content": "The week ahead brings the year's last major central bank decisions. The Federal Reserve on Wednesday commands the most attention—markets price a 90% probability of a hold, but the dot plot projections for 2025 will shape narratives into year-end.\n\nThe ECB follows Thursday. European rates likely hold steady, but any commentary on the eurozone's economic trajectory affects risk appetite globally. Crypto's correlation with traditional risk assets has reasserted itself in recent months.\n\nKey levels to watch: Bitcoin's $100,000 psychological barrier has proven resistant to first attempts. Historical patterns suggest multiple tests before decisive breaks. Support at $95,000 held this week's pullback; a failure there would target $88,000 where substantial buyer interest appears in order book data.\n\nEthereum's ratio against Bitcoin bears watching. The current 0.035 level represents multi-year lows; either a fundamental catalyst emerges to reverse the trend, or the market is pricing in structural concerns about Ethereum's value capture that extend beyond current sentiment."
     }
+  },
+  "segments": {
+    "payment": {"change": 8.2, "coins": ["BTC", "LTC", "XMR"]},
+    "stablecoin": {"change": 0.1, "coins": ["USDT", "USDC"]},
+    "infrastructure": {"change": 12.4, "coins": ["ETH", "SOL", "AVAX"]},
+    "defi": {"change": 6.8, "coins": ["AAVE", "UNI", "COMP"]},
+    "utility": {"change": 4.2, "coins": ["LINK", "FIL", "RENDER"]},
+    "entertainment": {"change": -2.1, "coins": ["APE", "MANA", "SAND"]},
+    "ai": {"change": 18.5, "coins": ["RNDR", "AKT", "TAO"]}
+  },
+  "market_data": {
+    "btc_price": 97500,
+    "eth_price": 3420,
+    "total_market_cap": 3450000000000,
+    "btc_dominance": 54.2
+  }
 }
-
-
-def get_mechanism_topic():
-    """Get the mechanism topic for this Saturday"""
-    today = datetime.now()
-    # Find this Saturday
-    days_until_saturday = (5 - today.weekday()) % 7
-    if days_until_saturday == 0 and today.hour >= 12:
-        days_until_saturday = 7
-    this_saturday = today + timedelta(days=days_until_saturday)
-    date_str = this_saturday.strftime("%Y-%m-%d")
-    
-    if date_str in MECHANISM_CALENDAR:
-        return MECHANISM_CALENDAR[date_str]
-    
-    # Fallback
-    return {
-        "topic": "How Market Sentiment Indicators Actually Work",
-        "timing": "Evergreen market education"
-    }
-
-
-def fetch_weekly_market_data():
-    """Fetch 7-day market data from CoinGecko"""
-    data = {
-        "top_coins": [],
-        "total_market_cap": 0,
-        "btc_dominance": 0,
-        "eth_dominance": 0,
-        "market_cap_change_24h": 0,
-        "segments": {}
-    }
-    
-    try:
-        # Global data
-        global_resp = requests.get(f"{COINGECKO_API}/global", timeout=10)
-        if global_resp.ok:
-            global_data = global_resp.json().get("data", {})
-            data["total_market_cap"] = global_data.get("total_market_cap", {}).get("usd", 0)
-            data["btc_dominance"] = global_data.get("market_cap_percentage", {}).get("btc", 0)
-            data["eth_dominance"] = global_data.get("market_cap_percentage", {}).get("eth", 0)
-            data["market_cap_change_24h"] = global_data.get("market_cap_change_percentage_24h_usd", 0)
-        
-        # Top coins with 7d and 30d data
-        coins_resp = requests.get(
-            f"{COINGECKO_API}/coins/markets",
-            params={
-                "vs_currency": "usd",
-                "order": "market_cap_desc",
-                "per_page": 20,
-                "sparkline": False,
-                "price_change_percentage": "24h,7d,30d"
-            },
-            timeout=10
-        )
-        if coins_resp.ok:
-            for coin in coins_resp.json():
-                data["top_coins"].append({
-                    "id": coin.get("id"),
-                    "symbol": coin.get("symbol", "").upper(),
-                    "name": coin.get("name"),
-                    "price": coin.get("current_price", 0),
-                    "market_cap": coin.get("market_cap", 0),
-                    "change_24h": coin.get("price_change_percentage_24h", 0),
-                    "change_7d": coin.get("price_change_percentage_7d_in_currency", 0),
-                    "change_30d": coin.get("price_change_percentage_30d_in_currency", 0)
-                })
-        
-        # Segment performance (simplified categories)
-        segments = {
-            "layer1": ["ethereum", "solana", "cardano", "avalanche-2"],
-            "defi": ["uniswap", "aave", "chainlink", "maker"],
-            "infrastructure": ["polygon", "arbitrum", "optimism"],
-            "ai": ["render-token", "fetch-ai", "akash-network"]
-        }
-        
-        for segment, coin_ids in segments.items():
-            segment_coins = [c for c in data["top_coins"] if c["id"] in coin_ids]
-            if segment_coins:
-                avg_change = sum(c.get("change_7d", 0) for c in segment_coins) / len(segment_coins)
-                data["segments"][segment] = {
-                    "change": round(avg_change, 2),
-                    "coins": len(segment_coins)
-                }
-    
-    except Exception as e:
-        print(f"Warning: Could not fetch market data: {e}")
-    
-    return data
-
-
-def get_key_dates_for_week():
-    """Generate placeholder key dates - in production, fetch from calendar API"""
-    # This would ideally fetch from an economic calendar API
-    return [
-        {"day": "Mon", "event": "Market Open"},
-        {"day": "Tue", "event": "Fed Decision"},
-        {"day": "Wed", "event": "CPI Data"},
-        {"day": "Thu", "event": "Jobless Claims"},
-        {"day": "Fri", "event": "Options Expiry"}
-    ]
-
-
-def get_magazine_prompt(market_data, mechanism):
-    """Generate the comprehensive weekend magazine prompt"""
-    
-    btc_data = next((c for c in market_data.get("top_coins", []) if c["id"] == "bitcoin"), {})
-    eth_data = next((c for c in market_data.get("top_coins", []) if c["id"] == "ethereum"), {})
-    
-    market_context = f"""
-CURRENT MARKET STATE:
-- Total Market Cap: ${market_data.get('total_market_cap', 0)/1e12:.2f}T
-- 24h Change: {market_data.get('market_cap_change_24h', 0):.1f}%
-- BTC Dominance: {market_data.get('btc_dominance', 0):.1f}%
-- ETH Dominance: {market_data.get('eth_dominance', 0):.1f}%
-
-BITCOIN:
-- Price: ${btc_data.get('price', 0):,.0f}
-- 7-day change: {btc_data.get('change_7d', 0):.1f}%
-- 30-day change: {btc_data.get('change_30d', 0):.1f}%
-
-ETHEREUM:
-- Price: ${eth_data.get('price', 0):,.0f}
-- 7-day change: {eth_data.get('change_7d', 0):.1f}%
-- 30-day change: {eth_data.get('change_30d', 0):.1f}%
-
-SEGMENT PERFORMANCE (7-day):
-"""
-    
-    for segment, seg_data in market_data.get("segments", {}).items():
-        market_context += f"- {segment.upper()}: {seg_data['change']:+.1f}%\n"
-
-    return f"""You are the editorial team at The Litmus, a premium crypto intelligence publication combining Financial Times editorial quality with behavioral economics insight.
-
-Today is Saturday. You are writing the Weekend Magazine - our flagship weekly analysis that provides depth and perspective that daily coverage cannot. This is the piece sophisticated investors save for their weekend reading.
-
-{market_context}
-
-Write a comprehensive Weekend Magazine with these sections. Each section should be substantive, insightful, and written for intelligent readers who want understanding, not hype.
-
-SECTIONS TO WRITE:
-
-1. THE WEEK IN REVIEW (300-400 words)
-Start with your thesis about what this week revealed about the market's character. Not just what happened, but what it means. Connect flows, sentiment, and price action into a coherent narrative.
-
-2. ASIA-PACIFIC (250-300 words)
-What happened in APAC that matters? Hong Kong, Singapore, Japan, Korea, Australia. Regulatory developments, institutional moves, retail sentiment. Write this so an APAC reader feels you understand their market.
-
-3. EMEA (250-300 words)  
-European and Middle Eastern developments. MiCA implementation, UK regulatory stance, Dubai positioning, European institutional adoption. The sophisticated European perspective.
-
-4. AMERICAS (250-300 words)
-US developments: ETF flows, SEC activity, institutional moves, political developments. Also cover Latin American adoption stories. The dominant market narrative.
-
-5. CAPITAL FLOWS (250-300 words)
-Where is money moving? ETF flows, exchange reserves, stablecoin movements, whale activity. Be specific with numbers where possible. This is the plumbing that sophisticated investors track.
-
-6. CORPORATE MOVES (200-250 words)
-What are the key corporate players doing? MicroStrategy, miners, exchanges, publicly traded crypto companies. Actions speak louder than prices.
-
-7. WEEK AHEAD (200-250 words)
-What should readers watch in the coming week? Key dates, potential catalysts, levels that matter. Be specific and actionable.
-
-8. THE MECHANISM (400-500 words)
-
-This week's topic: {mechanism['topic']}
-Timing context: {mechanism['timing']}
-
-Write an educational piece explaining HOW this mechanism works in crypto markets. This is not a primer for beginners—assume readers understand basic crypto concepts. Instead, explain the sophisticated plumbing that even informed investors often misunderstand.
-
-Structure your explanation:
-- Open with why this matters RIGHT NOW (connect to the timing context)
-- Explain the mechanism in clear, precise language with specific details
-- Include 2-3 insider details that demonstrate genuine market knowledge
-- Reference how institutional players think about this
-- End with a "What to Watch" subsection - 3-4 concrete, observable things readers can monitor
-
-Tone: Authoritative but accessible. Think FT Alphaville explaining bond market plumbing. No hype, no predictions—just clear explanation of how things work.
-
----
-
-EDITORIAL STANDARDS:
-- Write with conviction but intellectual humility
-- No hedge-fund jargon, no moon-talk, no "to the moon"
-- Each paragraph earns its place or gets cut
-- Specific numbers and examples over vague generalizations
-- The FT reader should feel at home
-
-Return as JSON with this structure:
-{{
-    "hero": {{
-        "headline": "Main magazine headline",
-        "subtitle": "Supporting context",
-        "author": "The Litmus Editorial"
-    }},
-    "week_in_review": {{
-        "title": "The Week in Review",
-        "content": "Full content here..."
-    }},
-    "apac": {{
-        "title": "Asia-Pacific",
-        "content": "Full content here..."
-    }},
-    "emea": {{
-        "title": "Europe & Middle East",
-        "content": "Full content here..."
-    }},
-    "americas": {{
-        "title": "Americas",
-        "content": "Full content here..."
-    }},
-    "capital_flows": {{
-        "title": "Capital Flows",
-        "content": "Full content here..."
-    }},
-    "corporate": {{
-        "title": "Corporate Moves",
-        "content": "Full content here..."
-    }},
-    "week_ahead": {{
-        "title": "The Week Ahead",
-        "content": "Full content here..."
-    }},
-    "mechanism": {{
-        "title": "The Mechanism",
-        "topic": "{mechanism['topic']}",
-        "timing": "{mechanism['timing']}",
-        "content": "Full educational content here..."
-    }}
-}}
-"""
-
-
-def call_anthropic_api(prompt):
-    """Call Anthropic API to generate magazine content"""
-    
-    headers = {
-        "x-api-key": ANTHROPIC_API_KEY,
-        "content-type": "application/json",
-        "anthropic-version": "2023-06-01"
-    }
-    
-    payload = {
-        "model": "claude-sonnet-4-20250514",
-        "max_tokens": 8000,
-        "temperature": 0.55,
-        "messages": [
-            {"role": "user", "content": prompt}
-        ]
-    }
-    
-    try:
-        response = requests.post(
-            "https://api.anthropic.com/v1/messages",
-            headers=headers,
-            json=payload,
-            timeout=120
-        )
-        
-        if response.ok:
-            content = response.json()["content"][0]["text"]
-            
-            # Extract JSON from response
-            json_match = re.search(r'\{[\s\S]*\}', content)
-            if json_match:
-                return json.loads(json_match.group())
-            else:
-                print("Warning: Could not extract JSON from response")
-                return {"error": "Could not parse response"}
-        else:
-            print(f"API Error: {response.status_code} - {response.text}")
-            return {"error": f"API error: {response.status_code}"}
-            
-    except Exception as e:
-        print(f"Error calling Anthropic API: {e}")
-        return {"error": str(e)}
-
-
-def generate_weekend_magazine():
-    """Generate the complete weekend magazine"""
-    print("=" * 60)
-    print("THE LITMUS - WEEKEND MAGAZINE GENERATOR")
-    print(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("=" * 60)
-    
-    # Get mechanism topic for this week
-    mechanism = get_mechanism_topic()
-    print(f"\n📐 This week's Mechanism: {mechanism['topic']}")
-    print(f"   Timing: {mechanism['timing']}")
-    
-    # Fetch market data
-    print("\n📊 Fetching market data...")
-    market_data = fetch_weekly_market_data()
-    
-    # Generate magazine content
-    print("\n📝 Generating magazine content...")
-    prompt = get_magazine_prompt(market_data, mechanism)
-    magazine_content = call_anthropic_api(prompt)
-    
-    if "error" in magazine_content:
-        print(f"❌ Generation failed: {magazine_content['error']}")
-        return None
-    
-    # Add key dates
-    print("\n📅 Adding key dates...")
-    magazine_content["key_dates"] = get_key_dates_for_week()
-    
-    # Add segment data
-    magazine_content["segments"] = market_data.get("segments", {})
-    
-    # Add metadata
-    magazine_content["generated_at"] = datetime.now().isoformat()
-    magazine_content["market_data"] = {
-        "btc_price": next((c["price"] for c in market_data.get("top_coins", []) if c["id"] == "bitcoin"), 0),
-        "eth_price": next((c["price"] for c in market_data.get("top_coins", []) if c["id"] == "ethereum"), 0),
-        "total_market_cap": market_data.get("total_market_cap", 0),
-        "btc_dominance": market_data.get("btc_dominance", 0)
-    }
-    
-    # Save to file
-    output_dir = "content/weekend"
-    os.makedirs(output_dir, exist_ok=True)
-    
-    output_path = os.path.join(output_dir, "magazine.json")
-    with open(output_path, "w") as f:
-        json.dump(magazine_content, f, indent=2)
-    
-    print(f"\n✅ Magazine saved to {output_path}")
-    print(f"   Hero: {magazine_content.get('hero', {}).get('headline', 'N/A')}")
-    print(f"   Mechanism: {magazine_content.get('mechanism', {}).get('topic', 'N/A')}")
-    
-    return magazine_content
-
-
-if __name__ == "__main__":
-    if not ANTHROPIC_API_KEY:
-        print("Error: ANTHROPIC_API_KEY environment variable not set")
-        exit(1)
-    
-    generate_weekend_magazine()
