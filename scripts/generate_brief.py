@@ -33,6 +33,38 @@ COINGECKO_COINS = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=us
 SCRIPT_DIR = Path(__file__).parent
 CONTENT_DIR = SCRIPT_DIR.parent / "content"
 
+# ============================================================================
+# DYNAMIC HERO IMAGES - Keyword-based Unsplash
+# ============================================================================
+
+# Fallback images for when keywords might return poor results
+FALLBACK_IMAGES = {
+    "default": "photo-1639762681485-074b7f938ba0",      # Abstract blue
+    "morning": "photo-1470252649378-9c29740c9fa8",      # Sunrise
+    "evening": "photo-1472120435266-53107fd0c44a",      # Sunset city
+}
+
+# Keywords to avoid (return bad stock photos)
+BAD_KEYWORDS = {"crypto", "bitcoin", "trading", "chart", "graph", "money", "coin", "currency", "stock", "market"}
+
+def build_image_url(keywords: str, fallback: str = "default") -> str:
+    """Build Unsplash URL from AI-generated keywords"""
+    if not keywords:
+        photo_id = FALLBACK_IMAGES.get(fallback, FALLBACK_IMAGES["default"])
+        return f"https://images.unsplash.com/{photo_id}?w=1400&h=500&fit=crop&q=80"
+    
+    # Clean and filter keywords
+    keyword_list = [k.strip().lower() for k in keywords.split(",")]
+    filtered = [k for k in keyword_list if k and k not in BAD_KEYWORDS]
+    
+    if not filtered:
+        photo_id = FALLBACK_IMAGES.get(fallback, FALLBACK_IMAGES["default"])
+        return f"https://images.unsplash.com/{photo_id}?w=1400&h=500&fit=crop&q=80"
+    
+    # Build Unsplash source URL
+    query = ",".join(filtered[:4])  # Max 4 keywords
+    return f"https://source.unsplash.com/1400x500/?{query}"
+
 
 def fetch_market_data() -> dict:
     """Fetch live market data from CoinGecko"""
@@ -196,6 +228,10 @@ def extract_essential_fields(text: str) -> dict:
     headline_match = re.search(r'"headline"\s*:\s*"([^"]*(?:\\.[^"]*)*)"', text)
     headline = headline_match.group(1) if headline_match else "Market Intelligence Brief"
     
+    # Try to extract image_keywords
+    keywords_match = re.search(r'"image_keywords"\s*:\s*"([^"]*)"', text)
+    keywords = keywords_match.group(1) if keywords_match else ""
+    
     # Try to extract sections
     sections = {}
     section_pattern = r'"(the_\w+)"\s*:\s*\{[^}]*"content"\s*:\s*"([^"]*(?:\\.[^"]*)*)"'
@@ -213,8 +249,9 @@ def extract_essential_fields(text: str) -> dict:
     return {
         "headline": headline.replace('\\n', ' ').replace('\\"', '"'),
         "sections": sections,
-        "image_keywords": "market analysis trading"
+        "image_keywords": keywords
     }
+
 
 
 # ============================================================================
@@ -304,6 +341,19 @@ ABSOLUTELY PROHIBITED:
 • Certainty about unpredictable outcomes
 • Exclamation marks
 
+HERO IMAGE KEYWORDS:
+Provide 3-4 visual keywords for the hero image that capture the mood of your lead story.
+
+IMPORTANT - Use CONCRETE, VISUAL nouns that photograph well:
+✓ Good: "storm clouds, ocean, dark sky" (for uncertainty)
+✓ Good: "sunrise, mountain peak, clear sky" (for optimism)  
+✓ Good: "fog, forest, mist" (for unclear outlook)
+✓ Good: "city lights, night, skyline" (for after-hours activity)
+✓ Good: "crossroads, path, decision" (for pivotal moments)
+
+✗ Avoid: crypto, bitcoin, trading, chart, money, stock, market, coin, currency
+These return generic stock photos. Think metaphorical, editorial imagery.
+
 CRITICAL JSON FORMATTING RULES:
 • All string values must have quotes escaped as \\"
 • No literal newlines inside strings - use \\n instead
@@ -315,6 +365,7 @@ OUTPUT FORMAT:
 Return ONLY valid JSON with this exact structure:
 {{
     "headline": "Main 5-8 word headline capturing your core thesis",
+    "image_keywords": "3-4 visual keywords, comma separated",
     "sections": {{
         "the_lead": {{
             "title": "4-8 word headline",
@@ -340,8 +391,7 @@ Return ONLY valid JSON with this exact structure:
             "title": "The Bottom Line",
             "content": "30-50 words"
         }}
-    }},
-    "image_keywords": "3-5 evocative keywords for editorial image"
+    }}
 }}
 
 Return ONLY the JSON object, no other text."""
@@ -410,6 +460,17 @@ One crystallizing insight about what today revealed.
 
 VOICE: FT editorial quality. Direct, authoritative, intellectually honest.
 
+HERO IMAGE KEYWORDS:
+Provide 3-4 visual keywords for the hero image that capture today's session mood.
+
+IMPORTANT - Use CONCRETE, VISUAL nouns that photograph well:
+✓ Good: "sunset, city, reflection" (for end of day)
+✓ Good: "calm water, evening light" (for quiet session)
+✓ Good: "storm, clouds, dramatic sky" (for volatile day)
+✓ Good: "highway, lights, motion" (for capital flows)
+
+✗ Avoid: crypto, bitcoin, trading, chart, money, stock, market, coin, currency
+
 CRITICAL JSON FORMATTING RULES:
 • All string values must have quotes escaped as \\"
 • No literal newlines inside strings - use \\n instead
@@ -420,6 +481,7 @@ OUTPUT FORMAT:
 Return ONLY valid JSON:
 {{
     "headline": "5-8 word headline capturing today's story",
+    "image_keywords": "3-4 visual keywords, comma separated",
     "sections": {{
         "the_session": {{
             "title": "4-8 word headline",
@@ -445,8 +507,7 @@ Return ONLY valid JSON:
             "title": "The Bottom Line",
             "content": "30-50 words"
         }}
-    }},
-    "image_keywords": "3-5 evocative keywords for editorial image"
+    }}
 }}
 
 Return ONLY the JSON object, no other text."""
@@ -544,6 +605,12 @@ def generate_brief(region: str, brief_type: str) -> dict:
             
             # Transform structure
             transformed = transform_to_flat_structure(brief_data)
+            
+            # Build hero image URL from keywords
+            keywords = transformed.get("image_keywords", "")
+            fallback = "morning" if brief_type == "morning" else "evening"
+            transformed["image_url"] = build_image_url(keywords, fallback)
+            print(f"  Image keywords: {keywords}")
             
             # Add metadata
             transformed["region"] = region
