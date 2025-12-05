@@ -744,11 +744,17 @@ def generate_weekend_magazine():
     
     # Add metadata
     magazine_content["generated_at"] = datetime.now().isoformat()
+    
+    # Calculate market average 7d change from top 10 coins
+    top_coins = market_data.get("top_coins", [])[:10]
+    market_change_7d = sum(c.get("change_7d", 0) for c in top_coins) / len(top_coins) if top_coins else 0
+    
     magazine_content["market_data"] = {
         "btc_price": next((c["price"] for c in market_data.get("top_coins", []) if c["id"] == "bitcoin"), 0),
         "eth_price": next((c["price"] for c in market_data.get("top_coins", []) if c["id"] == "ethereum"), 0),
         "total_market_cap": market_data.get("total_market_cap", 0),
-        "btc_dominance": market_data.get("btc_dominance", 0)
+        "btc_dominance": market_data.get("btc_dominance", 0),
+        "market_change_7d": round(market_change_7d, 2)
     }
     
     # Save to file
