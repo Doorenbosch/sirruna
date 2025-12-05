@@ -1,328 +1,683 @@
-/**
- * Weekend Magazine - The Litmus
- * Loads and renders weekend magazine content including The Mechanism
- */
+/* ========== WEEKEND MAGAZINE STYLES ========== */
 
-document.addEventListener('DOMContentLoaded', () => {
-    init();
-});
-
-async function init() {
-    console.log('[Weekend] Initializing magazine...');
-    
-    // Set publication date
-    setPublicationDate();
-    
-    // Load magazine content
-    await loadMagazineContent();
-    
-    // Setup navigation highlighting
-    setupNavigation();
+/* Weekend Masthead */
+.brand-link {
+display: flex;
+align-items: center;
+gap: var(--md);
+text-decoration: none;
 }
 
-function setPublicationDate() {
-    const dateEl = document.getElementById('pub-date');
-    const heroDateEl = document.getElementById('hero-date');
-    
-    const now = new Date();
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const formatted = now.toLocaleDateString('en-US', options);
-    
-    if (dateEl) dateEl.textContent = formatted;
-    if (heroDateEl) heroDateEl.textContent = formatted;
+.brand-logo {
+width: 40px;
+height: 40px;
+border-radius: 8px;
 }
 
-async function loadMagazineContent() {
-    try {
-        const response = await fetch('content/weekend/magazine.json');
-        
-        if (!response.ok) {
-            console.warn('[Weekend] Magazine not found, using placeholder');
-            loadPlaceholderContent();
-            return;
-        }
-        
-        const data = await response.json();
-        console.log('[Weekend] Magazine loaded:', data);
-        
-        renderMagazine(data);
-        
-    } catch (error) {
-        console.error('[Weekend] Error loading magazine:', error);
-        loadPlaceholderContent();
-    }
+.brand-name em {
+font-style: italic;
+font-weight: 400;
 }
 
-function renderMagazine(data) {
-    // Hero
-    if (data.hero) {
-        setText('hero-headline', data.hero.headline);
-        setText('hero-subtitle', data.hero.subtitle);
-        setText('hero-author', data.hero.author || 'The Litmus Editorial');
-    }
-    
-    // Main sections
-    renderSection('week-review-content', data.week_in_review);
-    renderSection('apac-content', data.apac);
-    renderSection('emea-content', data.emea);
-    renderSection('americas-content', data.americas);
-    renderSection('flows-content', data.capital_flows);
-    renderSection('corporate-content', data.corporate);
-    renderSection('week-ahead-content', data.week_ahead);
-    
-    // The Mechanism
-    if (data.mechanism) {
-        renderMechanism(data.mechanism);
-    }
-    
-    // Key dates
-    if (data.key_dates) {
-        renderKeyDates(data.key_dates);
-    }
-    
-    // Segments
-    if (data.segments) {
-        renderSegments(data.segments);
-    }
-    
-    // Market data
-    if (data.market_data) {
-        renderMarketData(data.market_data);
-    }
+.edition-label {
+font-family: var(--sans);
+font-size: 0.7rem;
+font-weight: 600;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+color: var(--burgundy);
 }
 
-function renderSection(elementId, sectionData) {
-    const el = document.getElementById(elementId);
-    if (!el) return;
-    
-    if (!sectionData || !sectionData.content) {
-        el.innerHTML = '<p class="loading">Content coming soon...</p>';
-        return;
-    }
-    
-    // Convert content to paragraphs
-    const content = sectionData.content;
-    const paragraphs = content.split('\n\n').filter(p => p.trim());
-    el.innerHTML = paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('');
+.publication-date {
+font-family: var(--sans);
+font-size: 0.85rem;
+color: var(--ink-secondary);
 }
 
-function renderMechanism(mechanism) {
-    // Topic
-    setText('mechanism-topic', mechanism.topic || 'This Week\'s Mechanism');
-    
-    // Timing
-    const timingEl = document.getElementById('mechanism-timing');
-    if (timingEl && mechanism.timing) {
-        timingEl.textContent = `Why now: ${mechanism.timing}`;
-    }
-    
-    // Content
-    const contentEl = document.getElementById('mechanism-content');
-    if (!contentEl) return;
-    
-    if (!mechanism.content) {
-        contentEl.innerHTML = '<p class="loading">Content coming soon...</p>';
-        return;
-    }
-    
-    // Parse content - handle markdown-style headers
-    let html = '';
-    const lines = mechanism.content.split('\n');
-    let inParagraph = false;
-    let currentParagraph = '';
-    
-    for (const line of lines) {
-        const trimmed = line.trim();
-        
-        // Check for headers
-        if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
-            // Bold line = subheader
-            if (currentParagraph) {
-                html += `<p>${escapeHtml(currentParagraph)}</p>`;
-                currentParagraph = '';
-            }
-            const headerText = trimmed.replace(/\*\*/g, '');
-            html += `<h4>${escapeHtml(headerText)}</h4>`;
-        } else if (trimmed.toLowerCase().includes('what to watch')) {
-            // What to Watch section
-            if (currentParagraph) {
-                html += `<p>${escapeHtml(currentParagraph)}</p>`;
-                currentParagraph = '';
-            }
-            html += `<div class="watch-callout"><h4>What to Watch</h4>`;
-        } else if (trimmed === '') {
-            // Empty line = paragraph break
-            if (currentParagraph) {
-                html += `<p>${escapeHtml(currentParagraph)}</p>`;
-                currentParagraph = '';
-            }
-        } else {
-            // Regular text
-            currentParagraph += (currentParagraph ? ' ' : '') + trimmed;
-        }
-    }
-    
-    // Flush remaining paragraph
-    if (currentParagraph) {
-        html += `<p>${escapeHtml(currentParagraph)}</p>`;
-    }
-    
-    // Close watch callout if opened
-    if (html.includes('watch-callout') && !html.includes('</div>')) {
-        html += '</div>';
-    }
-    
-    contentEl.innerHTML = html;
+/* Magazine Hero */
+.magazine-hero {
+margin-bottom: var(--xl);
 }
 
-function renderKeyDates(dates) {
-    const listEl = document.getElementById('key-dates-list');
-    if (!listEl || !Array.isArray(dates)) return;
-    
-    listEl.innerHTML = dates.map(date => `
-        <li>
-            <span class="date-day">${escapeHtml(date.day)}</span>
-            <span class="date-event">${escapeHtml(date.event)}</span>
-        </li>
-    `).join('');
+.hero-image {
+position: relative;
+width: 100%;
+height: 420px;
+overflow: hidden;
+border-radius: 0;
 }
 
-function renderSegments(segments) {
-    const listEl = document.getElementById('segments-list');
-    if (!listEl) return;
-    
-    const segmentNames = {
-        'layer1': 'Layer 1',
-        'defi': 'DeFi',
-        'infrastructure': 'Infrastructure',
-        'ai': 'AI & Compute'
-    };
-    
-    let html = '';
-    for (const [key, data] of Object.entries(segments)) {
-        const change = data.change || 0;
-        const className = change >= 0 ? 'positive' : 'negative';
-        const sign = change >= 0 ? '+' : '';
-        const name = segmentNames[key] || key;
-        
-        html += `
-            <div class="segment-item">
-                <span class="segment-name">${escapeHtml(name)}</span>
-                <span class="segment-change ${className}">${sign}${change.toFixed(1)}%</span>
-            </div>
-        `;
-    }
-    
-    listEl.innerHTML = html;
+.hero-image img {
+width: 100%;
+height: 100%;
+object-fit: cover;
 }
 
-function renderMarketData(marketData) {
-    // BTC price
-    if (marketData.btc_price) {
-        const btcEl = document.getElementById('btc-price');
-        if (btcEl) btcEl.textContent = formatPrice(marketData.btc_price);
-    }
-    
-    // ETH price
-    if (marketData.eth_price) {
-        const ethEl = document.getElementById('eth-price');
-        if (ethEl) ethEl.textContent = formatPrice(marketData.eth_price);
-    }
-    
-    // BTC dominance
-    if (marketData.btc_dominance) {
-        const domEl = document.getElementById('btc-dom');
-        if (domEl) domEl.textContent = `${marketData.btc_dominance.toFixed(1)}%`;
-    }
+.hero-overlay {
+position: absolute;
+bottom: 0;
+left: 0;
+right: 0;
+padding: 100px 48px 40px 48px;
+background: linear-gradient(
+to bottom,
+rgba(0, 0, 0, 0) 0%,
+rgba(0, 0, 0, 0.4) 40%,
+rgba(0, 0, 0, 0.85) 100%
+);
 }
 
-function setupNavigation() {
-    const navLinks = document.querySelectorAll('.nav-link');
-    const sections = document.querySelectorAll('.magazine-section, .mechanism-section');
-    
-    // Scroll spy
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const id = entry.target.id;
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href') === `#${id}`) {
-                        link.classList.add('active');
-                    }
-                });
-            }
-        });
-    }, { threshold: 0.3 });
-    
-    sections.forEach(section => observer.observe(section));
-    
-    // Smooth scroll
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const targetId = link.getAttribute('href').slice(1);
-            const target = document.getElementById(targetId);
-            if (target) {
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        });
-    });
+.hero-label {
+font-family: var(--sans);
+font-size: 0.7rem;
+font-weight: 600;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+color: var(--white);
+background: var(--burgundy);
+padding: 6px 14px;
+border-radius: 2px;
+display: inline-block;
+margin-bottom: var(--md);
 }
 
-function loadPlaceholderContent() {
-    setText('hero-headline', 'Weekend Magazine');
-    setText('hero-subtitle', 'Your weekly crypto intelligence brief will appear here on Saturday morning.');
-    
-    const sections = [
-        'week-review-content', 'apac-content', 'emea-content', 
-        'americas-content', 'flows-content', 'corporate-content', 
-        'week-ahead-content', 'mechanism-content'
-    ];
-    
-    sections.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.innerHTML = '<p class="loading">Content will be generated Saturday morning.</p>';
-        }
-    });
-    
-    setText('mechanism-topic', 'How Fed Rate Decisions Flow Into Crypto');
-    setText('mechanism-timing', 'Why now: FOMC meeting December 9-10');
+.hero-headline {
+font-family: var(--serif);
+font-size: 2.5rem;
+font-weight: 600;
+line-height: 1.15;
+color: var(--white);
+margin: 0 0 var(--sm) 0;
+text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+max-width: 800px;
 }
 
-// ========== HELPERS ==========
-
-function setText(id, text) {
-    const el = document.getElementById(id);
-    if (el && text) el.textContent = text;
+.hero-subtitle {
+font-family: var(--serif);
+font-size: 1.15rem;
+font-weight: 400;
+line-height: 1.4;
+color: rgba(255,255,255,0.9);
+margin: 0;
+max-width: 600px;
 }
 
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+/* Weekend Grid - Same 3-column but different proportions */
+.weekend-grid {
+grid-template-columns: 280px 1fr 260px;
 }
 
-function formatPrice(price) {
-    if (!price) return '$0';
-    if (price >= 1000) {
-        return '$' + price.toLocaleString('en-US', { 
-            minimumFractionDigits: 0, 
-            maximumFractionDigits: 0 
-        });
-    }
-    return '$' + price.toLocaleString('en-US', { 
-        minimumFractionDigits: 2, 
-        maximumFractionDigits: 2 
-    });
+/* Key Dates Section */
+.index-section {
+margin-bottom: var(--xl);
 }
 
-// Track events (if analytics enabled)
-function trackEvent(name, params = {}) {
-    if (typeof gtag === 'function') {
-        gtag('event', name, params);
-    }
-    console.log('[Weekend] Event:', name, params);
+.index-section .index-header {
+display: flex;
+justify-content: space-between;
+align-items: baseline;
+padding-bottom: var(--sm);
+border-bottom: 2px solid var(--burgundy);
+margin-bottom: var(--md);
+}
+
+.index-title {
+font-family: var(--sans);
+font-size: 0.75rem;
+font-weight: 700;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+color: var(--burgundy);
+margin: 0;
+}
+
+.index-subtitle {
+font-family: var(--sans);
+font-size: 0.7rem;
+font-weight: 500;
+color: var(--ink-tertiary);
+}
+
+/* Key Dates List */
+.key-dates-list {
+display: flex;
+flex-direction: column;
+gap: var(--sm);
+}
+
+.key-date {
+display: flex;
+gap: var(--md);
+padding: var(--sm) 0;
+border-bottom: 1px solid var(--rule);
+}
+
+.key-date:last-child {
+border-bottom: none;
+}
+
+.date-day {
+font-family: var(--sans);
+font-size: 0.75rem;
+font-weight: 600;
+color: var(--teal);
+min-width: 50px;
+}
+
+.date-event {
+font-family: var(--serif);
+font-size: 0.9rem;
+color: var(--ink);
+line-height: 1.3;
+}
+
+/* Regional Labels */
+.card-label.region-apac {
+color: #D4A017;
+}
+
+.card-label.region-emea {
+color: #2E7D32;
+}
+
+.card-label.region-americas {
+color: #1565C0;
+}
+
+/* Magazine Article Styling */
+.magazine-article {
+max-width: 720px;
+}
+
+/* Section Image */
+.section-image {
+position: relative;
+width: 100%;
+max-width: 720px;
+margin-bottom: var(--lg);
+border-radius: 4px;
+overflow: hidden;
+}
+
+.section-image img {
+width: 100%;
+height: auto;
+display: block;
+}
+
+.image-caption {
+font-family: var(--sans);
+font-size: 0.75rem;
+color: var(--ink-tertiary);
+padding: var(--sm) 0;
+display: block;
+font-style: italic;
+}
+
+/* Article Figure (inline images) */
+.article-figure {
+margin: var(--xl) 0;
+max-width: 720px;
+}
+
+.article-figure img {
+width: 100%;
+height: auto;
+border-radius: 4px;
+}
+
+.article-figure figcaption {
+font-family: var(--sans);
+font-size: 0.75rem;
+color: var(--ink-tertiary);
+padding: var(--sm) 0;
+font-style: italic;
+}
+
+/* Segments List */
+.segments-list {
+display: flex;
+flex-direction: column;
+gap: var(--md);
+}
+
+.segment-item {
+padding: var(--sm) 0;
+border-bottom: 1px solid var(--rule);
+cursor: pointer;
+transition: background 0.15s;
+}
+
+.segment-item:hover {
+background: var(--paper-dark);
+margin: 0 calc(var(--sm) * -1);
+padding-left: var(--sm);
+padding-right: var(--sm);
+}
+
+.segment-item:last-child {
+border-bottom: none;
+}
+
+.segment-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 4px;
+}
+
+.segment-name {
+font-family: var(--sans);
+font-size: 0.85rem;
+font-weight: 600;
+color: var(--ink);
+}
+
+.segment-change {
+font-family: var(--sans);
+font-size: 0.8rem;
+font-weight: 600;
+}
+
+.segment-change.positive {
+color: var(--green);
+}
+
+.segment-change.negative {
+color: var(--red);
+}
+
+.segment-change.neutral {
+color: var(--ink-tertiary);
+}
+
+.segment-tokens {
+font-family: var(--sans);
+font-size: 0.7rem;
+color: var(--ink-tertiary);
+margin-bottom: 6px;
+}
+
+.segment-bar {
+height: 4px;
+background: var(--rule);
+border-radius: 2px;
+overflow: hidden;
+}
+
+.segment-fill {
+height: 100%;
+border-radius: 2px;
+transition: width 0.3s ease;
+}
+
+.segment-fill.positive {
+background: var(--teal);
+}
+
+.segment-fill.negative {
+background: var(--red);
+}
+
+.segment-fill.neutral {
+background: var(--ink-tertiary);
+}
+
+/* ===== Sectors Section (Clickable) ===== */
+.sectors-section {
+    margin-top: var(--lg);
+}
+
+.sectors-header {
+    margin-bottom: var(--md);
+    padding-bottom: var(--sm);
+    border-bottom: 2px solid var(--teal);
+}
+
+.sectors-label {
+    display: block;
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--burgundy);
+}
+
+.sectors-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.sector-item {
+    padding: var(--sm) 0;
+    border-bottom: 1px solid var(--rule);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.sector-item:hover {
+    background: var(--paper-dark);
+    margin: 0 calc(var(--sm) * -1);
+    padding-left: var(--sm);
+    padding-right: var(--sm);
+}
+
+.sector-item:last-child {
+    border-bottom: none;
+}
+
+.sector-item.expanded {
+    background: var(--white);
+    margin: 0 calc(var(--sm) * -1);
+    padding: var(--sm);
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.sector-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.sector-name {
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.sector-change {
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.sector-change.positive {
+    color: var(--teal);
+}
+
+.sector-change.negative {
+    color: var(--burgundy);
+}
+
+.sector-change.neutral {
+    color: var(--ink-tertiary);
+}
+
+.sector-tokens {
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    color: var(--ink-tertiary);
+    margin-bottom: 6px;
+}
+
+.sector-bar {
+    height: 4px;
+    background: var(--rule);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.sector-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.sector-fill.positive {
+    background: var(--teal);
+}
+
+.sector-fill.negative {
+    background: var(--burgundy);
+}
+
+.sector-fill.neutral {
+    background: var(--ink-tertiary);
+}
+
+/* Expandable Detail */
+.sector-detail {
+    display: none;
+    margin-top: var(--sm);
+    padding-top: var(--sm);
+    border-top: 1px solid var(--rule);
+}
+
+.sector-item.expanded .sector-detail {
+    display: block;
+}
+
+.sector-about {
+    font-family: var(--serif);
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--ink-secondary);
+    margin: 0 0 var(--xs) 0;
+}
+
+.sector-drivers {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: var(--ink-tertiary);
+    margin: 0 0 var(--xs) 0;
+}
+
+.sector-drivers strong {
+    color: var(--ink-secondary);
+}
+
+.sector-weekly {
+    font-family: var(--serif);
+    font-size: 0.8rem;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--ink);
+    margin: var(--sm) 0 0 0;
+    padding-top: var(--xs);
+    border-top: 1px dashed var(--rule);
+}
+
+.sector-weekly:empty {
+    display: none;
+}
+
+/* Weekend Market Mood - 7-day burgundy trail */
+.market-mood .mood-trail #trail-path-7day {
+stroke-width: 3;
+fill: none;
+}
+
+/* Legend dot for burgundy */
+.legend-dot-burgundy {
+background: var(--burgundy);
+}
+
+/* Site Footer */
+.site-footer {
+margin-top: var(--xl);
+padding: var(--xl) 0;
+border-top: 1px solid var(--rule);
+text-align: center;
+}
+
+.site-footer p {
+font-family: var(--sans);
+font-size: 0.8rem;
+color: var(--ink-tertiary);
+margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+.weekend-grid {
+grid-template-columns: 260px 1fr;
+}
+
+.context-sidebar {
+display: none;
+}
+
+.hero-headline {
+font-size: 2rem;
+}
+}
+
+@media (max-width: 900px) {
+.weekend-grid {
+grid-template-columns: 1fr;
+}
+
+.article-index {
+border-right: none;
+border-bottom: 1px solid var(--rule);
+padding-right: 0;
+padding-bottom: var(--xl);
+margin-bottom: var(--xl);
+}
+
+.hero-image {
+height: 300px;
+}
+
+.hero-headline {
+font-size: 1.75rem;
+}
+
+.hero-overlay {
+padding: 60px 24px 24px 24px;
+}
+}
+
+@media (max-width: 600px) {
+.hero-image {
+height: 250px;
+}
+
+.hero-headline {
+font-size: 1.4rem;
+}
+
+.hero-subtitle {
+font-size: 1rem;
+}
+}
+
+/* ===== 7-Day Relative Performance ===== */
+.relative-performance-7d {
+margin-top: var(--lg);
+padding-top: var(--lg);
+border-top: 1px solid var(--rule);
+}
+
+.relative-header {
+margin-bottom: var(--md);
+}
+
+.relative-label {
+display: block;
+font-family: var(--sans);
+font-size: 0.7rem;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.08em;
+color: var(--burgundy);
+margin-bottom: var(--xs);
+}
+
+.relative-chart {
+display: flex;
+flex-direction: column;
+gap: 6px;
+}
+
+.relative-row {
+display: grid;
+grid-template-columns: 50px 48px 1fr 52px;
+align-items: center;
+gap: 8px;
+padding: 6px 0;
+}
+
+.relative-row.market-row {
+border-bottom: 1px solid var(--rule);
+padding-bottom: 10px;
+margin-bottom: 4px;
+}
+
+.rel-name {
+font-family: var(--sans);
+font-size: 0.8rem;
+font-weight: 600;
+color: var(--ink);
+}
+
+.market-row .rel-name {
+color: var(--ink-secondary);
+}
+
+.rel-change {
+font-family: var(--sans);
+font-size: 0.8rem;
+font-weight: 500;
+text-align: right;
+color: var(--ink-secondary);
+}
+
+.rel-bar-container {
+position: relative;
+height: 16px;
+background: var(--surface);
+border-radius: 2px;
+}
+
+.rel-baseline {
+position: absolute;
+left: 50%;
+top: 0;
+bottom: 0;
+width: 1px;
+background: var(--ink-tertiary);
+}
+
+.rel-bar {
+position: absolute;
+top: 3px;
+height: 10px;
+border-radius: 2px;
+transition: width 0.3s ease;
+}
+
+.rel-bar.outperform {
+left: 50%;
+background: var(--teal);
+}
+
+.rel-bar.underperform {
+right: 50%;
+background: #c9a87c;
+}
+
+.rel-vs {
+font-family: var(--sans);
+font-size: 0.75rem;
+font-weight: 500;
+text-align: right;
+}
+
+.rel-vs.positive {
+color: var(--teal);
+}
+
+.rel-vs.negative {
+color: var(--ink-tertiary);
+}
+
+.rel-vs.baseline {
+color: var(--ink-tertiary);
+font-style: italic;
 }
