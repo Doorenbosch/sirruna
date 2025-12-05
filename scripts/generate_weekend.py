@@ -25,50 +25,35 @@ ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 COINGECKO_API = "https://api.coingecko.com/api/v3"
 
 # ============================================
-# CURATED HERO IMAGE LIBRARY
-# High-quality Unsplash photos mapped to themes
+# DYNAMIC HERO IMAGES - Keyword-based Unsplash
 # ============================================
 
-HERO_IMAGES = {
-    # Market conditions
-    "rally": "photo-1451187580459-43490279c0fa",       # Blue globe network
-    "consolidation": "photo-1507003211169-0a1dd7228f2d", # Calm lake reflection
-    "volatility": "photo-1534088568595-a066f410bcda",   # Storm clouds
-    "uncertainty": "photo-1489549132488-d00b7eee80f1",  # Fog over water
-    "breakout": "photo-1504384308090-c894fdcc538d",     # Light through clouds
-    "correction": "photo-1516912481808-3406841bd33c",   # Mountain descent path
-    
-    # Macro themes
-    "fed_macro": "photo-1526304640581-d334cdbbf45e",    # Abstract financial lines
-    "institutional": "photo-1486406146926-c627a92ad1ab", # Modern glass building
-    "regulation": "photo-1589829545856-d10d557cf95f",   # Scales of justice
-    "adoption": "photo-1551288049-bebda4e38f71",        # Network connections
-    
-    # Regional
-    "asia": "photo-1536599018102-9f803c979b5e",         # Hong Kong skyline night
-    "europe": "photo-1467269204594-9661b134dd2b",       # European architecture
-    "americas": "photo-1534430480872-3498386e7856",     # NYC skyline
-    "global": "photo-1446776811953-b23d57bd21aa",       # Earth from space
-    
-    # Flow/movement themes
-    "flows": "photo-1509023464722-18d996393ca8",        # Light trails movement
-    "accumulation": "photo-1502101872923-d48509bff386", # Sunrise over mountains
-    "distribution": "photo-1517483000871-1dbf64a6e1c6", # Sunset water reflection
-    
-    # Abstract/editorial
-    "analysis": "photo-1551288049-bebda4e38f71",        # Data visualization
-    "conviction": "photo-1507090960745-b32f65d3113a",   # Mountain peak clear sky
-    "caution": "photo-1489549132488-d00b7eee80f1",      # Misty morning
-    "opportunity": "photo-1470071459604-3b5ec3a7fe05",  # Forest path light
-    
-    # Default fallback
-    "default": "photo-1639762681485-074b7f938ba0"       # Abstract crypto-friendly
+# Fallback images for when keywords might return poor results
+FALLBACK_IMAGES = {
+    "default": "photo-1639762681485-074b7f938ba0",      # Abstract blue
+    "weekend": "photo-1507003211169-0a1dd7228f2d",      # Calm lake - reflective
 }
 
-def get_hero_image_url(theme: str) -> str:
-    """Get Unsplash URL for the selected theme"""
-    photo_id = HERO_IMAGES.get(theme, HERO_IMAGES["default"])
-    return f"https://images.unsplash.com/{photo_id}?w=1400&h=500&fit=crop&q=80"
+# Keywords to avoid (return bad stock photos)
+BAD_KEYWORDS = {"crypto", "bitcoin", "trading", "chart", "graph", "money", "coin", "currency", "stock", "market"}
+
+def build_image_url(keywords: str, fallback: str = "default") -> str:
+    """Build Unsplash URL from AI-generated keywords"""
+    if not keywords:
+        photo_id = FALLBACK_IMAGES.get(fallback, FALLBACK_IMAGES["default"])
+        return f"https://images.unsplash.com/{photo_id}?w=1400&h=500&fit=crop&q=80"
+    
+    # Clean and filter keywords
+    keyword_list = [k.strip().lower() for k in keywords.split(",")]
+    filtered = [k for k in keyword_list if k and k not in BAD_KEYWORDS]
+    
+    if not filtered:
+        photo_id = FALLBACK_IMAGES.get(fallback, FALLBACK_IMAGES["default"])
+        return f"https://images.unsplash.com/{photo_id}?w=1400&h=500&fit=crop&q=80"
+    
+    # Build Unsplash source URL
+    query = ",".join(filtered[:4])  # Max 4 keywords
+    return f"https://source.unsplash.com/1400x500/?{query}"
 
 
 # ============================================
@@ -305,9 +290,6 @@ SEGMENT PERFORMANCE (7-day):
     for segment, seg_data in market_data.get("segments", {}).items():
         market_context += f"- {segment.upper()}: {seg_data['change']:+.1f}%\n"
 
-    # Available themes for image selection
-    theme_list = ", ".join(HERO_IMAGES.keys())
-
     return f"""You are the editorial team at The Litmus, a premium crypto intelligence publication combining Financial Times editorial quality with behavioral economics insight.
 
 Today is Saturday. You are writing the Weekend Magazine - our flagship weekly analysis that provides depth and perspective that daily coverage cannot. This is the piece sophisticated investors save for their weekend reading.
@@ -364,24 +346,25 @@ EDITORIAL STANDARDS:
 - Specific numbers and examples over vague generalizations
 - The FT reader should feel at home
 
-HERO IMAGE THEME:
-Select ONE theme from this list that best captures the week's dominant narrative:
-{theme_list}
+HERO IMAGE KEYWORDS:
+Provide 3-4 visual keywords for the hero image that capture the week's dominant mood.
 
-Choose based on the market's mood and your headline. For example:
-- Market testing highs with conviction → "conviction" or "rally"
-- Fed decision looming, uncertainty → "fed_macro" or "uncertainty"  
-- Strong institutional flows → "institutional" or "flows"
-- Asia leading the narrative → "asia"
-- Volatility and liquidations → "volatility"
-- Consolidation, waiting → "consolidation" or "caution"
+IMPORTANT - Use CONCRETE, VISUAL nouns that photograph well:
+✓ Good: "storm clouds, ocean, dramatic sky" (for volatile week)
+✓ Good: "sunrise, mountain, clear horizon" (for optimistic outlook)
+✓ Good: "fog, cityscape, uncertainty" (for unclear direction)
+✓ Good: "calm water, reflection, still" (for consolidation)
+✓ Good: "crossroads, path, forest" (for decision points)
+
+✗ Avoid: crypto, bitcoin, trading, chart, money, stock, market, coin, currency
+These return generic stock photos. Think metaphorical, editorial imagery.
 
 Return as JSON with this structure:
 {{
     "hero": {{
         "headline": "Main magazine headline (compelling, FT-style)",
         "subtitle": "Supporting context (one sentence)",
-        "theme": "ONE theme from the list above",
+        "image_keywords": "3-4 visual keywords, comma separated",
         "author": "The Litmus Editorial"
     }},
     "week_in_review": {{
@@ -492,11 +475,11 @@ def generate_weekend_magazine():
         print(f"❌ Generation failed: {magazine_content['error']}")
         return None
     
-    # Process hero image
-    hero_theme = magazine_content.get("hero", {}).get("theme", "default")
-    hero_image_url = get_hero_image_url(hero_theme)
+    # Process hero image from keywords
+    hero_keywords = magazine_content.get("hero", {}).get("image_keywords", "")
+    hero_image_url = build_image_url(hero_keywords, "weekend")
     magazine_content["hero"]["image_url"] = hero_image_url
-    print(f"\n🖼️  Hero image theme: {hero_theme}")
+    print(f"\n🖼️  Hero image keywords: {hero_keywords}")
     
     # Add key dates
     print("\n📅 Adding key dates...")
@@ -524,7 +507,7 @@ def generate_weekend_magazine():
     
     print(f"\n✅ Magazine saved to {output_path}")
     print(f"   Hero: {magazine_content.get('hero', {}).get('headline', 'N/A')}")
-    print(f"   Theme: {hero_theme}")
+    print(f"   Keywords: {hero_keywords}")
     print(f"   Mechanism: {magazine_content.get('mechanism', {}).get('topic', 'N/A')}")
     
     return magazine_content
