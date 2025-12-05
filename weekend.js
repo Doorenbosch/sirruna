@@ -223,7 +223,7 @@ function loadMechanismSection(mechanism) {
         // Show the timing as the header of the box
         const timingEl = document.getElementById('mechanism-timing');
         if (timingEl && mechanism.timing) {
-            timingEl.textContent = 'Why now: ' + mechanism.timing;
+            timingEl.textContent = 'WHY NOW: ' + mechanism.timing;
         }
         
         // Populate the content
