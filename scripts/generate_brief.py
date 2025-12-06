@@ -366,7 +366,7 @@ THE STRUCTURE (each section needs its own compelling headline):
 1. THE LEAD (100-130 words)
 Your opening thesis. Not what happened, but what it means. This is your argument about the underlying game.
 
-2. THE MECHANISM (160-200 words)
+2. THE DRIVER (160-200 words)
 How is this happening? What's the structural, flow-based, or behavioral explanation? Connect the dots: ETF flows → market maker positioning → price impact.
 
 3. THE COMPLICATION (140-170 words)
