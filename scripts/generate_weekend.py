@@ -480,6 +480,29 @@ def get_key_dates_for_week():
 def get_magazine_prompt(market_data, mechanism):
     """Generate the prompt for Claude to write the magazine"""
     
+    # Get current date info for prompt
+    from datetime import datetime, timedelta
+    now = datetime.now()
+    today_str = now.strftime("%B %d, %Y")  # e.g., "December 6, 2025"
+    
+    # Calculate next week's dates (Monday to Friday)
+    days_until_monday = (7 - now.weekday()) % 7
+    if days_until_monday == 0:
+        days_until_monday = 7  # If today is Monday, get next Monday
+    next_monday = now + timedelta(days=days_until_monday)
+    next_friday = next_monday + timedelta(days=4)
+    
+    week_start = next_monday.strftime("%B %d")  # e.g., "December 8"
+    week_end = next_friday.strftime("%d")  # e.g., "12"
+    week_range = f"{week_start}-{week_end}"  # e.g., "December 8-12"
+    
+    # Individual day dates for key_dates
+    mon_date = next_monday.strftime("%d").lstrip('0')  # e.g., "8"
+    tue_date = (next_monday + timedelta(days=1)).strftime("%d").lstrip('0')
+    wed_date = (next_monday + timedelta(days=2)).strftime("%d").lstrip('0')
+    thu_date = (next_monday + timedelta(days=3)).strftime("%d").lstrip('0')
+    fri_date = (next_monday + timedelta(days=4)).strftime("%d").lstrip('0')
+    
     # Build market context
     btc = next((c for c in market_data.get("top_coins", []) if c["id"] == "bitcoin"), {})
     eth = next((c for c in market_data.get("top_coins", []) if c["id"] == "ethereum"), {})
@@ -506,7 +529,10 @@ SEGMENT PERFORMANCE (7-day):
 
     return f"""You are the editorial team at The Litmus, a premium crypto intelligence publication combining Financial Times editorial quality with behavioral economics insight.
 
-Today is Saturday. You are writing the Weekend Magazine - our flagship weekly analysis that provides depth and perspective that daily coverage cannot. This is the piece sophisticated investors save for their weekend reading.
+TODAY'S DATE: Saturday, {today_str}
+UPCOMING WEEK: {week_range}, {now.year}
+
+You are writing the Weekend Magazine - our flagship weekly analysis that provides depth and perspective that daily coverage cannot. This is the piece sophisticated investors save for their weekend reading.
 
 {market_context}
 
@@ -516,6 +542,7 @@ SECTIONS TO WRITE:
 
 1. THE WEEK IN REVIEW (300-400 words)
 Start with your thesis about what this week revealed about the market's character. Not just what happened, but what it means. Connect flows, sentiment, and price action into a coherent narrative.
+IMPORTANT: Give this section a compelling headline that captures your thesis (like "The Patience Premium" or "Capital Finds Its Courage"). Don't use "The Week in Review" as the title - that's just the section label.
 
 2. ASIA-PACIFIC (250-300 words)
 What happened in APAC that matters? Hong Kong, Singapore, Japan, Korea, Australia. Regulatory developments, institutional moves, retail sentiment. Write this so an APAC reader feels you understand their market.
@@ -564,7 +591,14 @@ IMPORTANT: Use the EXACT percentages from the SEGMENT PERFORMANCE data above in 
 - AI & Compute ({segments.get('ai', {}).get('change', 0):+.1f}%): AI narrative momentum?
 
 10. KEY DATES
-Provide 5 specific market-moving events for the upcoming week (Mon-Fri). Include actual dates and specific events like "FOMC Decision 2pm ET", "US CPI Release", "Options Expiry", etc.
+Provide 5 specific market-moving events for the upcoming week ({week_range}). Include the actual day and date numbers shown below, with specific events like "FOMC Decision 2pm ET", "US CPI Release", "Options Expiry", etc.
+
+Use these EXACT dates for the upcoming week:
+- Monday {mon_date}
+- Tuesday {tue_date}
+- Wednesday {wed_date}
+- Thursday {thu_date}
+- Friday {fri_date}
 
 ---
 
@@ -597,7 +631,7 @@ Return as JSON with this structure:
         "author": "The Litmus Editorial"
     }},
     "week_in_review": {{
-        "title": "The Week in Review",
+        "title": "Compelling headline summarizing the week's story (not 'The Week in Review')",
         "content": "Full content here..."
     }},
     "apac": {{
@@ -640,11 +674,11 @@ Return as JSON with this structure:
         "ai": "1-2 sentence commentary on AI/compute tokens"
     }},
     "key_dates": [
-        {{"day": "Mon 9", "event": "Specific event"}},
-        {{"day": "Tue 10", "event": "Specific event"}},
-        {{"day": "Wed 11", "event": "Specific event"}},
-        {{"day": "Thu 12", "event": "Specific event"}},
-        {{"day": "Fri 13", "event": "Specific event"}}
+        {{"day": "Mon {mon_date}", "event": "Specific event"}},
+        {{"day": "Tue {tue_date}", "event": "Specific event"}},
+        {{"day": "Wed {wed_date}", "event": "Specific event"}},
+        {{"day": "Thu {thu_date}", "event": "Specific event"}},
+        {{"day": "Fri {fri_date}", "event": "Specific event"}}
     ]
 }}
 """
