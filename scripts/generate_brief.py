@@ -476,6 +476,35 @@ def get_evening_prompt(region: str, market_data: dict) -> str:
     
     ctx = region_context.get(region, region_context["americas"])
     
+    # Add ETF section only for Americas (heaviest ETF trading)
+    etf_section = ""
+    etf_json = ""
+    if region == "americas":
+        etf_section = """
+
+ETF FLOWS DATA:
+Include specific ETF flow data in your response. Research or estimate today's flows based on market conditions:
+- Estimate today's total net flow (positive = inflows, negative = outflows)
+- Consider major ETFs: IBIT (BlackRock), FBTC (Fidelity), GBTC (Grayscale), ARKB (Ark)
+- Provide flows for the last 5 trading days
+- Write a brief insight about the week's flow pattern"""
+        
+        etf_json = """,
+        "etf_flows": {{
+            "latest": {{
+                "amount": 0,
+                "date": "Dec 6"
+            }},
+            "week": [
+                {{"day": "Mon", "amount": 0}},
+                {{"day": "Tue", "amount": 0}},
+                {{"day": "Wed", "amount": 0}},
+                {{"day": "Thu", "amount": 0}},
+                {{"day": "Fri", "amount": 0}}
+            ],
+            "insight": "Brief insight about this week's ETF flow pattern"
+        }}"""
+    
     return f"""You are the Chief Markets Editor at The Litmus writing the evening brief. Your {ctx['name']} readers are wrapping up their trading day and preparing for the {ctx['handoff_to']}.
 
 MARKET DATA:
@@ -483,7 +512,7 @@ MARKET DATA:
 • Ethereum: ${market_data['eth_price']:,.0f} ({market_data['eth_24h_change']:+.1f}% 24h)
 • Solana: ${market_data['sol_price']:,.0f} ({market_data['sol_24h_change']:+.1f}% 24h)
 • Total Market Cap: ${market_data['total_market_cap']/1e12:.2f}T ({market_data['market_cap_change_24h']:+.1f}% 24h)
-• BTC Dominance: {market_data['btc_dominance']:.1f}%
+• BTC Dominance: {market_data['btc_dominance']:.1f}%{etf_section}
 
 SESSION CONTEXT: {ctx['session_reviewed']} review, {ctx['key_hours']}
 
@@ -555,7 +584,7 @@ Return ONLY valid JSON:
         "the_takeaway": {{
             "title": "The Bottom Line",
             "content": "30-50 words"
-        }}
+        }}{etf_json}
     }}
 }}
 
@@ -622,18 +651,31 @@ def call_anthropic_api(prompt: str, attempt: int = 1) -> dict:
 def transform_to_flat_structure(brief_data: dict) -> dict:
     """Transform nested section structure to flat for backward compatibility"""
     flat_sections = {}
+    etf_flows = None
+    
     for key, value in brief_data.get("sections", {}).items():
+        # Preserve ETF flows as-is (not flattened)
+        if key == "etf_flows":
+            etf_flows = value
+            continue
+            
         if isinstance(value, dict):
             flat_sections[key] = value.get("content", "")
             flat_sections[f"{key}_title"] = value.get("title", "")
         else:
             flat_sections[key] = value
     
-    return {
+    result = {
         "headline": brief_data.get("headline", ""),
         "sections": flat_sections,
         "image_keywords": brief_data.get("image_keywords", "")
     }
+    
+    # Add ETF flows at root level if present
+    if etf_flows:
+        result["etf_flows"] = etf_flows
+    
+    return result
 
 
 def generate_brief(region: str, brief_type: str) -> dict:
