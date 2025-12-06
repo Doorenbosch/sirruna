@@ -120,6 +120,8 @@ async function loadMagazineContent() {
 
 function setupIndexNavigation() {
     const indexCards = document.querySelectorAll('.index-card');
+    const readingPane = document.querySelector('.reading-pane');
+    const backBtn = document.getElementById('mobile-back-btn');
     
     indexCards.forEach(card => {
         card.addEventListener('click', () => {
@@ -131,7 +133,31 @@ function setupIndexNavigation() {
             // Load the section
             const section = card.dataset.section;
             loadSection(section);
+            
+            // On mobile, show the reading pane
+            if (window.innerWidth <= 600 && readingPane) {
+                readingPane.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Prevent background scroll
+            }
         });
+    });
+    
+    // Mobile back button handler
+    if (backBtn) {
+        backBtn.addEventListener('click', () => {
+            if (readingPane) {
+                readingPane.classList.remove('active');
+                document.body.style.overflow = ''; // Restore scroll
+            }
+        });
+    }
+    
+    // Handle resize - close mobile reader if switching to desktop
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 600 && readingPane) {
+            readingPane.classList.remove('active');
+            document.body.style.overflow = '';
+        }
     });
 }
 
