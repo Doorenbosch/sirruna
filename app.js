@@ -152,10 +152,6 @@ function initStickyHeader() {
     // Update region display
     updateStickyRegion();
 }
-    
-    // Update region display
-    updateStickyRegion();
-}
 
 // Edition (Region) Picker
 function initEditionPicker() {
