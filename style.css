@@ -546,12 +546,35 @@ a {
     grid-template-columns: 260px 1fr 300px;
     gap: var(--xl);
     margin-top: var(--xl);
+    height: calc(100vh - 180px); /* Full height minus header/nav */
+    overflow: hidden;
 }
 
 /* ========== ARTICLE INDEX (Left) ========== */
 .article-index {
     border-right: 1px solid var(--rule);
     padding-right: var(--xl);
+    overflow-y: auto;
+    max-height: calc(100vh - 180px);
+    scrollbar-width: thin;
+    scrollbar-color: var(--rule) transparent;
+}
+
+.article-index::-webkit-scrollbar {
+    width: 6px;
+}
+
+.article-index::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.article-index::-webkit-scrollbar-thumb {
+    background: var(--rule);
+    border-radius: 3px;
+}
+
+.article-index::-webkit-scrollbar-thumb:hover {
+    background: var(--ink-tertiary);
 }
 
 .index-header {
@@ -754,6 +777,33 @@ a {
 /* ========== READING PANE (Center) ========== */
 .reading-pane {
     min-height: 600px;
+    overflow-y: auto;
+    max-height: calc(100vh - 180px);
+    padding: 0 var(--md);
+    scrollbar-width: thin;
+    scrollbar-color: var(--rule) transparent;
+}
+
+.reading-pane::-webkit-scrollbar {
+    width: 6px;
+}
+
+.reading-pane::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.reading-pane::-webkit-scrollbar-thumb {
+    background: var(--rule);
+    border-radius: 3px;
+}
+
+.reading-pane::-webkit-scrollbar-thumb:hover {
+    background: var(--ink-tertiary);
+}
+
+/* Mobile back button (hidden by default) */
+.mobile-back-btn {
+    display: none;
 }
 
 /* Audio Card - Matching iOS Design */
@@ -1136,6 +1186,27 @@ a {
 .context-sidebar {
     padding-left: var(--xl);
     border-left: 1px solid var(--rule);
+    overflow-y: auto;
+    max-height: calc(100vh - 180px);
+    scrollbar-width: thin;
+    scrollbar-color: var(--rule) transparent;
+}
+
+.context-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.context-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.context-sidebar::-webkit-scrollbar-thumb {
+    background: var(--rule);
+    border-radius: 3px;
+}
+
+.context-sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--ink-tertiary);
 }
 
 /* ========== MARKET MOOD 9-BOX ========== */
@@ -1734,11 +1805,35 @@ a {
 /* Large tablets and small laptops */
 @media (max-width: 1200px) {
     .editorial-grid {
-        grid-template-columns: 260px 1fr;
+        grid-template-columns: 280px 1fr;
+        grid-template-rows: auto;
+        height: auto;
+        overflow: visible;
+    }
+    
+    .article-index {
+        max-height: none;
+        overflow-y: visible;
+        grid-row: 1;
+    }
+    
+    .reading-pane {
+        max-height: none;
+        overflow-y: visible;
+        grid-row: 1;
     }
     
     .context-sidebar {
-        display: none;
+        display: block;
+        grid-column: 1;
+        grid-row: 2;
+        max-height: none;
+        overflow-y: visible;
+        padding-left: 0;
+        padding-top: var(--xl);
+        border-top: 1px solid var(--rule);
+        border-left: none;
+        margin-top: var(--xl);
     }
 }
 
@@ -1770,6 +1865,7 @@ a {
 @media (max-width: 900px) {
     .editorial-grid {
         grid-template-columns: 1fr;
+        display: block;
     }
     
     .article-index {
@@ -1778,6 +1874,11 @@ a {
         padding-right: 0;
         padding-bottom: var(--xl);
         margin-bottom: var(--xl);
+    }
+    
+    .context-sidebar {
+        margin-top: var(--lg);
+        padding-top: var(--lg);
     }
     
     .index-list {
@@ -1860,6 +1961,79 @@ a {
     .audio-info {
         order: -1;
         flex-basis: calc(100% - 60px);
+    }
+    
+    /* Mobile tap-to-read layout */
+    .editorial-grid {
+        display: block;
+    }
+    
+    /* Hide reader by default on mobile */
+    .reading-pane {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1000;
+        background: var(--paper);
+        padding: var(--md);
+        overflow-y: auto;
+        max-height: 100vh;
+    }
+    
+    /* Show reader when article is selected */
+    .reading-pane.active {
+        display: block;
+    }
+    
+    /* Back button for mobile reader */
+    .reading-pane.active .mobile-back-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: var(--sans);
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--burgundy);
+        background: none;
+        border: none;
+        padding: var(--sm) 0;
+        margin-bottom: var(--md);
+        cursor: pointer;
+    }
+    
+    .mobile-back-btn::before {
+        content: '←';
+        font-size: 1.1rem;
+    }
+    
+    /* Left column (article list) full width */
+    .article-index {
+        padding-right: 0;
+        border-right: none;
+    }
+    
+    /* Right column under left */
+    .context-sidebar {
+        display: block;
+        border-top: 1px solid var(--rule);
+        padding-top: var(--lg);
+        margin-top: var(--lg);
+        padding-left: 0;
+        border-left: none;
+    }
+    
+    /* Make index cards more tappable */
+    .index-card {
+        padding: var(--md);
+        margin: 0 calc(var(--md) * -1);
+        border-radius: 0;
+    }
+    
+    .index-card:active {
+        background: var(--paper-dark);
     }
 }
 

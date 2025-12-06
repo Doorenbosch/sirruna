@@ -382,12 +382,38 @@ function rebuildIndexCards() {
 // Index Card Click Handlers
 function initIndexCards() {
     const cards = document.querySelectorAll('.index-card');
+    const readingPane = document.querySelector('.reading-pane');
+    const backBtn = document.getElementById('mobile-back-btn');
     
     cards.forEach(card => {
         card.addEventListener('click', () => {
             const section = card.dataset.section;
             setActiveSection(section);
+            
+            // On mobile, show the reading pane
+            if (window.innerWidth <= 600 && readingPane) {
+                readingPane.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Prevent background scroll
+            }
         });
+    });
+    
+    // Mobile back button handler
+    if (backBtn) {
+        backBtn.addEventListener('click', () => {
+            if (readingPane) {
+                readingPane.classList.remove('active');
+                document.body.style.overflow = ''; // Restore scroll
+            }
+        });
+    }
+    
+    // Handle resize - close mobile reader if switching to desktop
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 600 && readingPane) {
+            readingPane.classList.remove('active');
+            document.body.style.overflow = '';
+        }
     });
 }
 
@@ -1198,6 +1224,7 @@ function renderWeekAhead(data) {
 // Initialize Week Card Clicks
 function initWeekCards() {
     const cards = document.querySelectorAll('.week-card');
+    const readingPane = document.querySelector('.reading-pane');
     
     cards.forEach(card => {
         card.addEventListener('click', () => {
@@ -1212,6 +1239,12 @@ function initWeekCards() {
             
             // Show in reading pane
             renderWeekAheadPane(sectionKey);
+            
+            // On mobile, show the reading pane
+            if (window.innerWidth <= 600 && readingPane) {
+                readingPane.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
         });
     });
 }
