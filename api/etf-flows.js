@@ -12,8 +12,8 @@ export default async function handler(req, res) {
     try {
         const response = await fetch('https://bitbo.io/treasuries/etf-flows/', {
             headers: {
-                'User-Agent': 'Mozilla/5.0 (compatible; LitmusDaily/1.0)',
-                'Accept': 'text/html'
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
             }
         });
         
@@ -43,43 +43,100 @@ export default async function handler(req, res) {
 
 function parseETFData(html) {
     try {
-        // Find the table data - looking for rows with dates and totals
-        // Format: "Nov 13, 2025 | -35.0 | ... | -315.4"
         const rows = [];
         
-        // Match table rows with date pattern
-        const rowRegex = /([A-Z][a-z]{2}\s+\d{1,2},\s+\d{4})\s*\|([^|]+\|){11,12}\s*([-\d.,]+)\s*\|/g;
-        let match;
+        // The Bitbo table is markdown-style with pipe separators
+        // Format: | Dec 04, 2025 | 41.1 | 0.0 | -19.8 | ... | -15.2 |
         
-        while ((match = rowRegex.exec(html)) !== null) {
-            const dateStr = match[1].trim();
-            const totalStr = match[3].trim().replace(/,/g, '');
-            const total = parseFloat(totalStr);
+        // Split by lines and look for date patterns
+        const lines = html.split('\n');
+        
+        for (const line of lines) {
+            // Skip header rows and separator rows
+            if (line.includes('Date') || line.includes('---') || 
+                line.includes('Total') || line.includes('Average') ||
+                line.includes('Maximum') || line.includes('Minimum')) {
+                continue;
+            }
             
-            if (!isNaN(total)) {
-                rows.push({
-                    date: dateStr,
-                    total: total
-                });
+            // Match lines with date pattern: "Dec 04, 2025" or "Nov 27, 2025"
+            const dateMatch = line.match(/\|\s*([A-Z][a-z]{2}\s+\d{1,2},\s+\d{4})\s*\|/);
+            
+            if (dateMatch) {
+                // Split by pipe and get all values
+                const parts = line.split('|').map(p => p.trim()).filter(p => p !== '');
+                
+                if (parts.length >= 13) {
+                    // Last column is Totals
+                    const totalStr = parts[parts.length - 1].replace(/,/g, '');
+                    const total = parseFloat(totalStr);
+                    
+                    // Capture individual ETF data (column positions from table header)
+                    // | Date | IBIT | FBTC | GBTC | BTC | BITB | ARKB | HODL | ... | Totals |
+                    //    0      1      2      3     4     5      6      7           13
+                    const etfData = {
+                        IBIT: parseFloat(parts[1]) || 0,  // BlackRock
+                        FBTC: parseFloat(parts[2]) || 0,  // Fidelity
+                        GBTC: parseFloat(parts[3]) || 0,  // Grayscale
+                        ARKB: parseFloat(parts[6]) || 0,  // Ark
+                    };
+                    
+                    if (!isNaN(total)) {
+                        rows.push({
+                            date: dateMatch[1],
+                            total: total,
+                            etfs: etfData
+                        });
+                    }
+                }
             }
         }
         
-        // Alternative parsing if regex didn't work
+        // If pipe parsing didn't work, try alternative approach
         if (rows.length === 0) {
-            // Try simpler pattern matching
-            const lines = html.split('\n');
-            for (const line of lines) {
-                // Look for lines with date pattern and numbers
-                const dateMatch = line.match(/([A-Z][a-z]{2}\s+\d{1,2},\s+\d{4})/);
-                if (dateMatch) {
-                    // Extract the last number (totals column)
-                    const numbers = line.match(/-?\d+\.?\d*/g);
-                    if (numbers && numbers.length > 5) {
-                        const total = parseFloat(numbers[numbers.length - 1]);
-                        if (!isNaN(total) && Math.abs(total) < 10000) { // Sanity check
+            console.log('Pipe parsing failed, trying regex approach');
+            
+            // Look for date followed by numbers pattern
+            const rowRegex = /([A-Z][a-z]{2}\s+\d{1,2},\s+\d{4})[^\n]*?([-]?\d+\.?\d*)\s*\|?\s*$/gm;
+            let match;
+            
+            while ((match = rowRegex.exec(html)) !== null) {
+                const total = parseFloat(match[2]);
+                if (!isNaN(total) && Math.abs(total) < 5000) {
+                    rows.push({
+                        date: match[1].trim(),
+                        total: total,
+                        etfs: {}
+                    });
+                }
+            }
+        }
+        
+        // Still no data? Try looking for the table differently
+        if (rows.length === 0) {
+            console.log('Regex failed, trying table cell approach');
+            
+            // Match any date followed by numbers in the same context
+            const dateRegex = /([A-Z][a-z]{2}\s+\d{1,2},\s+\d{4})/g;
+            const dates = [...html.matchAll(dateRegex)];
+            
+            for (const dateMatch of dates) {
+                // Get context around the date (next 500 chars)
+                const startIdx = dateMatch.index;
+                const context = html.substring(startIdx, startIdx + 500);
+                
+                // Find the last number before a newline or end of row
+                const numbers = context.match(/-?\d+\.?\d*/g);
+                if (numbers && numbers.length >= 10) {
+                    // The total should be the last significant number
+                    const total = parseFloat(numbers[numbers.length - 1]);
+                    if (!isNaN(total) && Math.abs(total) < 5000) {
+                        // Avoid duplicates
+                        if (!rows.find(r => r.date === dateMatch[1])) {
                             rows.push({
                                 date: dateMatch[1],
-                                total: total
+                                total: total,
+                                etfs: {}
                             });
                         }
                     }
@@ -88,37 +145,40 @@ function parseETFData(html) {
         }
         
         if (rows.length === 0) {
-            console.log('No rows parsed from HTML');
+            console.log('All parsing methods failed');
             return null;
         }
+        
+        console.log(`Parsed ${rows.length} ETF flow rows`);
         
         // Sort by date (most recent first)
         rows.sort((a, b) => new Date(b.date) - new Date(a.date));
         
-        // Get yesterday (most recent)
+        // Get latest (most recent trading day)
         const latest = rows[0];
-        const yesterdayAmount = Math.round(latest.total);
+        const latestAmount = Math.round(latest.total);
         
         // Get last 5 trading days
         const last5 = rows.slice(0, 5).reverse();
-        const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
         
-        const week = last5.map((day, i) => {
+        const week = last5.map((day) => {
             const date = new Date(day.date);
-            const dayOfWeek = date.getDay();
-            const dayName = dayOfWeek >= 1 && dayOfWeek <= 5 
-                ? dayNames[dayOfWeek - 1] 
-                : dayNames[i % 5];
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const dayName = dayNames[date.getDay()];
             
             return {
                 day: dayName,
                 amount: Math.round(day.total),
-                date: day.date
+                date: day.date,
+                etfs: day.etfs || {}
             };
         });
         
+        // Calculate week total
+        const weekTotal = week.reduce((sum, d) => sum + d.amount, 0);
+        
         // Generate insight
-        const insight = generateInsight(yesterdayAmount, week);
+        const insight = generateInsight(latestAmount, week, weekTotal);
         
         // Format date for display
         const latestDate = new Date(latest.date);
@@ -128,14 +188,20 @@ function parseETFData(html) {
         });
         
         return {
-            yesterday: {
-                amount: yesterdayAmount,
-                date: dateStr
+            latest: {
+                amount: latestAmount,
+                date: dateStr,
+                fullDate: latest.date,
+                etfs: latest.etfs || {}
             },
             week: week,
+            weekTotal: weekTotal,
             insight: insight,
             source: 'bitbo',
-            updated: new Date().toISOString()
+            updated: new Date().toISOString(),
+            debug: {
+                rowsParsed: rows.length
+            }
         };
         
     } catch (e) {
@@ -144,27 +210,30 @@ function parseETFData(html) {
     }
 }
 
-function generateInsight(yesterday, week) {
-    const isInflow = yesterday > 0;
+function generateInsight(latest, week, weekTotal) {
+    const isInflow = latest > 0;
     const consecutiveDays = countConsecutive(week, isInflow);
-    const weekTotal = week.reduce((sum, d) => sum + (d.amount || 0), 0);
     
     if (consecutiveDays >= 4) {
         return `${consecutiveDays} consecutive days of net ${isInflow ? 'inflows' : 'outflows'}`;
     } else if (consecutiveDays === 3) {
         return `Third straight day of ${isInflow ? 'inflows' : 'outflows'}`;
-    } else if (Math.abs(yesterday) > 500) {
-        return `Heavy ${isInflow ? 'institutional buying' : 'redemptions'}: ${isInflow ? '+' : ''}$${yesterday}M`;
-    } else if (Math.abs(yesterday) > 300) {
-        return `Notable ${isInflow ? 'inflows' : 'outflows'}: ${isInflow ? '+' : ''}$${yesterday}M`;
-    } else if (weekTotal > 1000) {
-        return `Strong weekly accumulation: +$${Math.round(weekTotal)}M`;
-    } else if (weekTotal < -1000) {
-        return `Significant weekly outflows: $${Math.abs(Math.round(weekTotal))}M`;
+    } else if (Math.abs(latest) > 500) {
+        return `Heavy ${isInflow ? 'institutional buying' : 'redemptions'}: ${isInflow ? '+' : ''}$${latest}M`;
+    } else if (Math.abs(latest) > 300) {
+        return `Notable ${isInflow ? 'inflows' : 'outflows'}: ${isInflow ? '+' : ''}$${latest}M`;
+    } else if (Math.abs(weekTotal) > 500) {
+        if (weekTotal > 0) {
+            return `Strong weekly accumulation: +$${Math.round(weekTotal)}M`;
+        } else {
+            return `Significant weekly outflows: -$${Math.abs(Math.round(weekTotal))}M`;
+        }
     } else if (weekTotal > 0) {
         return `Net positive week: +$${Math.round(weekTotal)}M total`;
+    } else if (weekTotal < 0) {
+        return `Net outflows this week: -$${Math.abs(Math.round(weekTotal))}M`;
     } else {
-        return `Net outflows this week: $${Math.abs(Math.round(weekTotal))}M`;
+        return `Mixed flows, roughly flat this week`;
     }
 }
 
@@ -182,20 +251,24 @@ function countConsecutive(week, isInflow) {
 }
 
 function getMockData() {
+    // Return realistic recent data as fallback
     return {
-        yesterday: {
-            amount: 438,
-            date: 'Yesterday'
+        latest: {
+            amount: -15,
+            date: 'Dec 4',
+            fullDate: 'Dec 04, 2025',
+            etfs: { IBIT: 41, FBTC: 0, GBTC: -20, ARKB: -36 }
         },
         week: [
-            { day: 'Mon', amount: 215 },
-            { day: 'Tue', amount: 380 },
-            { day: 'Wed', amount: -120 },
-            { day: 'Thu', amount: 290 },
-            { day: 'Fri', amount: 438 }
+            { day: 'Wed', amount: 4, date: 'Nov 26, 2025' },
+            { day: 'Thu', amount: -28, date: 'Nov 27, 2025' },
+            { day: 'Mon', amount: 116, date: 'Dec 01, 2025' },
+            { day: 'Wed', amount: 57, date: 'Dec 03, 2025' },
+            { day: 'Thu', amount: -15, date: 'Dec 04, 2025' }
         ],
-        insight: 'Third consecutive day of net inflows',
-        source: 'mock',
+        weekTotal: 134,
+        insight: 'Net positive week: +$134M total',
+        source: 'fallback',
         updated: new Date().toISOString()
     };
 }
