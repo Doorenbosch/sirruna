@@ -32,10 +32,35 @@ function hasPersonalCoins() {
     return getPersonalCoins().length > 0;
 }
 
+// Get holdings only (exclude watching)
+function getPersonalHoldings() {
+    return getPersonalCoins().filter(c => c.weight !== 'watching');
+}
+
+// Get coin IDs for API calls
+function getPersonalHoldingIds() {
+    return getPersonalHoldings().map(c => c.id);
+}
+
 // Export for use in other scripts
 window.personalCoins = {
     getCoins: getPersonalCoins,
     getIds: getPersonalCoinIds,
     getSymbols: getPersonalCoinSymbols,
-    hasCoins: hasPersonalCoins
+    hasCoins: hasPersonalCoins,
+    getHoldings: getPersonalHoldings,
+    getHoldingIds: getPersonalHoldingIds
 };
+
+/**
+ * Usage in app.js or weekend.js:
+ * 
+ * // Check if user has personal coins
+ * if (window.personalCoins && window.personalCoins.hasCoins()) {
+ *     const holdings = window.personalCoins.getHoldings();
+ *     const coinIds = window.personalCoins.getHoldingIds();
+ *     
+ *     // Fetch price data for these coins
+ *     // Then render in "Your Coins vs Market" section
+ * }
+ */

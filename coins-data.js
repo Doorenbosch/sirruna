@@ -181,7 +181,7 @@ const DEFAULT_SEGMENTS = {
     'the-graph': 'real_world',
     'filecoin': 'real_world',
     'vechain': 'real_world',
-    'theta-token': 'real_world',
+    'theta-token': 'entertainment',
     'pyth-network': 'real_world',
     'quant-network': 'real_world',
     'arweave': 'real_world',

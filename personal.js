@@ -154,15 +154,22 @@ async function loadAvailableCoins() {
 }
 
 async function fetchPriceData() {
-    // Get IDs of user's coins only (to minimize API calls)
+    // Get IDs of user's coins
     const userCoinIds = state.userCoins.map(c => c.id);
-    if (userCoinIds.length === 0) {
-        // Fetch top 10 for market reference
-        userCoinIds.push('bitcoin', 'ethereum', 'tether', 'binancecoin', 'solana');
-    }
     
-    // Always include top coins for market calculation
-    const idsToFetch = [...new Set([...userCoinIds, 'bitcoin', 'ethereum', 'solana', 'binancecoin', 'cardano'])];
+    // Representative coins for each segment (for segment % calculation)
+    const segmentRepresentatives = [
+        'bitcoin', 'wrapped-bitcoin', // Store of Value
+        'ethereum', 'solana', 'cardano', 'avalanche-2', 'polkadot', // Infrastructure
+        'uniswap', 'aave', 'maker', 'lido-dao', // DeFi
+        'chainlink', 'the-graph', 'filecoin', 'vechain', // Real World Use
+        'render-token', 'fetch-ai', 'bittensor', // AI & Compute
+        'chiliz', 'gala', 'theta-token', 'the-sandbox', 'immutable-x', // Entertainment
+        'ripple', 'litecoin', 'stellar', 'dogecoin' // Payments
+    ];
+    
+    // Combine all needed coins
+    const idsToFetch = [...new Set([...userCoinIds, ...segmentRepresentatives])];
     
     try {
         const response = await fetch(
@@ -174,15 +181,23 @@ async function fetchPriceData() {
         const coins = await response.json();
         
         coins.forEach(c => {
-            const existing = state.coinData[c.id];
-            if (existing) {
-                existing.price = c.current_price;
-                existing.marketCap = c.market_cap;
-                existing.change7d = c.price_change_percentage_7d_in_currency || 0;
-                existing.change30d = c.price_change_percentage_30d_in_currency || 0;
-                // Estimate 90d from 30d (roughly 3x with dampening)
-                existing.change90d = (c.price_change_percentage_30d_in_currency || 0) * 2.2;
+            // Create or update coinData entry
+            if (!state.coinData[c.id]) {
+                state.coinData[c.id] = {
+                    id: c.id,
+                    symbol: c.symbol.toUpperCase(),
+                    name: c.name,
+                    image: c.image
+                };
             }
+            
+            const entry = state.coinData[c.id];
+            entry.price = c.current_price;
+            entry.marketCap = c.market_cap;
+            entry.change7d = c.price_change_percentage_7d_in_currency || 0;
+            entry.change30d = c.price_change_percentage_30d_in_currency || 0;
+            // Estimate 90d from 30d (roughly 3x with dampening)
+            entry.change90d = (c.price_change_percentage_30d_in_currency || 0) * 2.2;
         });
         
         // Calculate market average from top coins
@@ -209,20 +224,35 @@ async function fetchPriceData() {
 }
 
 function calculateSegmentChanges() {
-    // Group coins by segment and calculate average change
+    // Calculate segment averages from ALL available coins (not just user's)
     state.segmentChanges = {};
     
+    // Group all available coins by their default segment
+    const segmentCoins = {};
     Object.keys(SEGMENTS).forEach(segKey => {
-        const coinsInSegment = state.userCoins.filter(c => c.segment === segKey);
-        if (coinsInSegment.length === 0) {
-            state.segmentChanges[segKey] = null;
+        segmentCoins[segKey] = [];
+    });
+    
+    // Use DEFAULT_SEGMENTS to categorize all coins
+    state.availableCoins.forEach(coin => {
+        const segment = DEFAULT_SEGMENTS[coin.id] || 'infrastructure';
+        if (segmentCoins[segment]) {
+            segmentCoins[segment].push(coin.id);
+        }
+    });
+    
+    // Calculate average for each segment
+    Object.keys(SEGMENTS).forEach(segKey => {
+        const coinIds = segmentCoins[segKey];
+        if (coinIds.length === 0) {
+            state.segmentChanges[segKey] = { change7d: 0, change30d: 0, change90d: 0 };
             return;
         }
         
         let total7d = 0, total30d = 0, total90d = 0, count = 0;
-        coinsInSegment.forEach(coin => {
-            const data = state.coinData[coin.id];
-            if (data) {
+        coinIds.forEach(coinId => {
+            const data = state.coinData[coinId];
+            if (data && (data.change7d !== 0 || data.change30d !== 0)) {
                 total7d += data.change7d || 0;
                 total30d += data.change30d || 0;
                 total90d += data.change90d || 0;
@@ -236,6 +266,8 @@ function calculateSegmentChanges() {
                 change30d: total30d / count,
                 change90d: total90d / count
             };
+        } else {
+            state.segmentChanges[segKey] = { change7d: 0, change30d: 0, change90d: 0 };
         }
     });
 }
@@ -332,16 +364,15 @@ function renderSegmentChanges() {
         const existing = label.querySelector('.segment-change');
         if (existing) existing.remove();
         
-        if (segData) {
-            const change = state.period === 7 ? segData.change7d : 
-                           state.period === 90 ? segData.change90d : 
-                           segData.change30d;
-            
-            const changeEl = document.createElement('span');
-            changeEl.className = `segment-change ${change >= 0 ? 'positive' : 'negative'}`;
-            changeEl.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(0)}%`;
-            label.appendChild(changeEl);
-        }
+        // Always show segment change (even if 0)
+        const change = segData ? (state.period === 7 ? segData.change7d : 
+                       state.period === 90 ? segData.change90d : 
+                       segData.change30d) : 0;
+        
+        const changeEl = document.createElement('span');
+        changeEl.className = `segment-change ${change >= 0 ? 'positive' : 'negative'}`;
+        changeEl.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
+        label.appendChild(changeEl);
     });
 }
 
