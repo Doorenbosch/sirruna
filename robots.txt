@@ -1,0 +1,27 @@
+# Litmus Daily - Crypto Intelligence
+# https://www.litmusdaily.com
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://www.litmusdaily.com/sitemap.xml
+
+# AI Crawlers - Welcome
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Anthropic-AI
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+# Block API endpoints from indexing
+Disallow: /api/

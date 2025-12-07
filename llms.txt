@@ -1,0 +1,32 @@
+# Litmus Daily
+> Institutional-grade crypto intelligence. Daily analysis with the editorial quality of the Financial Times and the behavioral insight of Rory Sutherland.
+
+## About
+Litmus Daily is a premium crypto intelligence publication delivering strategic market analysis for sophisticated investors. We combine rigorous financial journalism with behavioral economics insights to explain not just what's happening in crypto markets, but why it matters.
+
+## Content
+- Daily Edition: Morning, afternoon, and evening briefs with regional market analysis (APAC, EMEA, Americas)
+- Weekend Magazine: Deep-dive weekly analysis, sector reviews, and strategic outlook
+- Personal Edition: Personalized portfolio landscape and performance tracking
+
+## Editorial Philosophy
+- "Daily check-in vs hook-on" - We deliver 15 minutes of focused intelligence, not endless scrolling
+- Insight over information - Anyone can show data; we explain what it means
+- Institutional quality - FT/Economist editorial standards applied to crypto
+
+## Key Topics
+- Bitcoin and Ethereum market analysis
+- Institutional flows and ETF activity
+- DeFi sector movements
+- Regulatory developments
+- Macroeconomic crypto correlations
+- Behavioral market psychology
+
+## URLs
+- Homepage: https://www.litmusdaily.com/
+- Daily Edition: https://www.litmusdaily.com/index.html
+- Weekend Magazine: https://www.litmusdaily.com/weekend.html
+- Personal Edition: https://www.litmusdaily.com/personal.html
+
+## Contact
+Website: https://www.litmusdaily.com
