@@ -33,6 +33,9 @@ async function init() {
     
     // Load relative performance
     loadRelativePerformance();
+    
+    // Load market mood
+    loadMarketMood();
 }
 
 // Sticky Header
@@ -759,4 +762,148 @@ function formatTime(seconds) {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+// ========== MARKET MOOD 9-BOX (Weekend Edition) ==========
+
+const MOOD_ZONES = {
+    'concentration':   { row: 0, col: 0, label: 'Concentration' },
+    'leadership':      { row: 0, col: 1, label: 'Leadership' },
+    'strong-rally':    { row: 0, col: 2, label: 'Strong Rally' },
+    'rotation':        { row: 1, col: 0, label: 'Rotation' },
+    'consolidation':   { row: 1, col: 1, label: 'Consolidation' },
+    'steady-advance':  { row: 1, col: 2, label: 'Steady Advance' },
+    'capitulation':    { row: 2, col: 0, label: 'Capitulation' },
+    'drift':           { row: 2, col: 1, label: 'Drift' },
+    'weak-rally':      { row: 2, col: 2, label: 'Weak Rally' }
+};
+
+const MOOD_DESCRIPTIONS = {
+    'strong-rally': 'Broad participation with high conviction. The market is moving decisively higher with strong volume confirmation.',
+    'leadership': 'Select leaders driving gains on elevated volume. Watch for rotation or broadening participation.',
+    'steady-advance': 'Healthy breadth with moderate volume. Measured advance with sustainable participation.',
+    'consolidation': 'Mixed breadth on quiet volume. The market is digesting recent moves and awaiting direction.',
+    'concentration': 'Narrow leadership with frenzied activity. Gains concentrated in few names—fragile setup.',
+    'rotation': 'Sector rotation underway with elevated volume. Capital is moving, but direction is unclear.',
+    'weak-rally': 'Broad gains but lacking volume conviction. Advance may stall without renewed participation.',
+    'drift': 'Indecisive action on low volume. The market lacks catalyst and conviction.',
+    'capitulation': 'Widespread selling on high volume. Potential washout—watch for exhaustion signals.'
+};
+
+async function loadMarketMood() {
+    try {
+        const response = await fetch('/api/market-mood');
+        if (!response.ok) {
+            console.log('[Weekend] Market mood API not available');
+            return;
+        }
+        
+        const data = await response.json();
+        renderMarketMood(data);
+        
+    } catch (error) {
+        console.log('[Weekend] Market mood API error:', error);
+    }
+}
+
+function renderMarketMood(data) {
+    // Use weekend-specific grid ID
+    const grid = document.getElementById('nine-box-grid-weekend');
+    if (!grid) return;
+    
+    const { breadth, breadthAvg24h, mvRatio24h, mvRatio7d, trail, mvRange } = data;
+    
+    const avgBreadth = breadthAvg24h !== undefined ? breadthAvg24h : breadth;
+    
+    // Calculate zone
+    const zone = getMarketZone(breadth, mvRatio24h, mvRange);
+    
+    // Update title and description
+    const titleEl = document.getElementById('mood-title-weekend');
+    const descEl = document.getElementById('mood-description-weekend');
+    const breadthEl = document.getElementById('breadth-value-weekend');
+    
+    if (titleEl) titleEl.textContent = MOOD_ZONES[zone]?.label || 'Market Mood';
+    if (descEl) descEl.textContent = MOOD_DESCRIPTIONS[zone] || '';
+    if (breadthEl) breadthEl.textContent = `${Math.round(breadth)}% of coins are green`;
+    
+    // Map coordinates
+    const mapX = (b) => (b / 100) * 100;
+    const mapY = (mv) => {
+        const normalized = (mv - mvRange.low) / (mvRange.high - mvRange.low);
+        return Math.max(0, Math.min(100, normalized * 100));
+    };
+    
+    // Position teal dot (current breadth, 24h M/V)
+    const tealDot = document.getElementById('mood-dot-teal-weekend');
+    if (tealDot) {
+        tealDot.style.left = `${mapX(breadth)}%`;
+        tealDot.style.top = `${mapY(mvRatio24h)}%`;
+    }
+    
+    // Position burgundy dot (average breadth 24h, 7d avg M/V)
+    const burgundyDot = document.getElementById('mood-dot-burgundy-weekend');
+    if (burgundyDot) {
+        burgundyDot.style.left = `${mapX(avgBreadth)}%`;
+        burgundyDot.style.top = `${mapY(mvRatio7d)}%`;
+    }
+    
+    // Draw trail
+    if (trail && trail.length > 1) {
+        const trailPath = document.getElementById('trail-path-weekend');
+        const startDot = document.getElementById('mood-dot-start-weekend');
+        
+        const points = trail.map(p => ({
+            x: mapX(p.breadth),
+            y: mapY(p.mv)
+        }));
+        
+        if (trailPath && points.length > 0) {
+            let d = `M ${points[0].x} ${points[0].y}`;
+            
+            for (let i = 1; i < points.length; i++) {
+                const prev = points[i - 1];
+                const curr = points[i];
+                const next = points[i + 1] || curr;
+                const prevPrev = points[i - 2] || prev;
+                
+                const tension = 0.3;
+                const cp1x = prev.x + (curr.x - prevPrev.x) * tension;
+                const cp1y = prev.y + (curr.y - prevPrev.y) * tension;
+                const cp2x = curr.x - (next.x - prev.x) * tension;
+                const cp2y = curr.y - (next.y - prev.y) * tension;
+                
+                d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${curr.x} ${curr.y}`;
+            }
+            
+            trailPath.setAttribute('d', d);
+        }
+        
+        if (startDot) {
+            startDot.style.left = `${mapX(trail[0].breadth)}%`;
+            startDot.style.top = `${mapY(trail[0].mv)}%`;
+        }
+    }
+    
+    // Highlight active zone
+    grid.querySelectorAll('.box').forEach(box => {
+        box.classList.remove('active-zone');
+        if (box.dataset.zone === zone) {
+            box.classList.add('active-zone');
+        }
+    });
+}
+
+function getMarketZone(breadth, mv, mvRange) {
+    const col = breadth < 33 ? 0 : breadth < 66 ? 1 : 2;
+    const mvNormalized = (mv - mvRange.low) / (mvRange.high - mvRange.low);
+    const row = mvNormalized < 0.33 ? 0 : mvNormalized < 0.66 ? 1 : 2;
+    
+    const zones = [
+        ['concentration', 'leadership', 'strong-rally'],
+        ['rotation', 'consolidation', 'steady-advance'],
+        ['capitulation', 'drift', 'weak-rally']
+    ];
+    
+    return zones[row][col];
 }

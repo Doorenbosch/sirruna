@@ -8,6 +8,10 @@
       "memory": 256,
       "maxDuration": 10
     },
+    "api/etf-flows.js": {
+      "memory": 256,
+      "maxDuration": 15
+    },
     "api/breaking-news-check.js": {
       "maxDuration": 30
     }
@@ -19,6 +23,12 @@
         { "key": "Access-Control-Allow-Origin", "value": "*" },
         { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" }
       ]
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/breaking-news-check",
+      "schedule": "*/5 * * * *"
     }
   ]
 }
