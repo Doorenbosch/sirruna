@@ -862,12 +862,6 @@ font-style: italic;
     margin-top: 0;
 }
 
-/* Weekend-specific: Make trail start dot burgundy */
-#mood-dot-start-weekend {
-    background: var(--burgundy);
-    opacity: 0.3;
-}
-
 
 /* ========== AUDIO EDITION PLAYER ========== */
 .audio-edition {
@@ -1012,7 +1006,6 @@ font-style: italic;
     line-height: 1.5;
     color: var(--ink);
     margin-bottom: var(--sm);
-    font-style: italic;
 }
 
 .sector-weekly .weekly-text {
@@ -1024,4 +1017,24 @@ font-style: italic;
     line-height: 1.5;
     color: var(--ink-secondary);
     margin-bottom: var(--sm);
+}
+
+/* ========== 9-BOX DOTS - WEEKEND OVERRIDES ========== */
+#mood-dot-teal-weekend {
+    width: 24px;
+    height: 24px;
+}
+
+#mood-dot-burgundy-weekend {
+    width: 21px;
+    height: 21px;
+    background: var(--burgundy);
+    opacity: 1;
+}
+
+#mood-dot-start-weekend {
+    width: 15px;
+    height: 15px;
+    background: var(--burgundy);
+    opacity: 0.4;
 }
