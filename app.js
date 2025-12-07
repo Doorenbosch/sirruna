@@ -945,7 +945,20 @@ function renderTheNumber(data) {
     const contextEl = document.getElementById('number-context');
     
     if (valueEl && data.value) {
-        valueEl.textContent = data.value;
+        // Check if this is a dollar value (stablecoin) or index value (Fear & Greed)
+        const value = String(data.value);
+        const isDollarValue = value.includes('$') || value.includes('B') || value.includes('T');
+        
+        if (isDollarValue) {
+            // Stablecoin market cap - no suffix
+            valueEl.innerHTML = value;
+        } else if (data.suffix) {
+            // Index with explicit suffix (e.g., Fear & Greed)
+            valueEl.innerHTML = `${value}<span class="number-suffix">${data.suffix}</span>`;
+        } else {
+            // Plain number - assume it's an index, add /100
+            valueEl.innerHTML = `${value}<span class="number-suffix">/100</span>`;
+        }
     }
     
     if (contextEl && data.context) {
