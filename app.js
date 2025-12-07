@@ -597,8 +597,8 @@ async function loadMarketMood() {
     try {
         const response = await fetch(CONFIG.marketMoodAPI);
         if (!response.ok) {
-            // Use fallback mock data if API not available
-            renderMarketMood(getMockMarketMood());
+            console.log('Market mood API not available');
+            renderMarketMoodUnavailable();
             return;
         }
         
@@ -606,27 +606,17 @@ async function loadMarketMood() {
         renderMarketMood(data);
         
     } catch (error) {
-        console.log('Market mood API not available, using mock data');
-        renderMarketMood(getMockMarketMood());
+        console.log('Market mood API error:', error);
+        renderMarketMoodUnavailable();
     }
 }
 
-// Mock data for development
-function getMockMarketMood() {
-    return {
-        breadth: 88,                // Current breadth (teal dot X)
-        breadthAvg24h: 75,          // Average breadth over 24h (burgundy dot X)
-        mvRatio24h: 18.7,           // M/V using 24h volume (teal dot Y)
-        mvRatio7d: 22.0,            // M/V using 7d avg volume (burgundy dot Y)
-        trail: [
-            { breadth: 72, mv: 24.5 },
-            { breadth: 75, mv: 21.2 },
-            { breadth: 80, mv: 19.8 },
-            { breadth: 85, mv: 18.2 },
-            { breadth: 88, mv: 18.7 }
-        ],
-        mvRange: { low: 12, high: 39 }  // Y-axis bounds
-    };
+function renderMarketMoodUnavailable() {
+    setText('mood-title', '—');
+    setText('mood-description', 'Data temporarily unavailable');
+    setText('breadth-value', '—');
+    setText('legend-teal', '—');
+    setText('legend-burgundy', '—');
 }
 
 // Render Market Mood
@@ -795,13 +785,11 @@ async function loadETFFlows() {
         
         if (apiResponse.ok) {
             const data = await apiResponse.json();
-            renderETFFlows(data);
-            
-            // Show data source indicator if using live data
-            if (data.source === 'sosovalue') {
-                console.log('ETF Flows: Live data from SoSoValue');
+            if (data && data.yesterday) {
+                renderETFFlows(data);
+                console.log('ETF Flows: Live data loaded');
+                return;
             }
-            return;
         }
         
         // Fallback to brief data
@@ -810,37 +798,36 @@ async function loadETFFlows() {
         
         if (briefResponse.ok) {
             const brief = await briefResponse.json();
-            if (brief.etf_flows) {
+            if (brief.etf_flows && brief.etf_flows.yesterday) {
                 renderETFFlows(brief.etf_flows);
                 return;
             }
         }
         
-        // Final fallback to mock data
-        renderETFFlows(getMockETFFlows());
+        // No data available - show placeholder
+        renderETFFlowsUnavailable();
         
     } catch (error) {
-        console.log('ETF flows not available, using mock data');
-        renderETFFlows(getMockETFFlows());
+        console.log('ETF flows not available');
+        renderETFFlowsUnavailable();
     }
 }
 
-function getMockETFFlows() {
-    // Mock data - will be replaced with real data source
-    return {
-        yesterday: {
-            amount: 438,
-            date: 'Yesterday'
-        },
-        week: [
-            { day: 'Mon', amount: 215 },
-            { day: 'Tue', amount: 380 },
-            { day: 'Wed', amount: -120 },
-            { day: 'Thu', amount: 290 },
-            { day: 'Fri', amount: 438 }
-        ],
-        insight: 'Third consecutive day of net inflows'
-    };
+function renderETFFlowsUnavailable() {
+    const amountEl = document.getElementById('etf-amount');
+    const barEl = document.getElementById('etf-bar');
+    const insightEl = document.getElementById('etf-insight');
+    const dateEl = document.getElementById('etf-date');
+    const weekContainer = document.getElementById('etf-week');
+    
+    if (amountEl) {
+        amountEl.textContent = '—';
+        amountEl.className = 'etf-amount';
+    }
+    if (barEl) barEl.style.width = '0%';
+    if (insightEl) insightEl.textContent = '';
+    if (dateEl) dateEl.textContent = '';
+    if (weekContainer) weekContainer.innerHTML = '';
 }
 
 function renderETFFlows(data) {
@@ -896,17 +883,16 @@ function renderETFFlows(data) {
 // ===== The Number Section =====
 async function loadTheNumber() {
     try {
-        // Try live API first (CoinGecko stablecoin data)
+        // Try live API first (rotates by day)
         const apiResponse = await fetch('/api/the-number');
         
         if (apiResponse.ok) {
             const data = await apiResponse.json();
-            renderTheNumber(data);
-            
-            if (data.source === 'coingecko') {
-                console.log('The Number: Live data from CoinGecko');
+            if (data.value && data.source !== 'fallback') {
+                renderTheNumber(data);
+                console.log('The Number: Live data loaded');
+                return;
             }
-            return;
         }
         
         // Fallback to brief data
@@ -915,54 +901,55 @@ async function loadTheNumber() {
         
         if (briefResponse.ok) {
             const brief = await briefResponse.json();
-            if (brief.the_number) {
+            if (brief.the_number && brief.the_number.value) {
                 renderTheNumber(brief.the_number);
                 return;
             }
         }
         
-        // Final fallback to mock data
-        renderTheNumber(getMockTheNumber());
+        // No data available - show placeholder
+        renderTheNumber(null);
         
     } catch (error) {
-        console.log('The Number not available, using mock data');
-        renderTheNumber(getMockTheNumber());
+        console.log('The Number not available');
+        renderTheNumber(null);
     }
-}
-
-function getMockTheNumber() {
-    // Mock data - will be AI-generated
-    return {
-        value: '$311B',
-        context: 'Stablecoin market cap—dry powder waiting on sidelines'
-    };
 }
 
 function renderTheNumber(data) {
-    if (!data) return;
-    
     const valueEl = document.getElementById('number-value');
     const contextEl = document.getElementById('number-context');
     
-    if (valueEl && data.value) {
-        // Check if this is a dollar value (stablecoin) or index value (Fear & Greed)
-        const value = String(data.value);
-        const isDollarValue = value.includes('$') || value.includes('B') || value.includes('T');
-        
-        if (isDollarValue) {
-            // Stablecoin market cap - no suffix
-            valueEl.innerHTML = value;
-        } else if (data.suffix) {
-            // Index with explicit suffix (e.g., Fear & Greed)
-            valueEl.innerHTML = `${value}<span class="number-suffix">${data.suffix}</span>`;
+    if (valueEl) {
+        if (!data || !data.value) {
+            // No data - show placeholder
+            valueEl.innerHTML = '—';
         } else {
-            // Plain number - assume it's an index, add /100
-            valueEl.innerHTML = `${value}<span class="number-suffix">/100</span>`;
+            const value = String(data.value);
+            
+            // Detect format and render appropriately
+            if (value.includes('$') || value.includes('B') || value.includes('T') || value.includes('M')) {
+                // Currency format (stablecoin, ETF flows) - no suffix
+                valueEl.innerHTML = value;
+            } else if (value.includes('%')) {
+                // Percentage format (BTC dominance) - no suffix
+                valueEl.innerHTML = value;
+            } else if (/^\d+(\.\d+)?$/.test(value)) {
+                // Plain number - likely an index, add /100
+                valueEl.innerHTML = `${value}<span class="number-suffix">/100</span>`;
+            } else {
+                // Unknown format - display as-is
+                valueEl.innerHTML = value;
+            }
         }
     }
     
-    if (contextEl && data.context) {
-        contextEl.textContent = data.context;
+    if (contextEl) {
+        if (!data || !data.context) {
+            contextEl.textContent = '';
+        } else {
+            contextEl.textContent = data.context;
+        }
     }
 }
 
