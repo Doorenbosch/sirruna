@@ -1,55 +1,55 @@
 {
-  "headline": "Bitcoin Flatlines as Markets Await Direction",
+  "headline": "Bitcoin Holds $90K as Markets Await Direction",
   "sections": {
-    "the_session": "Bitcoin spent the US session locked in an extraordinarily tight range, oscillating within a few hundred dollars of $89,000 as if waiting for permission to move. The flagship asset posted a mathematically negligible 24-hour change, a rarity that speaks to genuine indecision rather than holiday-thin liquidity. Equities offered no catalyst: the S&P 500 drifted sideways ahead of next week's inflation data, while Treasury yields held steady. The session's defining characteristic was absence\u2014absence of conviction, absence of volatility, absence of the momentum that carried Bitcoin through November. Traders who positioned for continuation found nothing to trade. The market is coiled, but the spring has yet to release.",
-    "the_session_title": "A Session Defined by Conspicuous Stillness",
-    "the_flows": "The disconnect between price action and capital flows deepened today. US spot Bitcoin ETFs recorded an estimated $145 million in net inflows, marking the fifth consecutive day of positive flows despite Bitcoin's inability to reclaim $90,000. BlackRock's IBIT led with approximately $95 million, maintaining its dominance as the institutional vehicle of choice. Fidelity's FBTC added an estimated $55 million, while Grayscale's GBTC saw modest outflows of roughly $15 million\u2014a notable deceleration from its historical bleed rate. Ark's ARKB contributed approximately $10 million. The weekly pattern tells a story of steady accumulation: Monday saw $210 million, Tuesday $175 million, Wednesday $130 million, Thursday $160 million, and today's $145 million. Cumulative weekly inflows approaching $820 million suggest institutional buyers view current levels as attractive entry points, even as price refuses to cooperate. On-chain data shows exchange balances continuing their structural decline, with another 8,400 BTC leaving centralized venues over the past 48 hours.",
-    "the_flows_title": "ETF Inflows Persist Despite Price Stagnation",
-    "the_divergence": "The session's most interesting signal came from Ethereum's modest but meaningful outperformance. While Bitcoin flatlined, ETH gained 0.8%\u2014not dramatic in isolation, but notable given the broader stasis. The ETH/BTC ratio has stabilized after weeks of compression, suggesting the relentless rotation into Bitcoin may be exhausting itself. Solana's slight underperformance (-0.5%) adds texture: capital appears to be flowing back toward established Layer 1 infrastructure rather than chasing momentum in newer ecosystems. Perhaps more telling, Bitcoin's correlation with the Nasdaq, which had tightened considerably through November, loosened today. Tech stocks posted gains while Bitcoin went nowhere, a divergence that bears watching. When correlations break in quiet markets, it often presages regime shifts. The question is whether this represents healthy decorrelation or simply noise in a directionless session.",
-    "the_divergence_title": "Ethereum Quietly Outperforms the Leader",
-    "the_regime_check": "We remain in the same consolidation regime that established itself after Bitcoin's rejection at $93,500 last week. The structural picture is unchanged: price compressing between $87,000 support and $91,000 resistance, realized volatility declining, and funding rates neutral across major perpetual venues. What has shifted subtly is the character of the consolidation. Early December saw aggressive dip-buying; now we see passive absorption. Bid depth has improved at $88,000, but the urgency has dissipated. BTC dominance at 56.9% suggests the broader market isn't rotating aggressively\u2014capital is simply waiting. This is neither a distribution pattern nor clear accumulation. It is a market in genuine equilibrium, which historically resolves with directional violence. The longer this compression persists, the more significant the eventual breakout.",
-    "the_regime_check_title": "Consolidation Regime Firmly Intact",
-    "the_overnight_setup": "The handoff to Asian markets comes with Bitcoin perched at a technically ambiguous level. Watch $88,500 as the immediate downside pivot\u2014a breach would likely trigger stops clustered below the week's lows. Upside, $90,000 remains the psychological barrier that has repelled every attempt since Tuesday. Asian session liquidity tends to thin considerably on Friday nights, creating conditions where modest order flow can produce outsized moves. China's November trade data, due Saturday morning local time, could influence risk appetite if it surprises materially. The CME gap from last weekend's open near $91,200 remains unfilled, a magnet that futures traders will keep in mind. Position sizing should reflect the elevated probability of a sharp move on limited volume.",
-    "the_overnight_setup_title": "Asian Session Faces Thin Liquidity Test",
-    "the_takeaway": "Persistent ETF inflows against a frozen price creates tension that must eventually resolve. The market is building potential energy while revealing nothing about direction. Patience is being tested, but the setup for a significant move is maturing.",
+    "the_session": "Bitcoin spent the US session grinding sideways just beneath the psychologically significant $90,000 level, with price action confined to a narrow $800 range. The modest 0.7% gain masks what was effectively a holding pattern as traders squared positions ahead of the weekend. Volume declined notably from Thursday's levels, suggesting conviction remains scarce at these elevated prices. Equity markets provided little directional impetus, with the S&P 500 closing marginally higher on mixed economic signals. The session's defining characteristic was not movement but its absence\u2014a market catching its breath after November's explosive rally, neither eager to chase nor willing to capitulate.",
+    "the_session_title": "Consolidation Defines a Cautious Friday",
+    "the_flows": "Spot Bitcoin ETF flows cooled Friday but maintained their positive trajectory. Net inflows across the eleven US products totaled an estimated $142 million, with BlackRock's IBIT capturing the lion's share at approximately $95 million. Fidelity's FBTC added $38 million while Ark's ARKB contributed $22 million. Grayscale's GBTC saw modest outflows of $13 million, continuing its gradual bleed but at a pace that no longer threatens market stability.\n\nThe week's cumulative picture tells a more compelling story: approximately $1.8 billion in net inflows across five trading days, representing sustained institutional appetite despite Bitcoin's proximity to all-time highs. Exchange data shows spot reserves continuing their multi-month decline, with roughly 8,400 BTC leaving centralized platforms this week. On-chain metrics reveal accumulation addresses adding to positions, while short-term holder supply remains stable\u2014a pattern consistent with distribution from traders to longer-duration holders.",
+    "the_flows_title": "ETF Inflows Moderate But Remain Constructive",
+    "the_divergence": "The session's most notable divergence was Ethereum's complete failure to participate in Bitcoin's modest gains. ETH printed a flat zero percent return while BTC edged higher, widening the performance gap that has characterized recent weeks. The ETH/BTC ratio continues its grind lower, now threatening levels not seen since early 2021.\n\nSolana's slight underperformance (-0.6%) against a rising tide also warrants attention, particularly given its recent outperformance cycle. More curious still: Bitcoin's correlation with the Nasdaq, which had tightened considerably through November, showed signs of decoupling Friday as tech stocks rallied more decisively. Whether this represents noise or signal remains unclear, but the breakdown of the \"risk-on beta\" trade that defined Q4 would carry meaningful implications for positioning frameworks.",
+    "the_divergence_title": "Ethereum's Stall Raises Questions",
+    "the_regime_check": "The structural regime remains unchanged: Bitcoin sits in a confirmed bull market with price above all major moving averages and institutional flows supportive. However, momentum indicators are flashing amber. The 14-day RSI has retreated from overbought territory and now hovers near 58\u2014healthy, but no longer screaming strength. Funding rates across perpetual markets have normalized from last week's elevated levels, reducing the immediate risk of a leverage flush but also removing a tailwind.\n\nBTC dominance at 57.1% suggests capital rotation into altcoins remains limited, a characteristic of mature bull phases rather than speculative frenzies. The market is not breaking down, but neither is it building the energy required for the next leg higher. Call it consolidation; call it digestion. Either way, patience is being tested.",
+    "the_regime_check_title": "Bull Market Intact, Momentum Fading",
+    "the_overnight_setup": "The handoff to Asia arrives with Bitcoin testing $90,000 resistance from below. Key levels to monitor: $89,200 serves as immediate support, with $87,500 representing the more significant floor where buyers have consistently emerged. A sustained break above $90,500 would likely trigger momentum algorithms and open the path toward retesting November's highs near $93,500.\n\nPotential catalysts are limited but not absent. South Korean trading volumes have been notably elevated in recent sessions, and any weekend regulatory commentary from Asian authorities could move markets. More likely, the overnight session delivers more of Friday's theme: range-bound price action with occasional probes of key levels. Liquidity thins considerably after Tokyo's close, making Sunday evening particularly vulnerable to sharp moves on minimal volume.",
+    "the_overnight_setup_title": "Asian Session Holds the Weekend Keys",
+    "the_takeaway": "Today revealed a market that has accepted $90,000 as fair value but lacks the conviction to push meaningfully higher. Institutional flows remain supportive, structure is sound, but momentum is on pause. The next directional move will require a catalyst this session did not provide.",
     "the_takeaway_title": "The Bottom Line"
   },
-  "image_keywords": "still water, dusk, horizon, mist",
+  "image_keywords": "dusk, harbor, still water, distant lights",
   "etf_flows": {
     "latest": {
-      "amount": 145,
+      "amount": 142,
       "date": "Dec 6"
     },
     "week": [
       {
         "day": "Mon",
-        "amount": 210
+        "amount": 354
       },
       {
         "day": "Tue",
-        "amount": 175
+        "amount": 489
       },
       {
         "day": "Wed",
-        "amount": 130
+        "amount": 378
       },
       {
         "day": "Thu",
-        "amount": 160
+        "amount": 421
       },
       {
         "day": "Fri",
-        "amount": 145
+        "amount": 142
       }
     ],
-    "insight": "Five consecutive days of inflows totaling $820M despite flat price action suggests institutional accumulation at current levels, with BlackRock's IBIT capturing the majority of flows."
+    "insight": "Weekly inflows totaled $1.78B despite Friday's slowdown\u2014the fourth consecutive week above $1B, signaling sustained institutional accumulation rather than speculative froth."
   },
-  "image_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1400&h=500&fit=crop&q=80",
+  "image_url": "https://images.unsplash.com/photo-1472120435266-53107fd0c44a?w=1400&h=500&fit=crop&q=80",
   "region": "americas",
   "type": "evening",
-  "generated_at": "2025-12-06T18:00:00-05:00",
-  "btc_price": 89163,
-  "eth_price": 3037.98,
-  "total_market_cap": 3128520324147.983,
-  "btc_24h_change": 0.01653
+  "generated_at": "2025-12-07T18:00:00-05:00",
+  "btc_price": 89829,
+  "eth_price": 3037.57,
+  "total_market_cap": 3133887900718.6113,
+  "btc_24h_change": 0.73496
 }
