@@ -38,7 +38,7 @@ const SECTIONS_MORNING = {
         defaultHeadline: 'The Opening Take'
     },
     mechanism: {
-        label: 'THE DRIVER',
+        label: 'THE MECHANISM',
         field: 'the_mechanism',
         defaultHeadline: 'What\'s Driving This'
     },
@@ -49,12 +49,12 @@ const SECTIONS_MORNING = {
     },
     behavior: {
         label: 'THE BEHAVIORAL ANGLE',
-        field: 'the_behavioral_angle',
+        field: 'the_behavioral_layer',
         defaultHeadline: 'The Psychology'
     },
     outlook: {
         label: 'LOOKING AHEAD',
-        field: 'looking_ahead',
+        field: 'the_forward_view',
         defaultHeadline: 'What to Watch'
     }
     // THE TAKEAWAY is now a separate quote box, not clickable
@@ -103,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initAudioPlayer();
     initSettings();
     initStickyHeader();
-    initBreakingNews();
     loadUserCoins();
     
     // Check brief availability first, then load content
@@ -129,16 +128,16 @@ document.addEventListener('DOMContentLoaded', () => {
 // Initialize Sticky Header
 function initStickyHeader() {
     const stickyHeader = document.getElementById('sticky-header');
-    const masthead = document.querySelector('.masthead');
+    const sectionNav = document.querySelector('.section-nav');
     
-    if (!stickyHeader) return;
+    if (!stickyHeader || !sectionNav) return;
     
-    // Use masthead bottom as threshold - shows as soon as masthead scrolls out
-    let threshold = masthead ? masthead.offsetTop + masthead.offsetHeight : 80;
+    // Get the bottom of section nav as threshold
+    let threshold = sectionNav.offsetTop + sectionNav.offsetHeight;
     
     // Update threshold on resize
     window.addEventListener('resize', () => {
-        threshold = masthead ? masthead.offsetTop + masthead.offsetHeight : 80;
+        threshold = sectionNav.offsetTop + sectionNav.offsetHeight;
     });
     
     // Show/hide on scroll
@@ -383,38 +382,12 @@ function rebuildIndexCards() {
 // Index Card Click Handlers
 function initIndexCards() {
     const cards = document.querySelectorAll('.index-card');
-    const readingPane = document.querySelector('.reading-pane');
-    const backBtn = document.getElementById('mobile-back-btn');
     
     cards.forEach(card => {
         card.addEventListener('click', () => {
             const section = card.dataset.section;
             setActiveSection(section);
-            
-            // On mobile, show the reading pane
-            if (window.innerWidth <= 600 && readingPane) {
-                readingPane.classList.add('active');
-                document.body.style.overflow = 'hidden'; // Prevent background scroll
-            }
         });
-    });
-    
-    // Mobile back button handler
-    if (backBtn) {
-        backBtn.addEventListener('click', () => {
-            if (readingPane) {
-                readingPane.classList.remove('active');
-                document.body.style.overflow = ''; // Restore scroll
-            }
-        });
-    }
-    
-    // Handle resize - close mobile reader if switching to desktop
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 600 && readingPane) {
-            readingPane.classList.remove('active');
-            document.body.style.overflow = '';
-        }
     });
 }
 
@@ -853,75 +826,64 @@ async function loadETFFlows() {
 }
 
 function getMockETFFlows() {
-    // Mock data - will be replaced with real data from /api/etf-flows
+    // Mock data - will be replaced with real data source
     return {
-        latest: {
-            amount: 127,
-            date: 'Dec 5'
+        yesterday: {
+            amount: 438,
+            date: 'Yesterday'
         },
         week: [
-            { day: 'Mon', amount: 116 },
-            { day: 'Tue', amount: -45 },
-            { day: 'Wed', amount: 57 },
-            { day: 'Thu', amount: -15 },
-            { day: 'Fri', amount: 127 }
+            { day: 'Mon', amount: 215 },
+            { day: 'Tue', amount: 380 },
+            { day: 'Wed', amount: -120 },
+            { day: 'Thu', amount: 290 },
+            { day: 'Fri', amount: 438 }
         ],
-        weekTotal: 240,
-        insight: 'Net positive week: +$240M total',
-        source: 'mock'
+        insight: 'Third consecutive day of net inflows'
     };
 }
 
 function renderETFFlows(data) {
     if (!data) return;
     
-    // Handle both API format (latest) and legacy format (yesterday)
-    const latestFlow = data.latest || data.yesterday;
-    const week = data.week || [];
-    const insight = data.insight;
+    const { yesterday, week, insight } = data;
     
-    // Update latest flow display
+    // Update yesterday's flow
     const amountEl = document.getElementById('etf-amount');
     const barEl = document.getElementById('etf-bar');
     const insightEl = document.getElementById('etf-insight');
     const dateEl = document.getElementById('etf-date');
     
-    if (amountEl && latestFlow) {
-        const amount = latestFlow.amount || 0;
-        const isInflow = amount >= 0;
+    if (amountEl && yesterday) {
+        const isInflow = yesterday.amount >= 0;
         const sign = isInflow ? '+' : '';
-        amountEl.textContent = `$${Math.abs(amount)}M`;
+        amountEl.textContent = `${sign}$${Math.abs(yesterday.amount)}M`;
         amountEl.className = `etf-amount ${isInflow ? 'positive' : 'negative'}`;
     }
     
-    if (barEl && latestFlow) {
+    if (barEl && yesterday) {
         // Scale bar: $500M = 100%
-        const amount = latestFlow.amount || 0;
         const maxFlow = 500;
-        const width = Math.min(Math.abs(amount) / maxFlow * 100, 100);
+        const width = Math.min(Math.abs(yesterday.amount) / maxFlow * 100, 100);
         barEl.style.width = `${width}%`;
-        barEl.className = `etf-bar ${amount >= 0 ? 'etf-inflow' : 'etf-outflow'}`;
+        barEl.className = `etf-bar ${yesterday.amount >= 0 ? 'etf-inflow' : 'etf-outflow'}`;
     }
     
-    if (dateEl && latestFlow) {
-        dateEl.textContent = latestFlow.date || 'Latest';
+    if (dateEl && yesterday.date) {
+        dateEl.textContent = yesterday.date;
     }
     
-    // Update week bars with values underneath
+    // Update week bars
     if (week && week.length > 0) {
         const weekContainer = document.getElementById('etf-week');
         if (weekContainer) {
             weekContainer.innerHTML = week.map(day => {
                 const isInflow = day.amount >= 0;
                 const isStrong = Math.abs(day.amount) > 300;
-                const valueClass = isInflow ? 'positive' : 'negative';
-                const displayValue = Math.abs(day.amount);
-                
-                return `<div class="etf-day-column">
-                    <div class="etf-day ${isInflow ? 'inflow' : 'outflow'}${isStrong ? ' strong' : ''}" 
-                         title="${day.day}: ${isInflow ? '+' : '-'}$${displayValue}M"></div>
-                    <span class="etf-day-value ${valueClass}">${isInflow ? '' : '-'}${displayValue}</span>
-                </div>`;
+                const sign = isInflow ? '+' : '';
+                return `<div class="etf-day ${isInflow ? 'inflow' : 'outflow'}${isStrong ? ' strong' : ''}" 
+                             data-day="${day.day.toLowerCase()}" 
+                             title="${day.day}: ${sign}$${Math.abs(day.amount)}M"></div>`;
             }).join('');
         }
     }
@@ -969,139 +931,26 @@ async function loadTheNumber() {
 }
 
 function getMockTheNumber() {
-    // Day-based mock data
-    const dayOfWeek = new Date().getDay();
-    
-    const mockData = {
-        1: { // Monday - Fear & Greed
-            metric: 'fear_greed',
-            label: 'FEAR & GREED',
-            value: '65',
-            unit: '/100',
-            subtitle: 'Greed',
-            context: 'Greed is building - momentum favors bulls, but watch for overextension',
-            interpretation: 'optimistic',
-            change: '+8 vs 30d ago',
-            source: 'mock'
-        },
-        2: { // Tuesday - BTC Dominance
-            metric: 'btc_dominance',
-            label: 'BTC DOMINANCE',
-            value: '52.1',
-            unit: '%',
-            subtitle: 'ETH: 18.5%',
-            context: 'Healthy Bitcoin leadership - alts following, not leading',
-            interpretation: 'balanced',
-            source: 'mock'
-        },
-        3: { // Wednesday - Funding Rates
-            metric: 'funding_rates',
-            label: 'FUNDING RATE',
-            value: '0.0100',
-            unit: '%',
-            subtitle: '≈ 11% APR',
-            context: 'Modest long bias - healthy bullish positioning',
-            interpretation: 'bullish-bias',
-            source: 'mock'
-        },
-        4: { // Thursday - Open Interest
-            metric: 'open_interest',
-            label: 'OPEN INTEREST',
-            value: '18.5',
-            unit: 'B',
-            subtitle: '+2.3% 24h',
-            context: 'Healthy leverage levels - normal market structure',
-            interpretation: 'normal',
-            source: 'mock'
-        },
-        // Friday, Saturday, Sunday - Stablecoin Supply
-        5: {
-            metric: 'stablecoin_supply',
-            label: 'STABLECOIN SUPPLY',
-            value: '150',
-            unit: 'B',
-            subtitle: 'USDT: $83B · USDC: $42B',
-            context: 'Dry powder stable - capital waiting on sidelines for opportunity',
-            interpretation: 'neutral',
-            source: 'mock'
-        }
+    // Mock data - will be AI-generated
+    return {
+        value: '$311B',
+        context: 'Stablecoin market cap—dry powder waiting on sidelines'
     };
-    
-    // Weekend defaults to stablecoin (same as Friday)
-    return mockData[dayOfWeek] || mockData[5];
 }
 
 function renderTheNumber(data) {
     if (!data) return;
     
-    const labelEl = document.getElementById('number-label');
-    const dayEl = document.getElementById('number-day');
     const valueEl = document.getElementById('number-value');
-    const unitEl = document.getElementById('number-unit');
-    const subtitleEl = document.getElementById('number-subtitle');
     const contextEl = document.getElementById('number-context');
-    const changeEl = document.getElementById('number-change');
     
-    // Update label (e.g., "FEAR & GREED" or "BTC DOMINANCE")
-    if (labelEl && data.label) {
-        labelEl.textContent = data.label;
+    if (valueEl && data.value) {
+        valueEl.textContent = data.value;
     }
     
-    // Show day of week for context
-    if (dayEl) {
-        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        const today = new Date().getDay();
-        dayEl.textContent = days[today];
-    }
-    
-    // Update main value
-    if (valueEl) {
-        // Handle different formats
-        if (data.value !== undefined) {
-            // Add $ for stablecoin supply
-            const prefix = data.metric === 'stablecoin_supply' ? '$' : '';
-            valueEl.textContent = prefix + data.value;
-        }
-    }
-    
-    // Update unit
-    if (unitEl) {
-        unitEl.textContent = data.unit || '';
-    }
-    
-    // Update subtitle (e.g., "USDT: $83B · USDC: $42B")
-    if (subtitleEl) {
-        if (data.subtitle) {
-            subtitleEl.textContent = data.subtitle;
-            subtitleEl.style.display = 'block';
-        } else {
-            subtitleEl.style.display = 'none';
-        }
-    }
-    
-    // Update context/interpretation
     if (contextEl && data.context) {
         contextEl.textContent = data.context;
     }
-    
-    // Update change indicator
-    if (changeEl) {
-        if (data.change) {
-            changeEl.textContent = data.change;
-            changeEl.style.display = 'inline-block';
-            // Color based on positive/negative
-            changeEl.classList.remove('positive', 'negative');
-            if (data.change.includes('+')) {
-                changeEl.classList.add('positive');
-            } else if (data.change.includes('-')) {
-                changeEl.classList.add('negative');
-            }
-        } else {
-            changeEl.style.display = 'none';
-        }
-    }
-    
-    console.log(`[The Number] ${data.label}: ${data.value}${data.unit || ''} (${data.source})`);
 }
 
 // Load Week Ahead
@@ -1246,17 +1095,14 @@ function renderReadingPane(sectionKey) {
                 'https://images.unsplash.com/photo-1559526324-593bc073d938?w=1200&h=600&fit=crop', // Abstract data
             ];
             
-            // Choose image source - priority: image_url > image_keywords > fallback
+            // Choose image source
             let imageUrl;
-            if (briefData.image_url) {
-                // Use pre-computed URL from brief generator (curated images)
-                imageUrl = briefData.image_url;
-            } else if (briefData.image_keywords) {
-                // Fallback: Use Unsplash search if only keywords provided
+            if (briefData.image_keywords) {
+                // Use Unsplash search if keywords provided
                 const keywords = encodeURIComponent(briefData.image_keywords);
                 imageUrl = `https://source.unsplash.com/1200x600/?${keywords}`;
             } else {
-                // Final fallback: Use random based on headline hash for consistency
+                // Use random fallback based on headline hash for consistency
                 const hash = headline.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
                 imageUrl = unsplashFallbacks[hash % unsplashFallbacks.length];
             }
@@ -1352,7 +1198,6 @@ function renderWeekAhead(data) {
 // Initialize Week Card Clicks
 function initWeekCards() {
     const cards = document.querySelectorAll('.week-card');
-    const readingPane = document.querySelector('.reading-pane');
     
     cards.forEach(card => {
         card.addEventListener('click', () => {
@@ -1367,12 +1212,6 @@ function initWeekCards() {
             
             // Show in reading pane
             renderWeekAheadPane(sectionKey);
-            
-            // On mobile, show the reading pane
-            if (window.innerWidth <= 600 && readingPane) {
-                readingPane.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
         });
     });
 }
@@ -1826,8 +1665,25 @@ function parseDurationSeconds(duration) {
 
 // ========== USER SETTINGS & COINS ==========
 
-// Load user coins from localStorage
+// Load user coins from localStorage - Personal Edition takes priority
 function loadUserCoins() {
+    // Try Personal Edition first
+    const personalSaved = localStorage.getItem('litmus_personal_coins');
+    if (personalSaved) {
+        try {
+            const personalCoins = JSON.parse(personalSaved);
+            // Get holdings only (exclude watching)
+            const holdings = personalCoins.filter(c => c.weight !== 'watching');
+            if (holdings.length > 0) {
+                userCoins = holdings.map(c => c.id);
+                return;
+            }
+        } catch (e) {
+            console.warn('Failed to parse Personal Edition coins');
+        }
+    }
+    
+    // Fallback to old storage
     const saved = localStorage.getItem('litmus_user_coins');
     if (saved) {
         try {
@@ -2134,188 +1990,6 @@ function trackEvent(eventName, params = {}) {
         console.log('[GA4] Event:', eventName, params);
     }
 }
-
-// ============================================
-// BREAKING NEWS
-// ============================================
-
-const BREAKING_CONFIG = {
-    pollInterval: 60000,        // Check every 60 seconds
-    apiEndpoint: '/api/breaking-news',
-    dismissedKey: 'litmus-breaking-dismissed',
-    maxDismissedAge: 4 * 3600 * 1000  // Remember dismissals for 4 hours
-};
-
-let breakingNewsInterval = null;
-
-function initBreakingNews() {
-    console.log('[Breaking] Initializing breaking news monitor');
-    
-    // Setup dismiss button
-    const dismissBtn = document.getElementById('breaking-dismiss');
-    if (dismissBtn) {
-        dismissBtn.addEventListener('click', dismissBreakingNews);
-    }
-    
-    // Check immediately on load
-    checkBreakingNews();
-    
-    // Then poll periodically
-    breakingNewsInterval = setInterval(checkBreakingNews, BREAKING_CONFIG.pollInterval);
-}
-
-async function checkBreakingNews() {
-    try {
-        const response = await fetch(BREAKING_CONFIG.apiEndpoint);
-        
-        if (!response.ok) {
-            console.log('[Breaking] API not available');
-            return;
-        }
-        
-        const data = await response.json();
-        
-        if (data.breaking) {
-            // Check if user dismissed this story
-            if (isBreakingDismissed(data.breaking.id)) {
-                console.log('[Breaking] Story already dismissed by user');
-                hideBreakingNews();
-                return;
-            }
-            
-            displayBreakingNews(data.breaking);
-        } else {
-            hideBreakingNews();
-        }
-        
-    } catch (error) {
-        console.log('[Breaking] Check failed:', error.message);
-        // Silently fail - don't show error to user
-    }
-}
-
-function displayBreakingNews(breaking) {
-    const banner = document.getElementById('breaking-news-banner');
-    const headline = document.getElementById('breaking-headline');
-    const summary = document.getElementById('breaking-summary');
-    const implication = document.getElementById('breaking-implication');
-    const source = document.getElementById('breaking-source');
-    const time = document.getElementById('breaking-time');
-    
-    if (!banner) return;
-    
-    // Populate content
-    if (headline) headline.textContent = breaking.headline;
-    if (summary) summary.textContent = breaking.summary;
-    if (implication) implication.textContent = breaking.implication;
-    
-    if (source && breaking.source) {
-        source.textContent = `Source: ${breaking.source.name}`;
-        source.href = breaking.source.url;
-    }
-    
-    if (time && breaking.published_at) {
-        time.textContent = formatBreakingTime(breaking.published_at);
-    }
-    
-    // Apply severity class
-    banner.classList.remove('severity-high', 'severity-medium');
-    if (breaking.severity) {
-        banner.classList.add(`severity-${breaking.severity}`);
-    }
-    
-    // Store the current breaking ID for dismiss tracking
-    banner.dataset.breakingId = breaking.id;
-    
-    // Show the banner
-    banner.style.display = 'block';
-    
-    console.log('[Breaking] Displaying:', breaking.headline);
-}
-
-function hideBreakingNews() {
-    const banner = document.getElementById('breaking-news-banner');
-    if (banner) {
-        banner.style.display = 'none';
-    }
-}
-
-function dismissBreakingNews() {
-    const banner = document.getElementById('breaking-news-banner');
-    if (!banner) return;
-    
-    const breakingId = banner.dataset.breakingId;
-    
-    // Save dismissal to localStorage
-    if (breakingId) {
-        saveDismissed(breakingId);
-    }
-    
-    // Hide the banner
-    hideBreakingNews();
-    
-    console.log('[Breaking] User dismissed:', breakingId);
-}
-
-function saveDismissed(breakingId) {
-    try {
-        const dismissed = getDismissedList();
-        dismissed[breakingId] = Date.now();
-        
-        // Clean up old dismissals
-        const cutoff = Date.now() - BREAKING_CONFIG.maxDismissedAge;
-        for (const id in dismissed) {
-            if (dismissed[id] < cutoff) {
-                delete dismissed[id];
-            }
-        }
-        
-        localStorage.setItem(BREAKING_CONFIG.dismissedKey, JSON.stringify(dismissed));
-    } catch (e) {
-        // localStorage not available
-    }
-}
-
-function getDismissedList() {
-    try {
-        const stored = localStorage.getItem(BREAKING_CONFIG.dismissedKey);
-        return stored ? JSON.parse(stored) : {};
-    } catch (e) {
-        return {};
-    }
-}
-
-function isBreakingDismissed(breakingId) {
-    const dismissed = getDismissedList();
-    const dismissedAt = dismissed[breakingId];
-    
-    if (!dismissedAt) return false;
-    
-    // Check if dismissal is still valid (within max age)
-    const age = Date.now() - dismissedAt;
-    return age < BREAKING_CONFIG.maxDismissedAge;
-}
-
-function formatBreakingTime(isoString) {
-    const date = new Date(isoString);
-    const now = new Date();
-    const diffMs = now - date;
-    const diffMins = Math.floor(diffMs / 60000);
-    
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    
-    const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours}h ago`;
-    
-    return date.toLocaleDateString('en-US', { 
-        month: 'short', 
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit'
-    });
-}
-
 
 // Track initial page load with region
 document.addEventListener('DOMContentLoaded', () => {
