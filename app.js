@@ -49,12 +49,12 @@ const SECTIONS_MORNING = {
     },
     behavior: {
         label: 'THE BEHAVIORAL ANGLE',
-        field: 'the_behavioral_layer',
+        field: 'the_behavioral_angle',
         defaultHeadline: 'The Psychology'
     },
     outlook: {
         label: 'LOOKING AHEAD',
-        field: 'the_forward_view',
+        field: 'looking_ahead',
         defaultHeadline: 'What to Watch'
     }
     // THE TAKEAWAY is now a separate quote box, not clickable
