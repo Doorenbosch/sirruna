@@ -48,10 +48,62 @@ let state = {
 // ===== Initialize =====
 document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
+    setupStickyHeader();
     loadUserCoins();
     loadAvailableCoins();
     render();
 });
+
+// ===== Sticky Header =====
+function setupStickyHeader() {
+    const stickyHeader = document.getElementById('sticky-header');
+    let lastScroll = 0;
+    
+    window.addEventListener('scroll', () => {
+        const currentScroll = window.pageYOffset;
+        
+        if (currentScroll > 150) {
+            stickyHeader.classList.add('visible');
+        } else {
+            stickyHeader.classList.remove('visible');
+        }
+        
+        lastScroll = currentScroll;
+    });
+}
+
+function updateStickyPrices() {
+    const btc = state.coinData['bitcoin'];
+    const eth = state.coinData['ethereum'];
+    
+    if (btc) {
+        const btcPrice = document.getElementById('sticky-btc-price');
+        const btcChange = document.getElementById('sticky-btc-change');
+        if (btcPrice) btcPrice.textContent = btc.price ? `$${(btc.price / 1000).toFixed(1)}k` : '---';
+        if (btcChange) {
+            const change = btc.change7d || 0;
+            btcChange.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
+            btcChange.className = `sticky-change ${change >= 0 ? 'positive' : 'negative'}`;
+        }
+    }
+    
+    if (eth) {
+        const ethPrice = document.getElementById('sticky-eth-price');
+        const ethChange = document.getElementById('sticky-eth-change');
+        if (ethPrice) ethPrice.textContent = eth.price ? `$${eth.price.toFixed(0)}` : '---';
+        if (ethChange) {
+            const change = eth.change7d || 0;
+            ethChange.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
+            ethChange.className = `sticky-change ${change >= 0 ? 'positive' : 'negative'}`;
+        }
+    }
+    
+    const marketEl = document.getElementById('sticky-market');
+    if (marketEl) {
+        const marketChange = state.marketChange7d || 0;
+        marketEl.textContent = `${marketChange >= 0 ? '+' : ''}${marketChange.toFixed(1)}%`;
+    }
+}
 
 // ===== LocalStorage =====
 function loadUserCoins() {
@@ -145,6 +197,9 @@ async function fetchPriceData() {
         // Calculate segment averages
         calculateSegmentChanges();
         
+        // Update sticky header prices
+        updateStickyPrices();
+        
     } catch (e) {
         console.error('Failed to fetch price data:', e);
         state.marketChange7d = 2;
@@ -229,13 +284,13 @@ function renderChart() {
     // Render each coin
     state.userCoins.forEach(coin => {
         const data = state.coinData[coin.id];
-        if (!data) return;
-        
-        const change = state.period === 7 ? data.change7d : 
-                       state.period === 90 ? data.change90d : 
-                       data.change30d;
         const segment = SEGMENTS[coin.segment];
         if (!segment) return;
+        
+        // For watching coins, render even without price data
+        const change = data ? (state.period === 7 ? data.change7d : 
+                       state.period === 90 ? data.change90d : 
+                       data.change30d) : 0;
         
         const x = percentToX(change);
         const y = segmentToY(segment.row);
@@ -250,7 +305,9 @@ function renderChart() {
             el.onclick = () => openEditCoinModal(coin);
             chartArea.appendChild(el);
         } else {
-            // Dot for holdings
+            // Dot for holdings - need data
+            if (!data) return;
+            
             const el = document.createElement('div');
             const isOutperforming = change > marketChange;
             el.className = `coin-dot ${coin.weight} ${isOutperforming ? 'outperforming' : 'underperforming'}`;

@@ -97,6 +97,94 @@ body {
     font-family: var(--sans);
 }
 
+/* ===== Sticky Header ===== */
+.sticky-header {
+    position: fixed;
+    top: -60px;
+    left: 0;
+    right: 0;
+    height: 48px;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 var(--lg);
+    z-index: 1000;
+    transition: top 0.3s ease;
+}
+
+.sticky-header.visible {
+    top: 0;
+}
+
+.sticky-left {
+    display: flex;
+    gap: var(--lg);
+}
+
+.sticky-ticker {
+    display: flex;
+    align-items: center;
+    gap: var(--xs);
+}
+
+.sticky-label {
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--ink-tertiary);
+}
+
+.sticky-value {
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.sticky-change {
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+.sticky-change.positive {
+    color: var(--teal);
+}
+
+.sticky-change.negative {
+    color: var(--burgundy);
+}
+
+.sticky-right {
+    display: flex;
+    align-items: center;
+}
+
+.sticky-nav {
+    display: flex;
+    gap: var(--md);
+}
+
+.sticky-link {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--ink-tertiary);
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.sticky-link:hover {
+    color: var(--ink);
+}
+
+.sticky-link.active {
+    color: var(--ink);
+    font-weight: 600;
+}
+
 /* ===== Main Content ===== */
 .personal-main {
     padding: var(--xl) 0;
@@ -354,16 +442,20 @@ body {
     position: absolute;
     transform: translate(-50%, -50%);
     font-family: var(--sans);
-    font-size: 0.7rem;
-    font-weight: 500;
-    color: var(--ink-tertiary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--ink-secondary);
     cursor: pointer;
     z-index: 10;
     transition: color 0.15s;
+    background: rgba(255,255,255,0.8);
+    padding: 2px 6px;
+    border-radius: 3px;
 }
 
 .coin-watching:hover {
-    color: var(--ink-secondary);
+    color: var(--ink);
+    background: rgba(255,255,255,1);
 }
 
 /* Outperforming vs underperforming */
@@ -507,18 +599,21 @@ body {
 }
 
 .coin-icon {
-    width: 40px;
-    height: 40px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
-    background: var(--teal);
+    background: #FFF8F2;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+    padding: 6px;
 }
 
 .coin-icon img {
-    width: 24px;
-    height: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
 }
 
 .coin-info {
@@ -536,8 +631,9 @@ body {
 
 .coin-meta {
     font-family: var(--sans);
-    font-size: 0.75rem;
-    color: var(--ink-tertiary);
+    font-size: 0.8rem;
+    color: var(--ink-secondary);
+    font-weight: 500;
 }
 
 .coin-performance {
