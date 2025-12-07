@@ -43,9 +43,9 @@ body {
 
 /* Container */
 .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 var(--lg);
+    padding: var(--lg) var(--xl);
 }
 
 /* Settings Button - positioned in masthead-right */
@@ -72,8 +72,6 @@ body {
     width: 40px;
     height: 40px;
     border-radius: 8px;
-    background: var(--ink);
-    padding: 4px;
 }
 
 .brand-link {
