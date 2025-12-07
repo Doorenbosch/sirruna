@@ -16,6 +16,9 @@ async function init() {
     // Set date
     setMagazineDate();
     
+    // Initialize sticky header
+    initStickyHeader();
+    
     // Load magazine content
     await loadMagazineContent();
     
@@ -27,6 +30,80 @@ async function init() {
     
     // Load relative performance
     loadRelativePerformance();
+}
+
+// Sticky Header
+function initStickyHeader() {
+    const stickyHeader = document.getElementById('sticky-header');
+    const sectionNav = document.querySelector('.section-nav');
+    
+    if (!stickyHeader) return;
+    
+    // Get threshold
+    let threshold = sectionNav ? sectionNav.offsetTop + sectionNav.offsetHeight : 150;
+    
+    // Update threshold on resize
+    window.addEventListener('resize', () => {
+        if (sectionNav) {
+            threshold = sectionNav.offsetTop + sectionNav.offsetHeight;
+        }
+    });
+    
+    // Show/hide on scroll
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > threshold) {
+            stickyHeader.classList.add('visible');
+        } else {
+            stickyHeader.classList.remove('visible');
+        }
+    });
+    
+    // Load sticky prices
+    loadStickyPrices();
+}
+
+async function loadStickyPrices() {
+    try {
+        const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum&order=market_cap_desc&sparkline=false&price_change_percentage=7d');
+        if (!response.ok) return;
+        
+        const coins = await response.json();
+        const btc = coins.find(c => c.id === 'bitcoin');
+        const eth = coins.find(c => c.id === 'ethereum');
+        
+        if (btc) {
+            const btcPrice = document.getElementById('sticky-btc-price');
+            const btcChange = document.getElementById('sticky-btc-change');
+            if (btcPrice) btcPrice.textContent = `$${(btc.current_price / 1000).toFixed(1)}k`;
+            if (btcChange) {
+                const change = btc.price_change_percentage_7d_in_currency || 0;
+                btcChange.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
+                btcChange.className = `sticky-change ${change >= 0 ? 'positive' : 'negative'}`;
+            }
+        }
+        
+        if (eth) {
+            const ethPrice = document.getElementById('sticky-eth-price');
+            const ethChange = document.getElementById('sticky-eth-change');
+            if (ethPrice) ethPrice.textContent = `$${(eth.current_price / 1000).toFixed(1)}k`;
+            if (ethChange) {
+                const change = eth.price_change_percentage_7d_in_currency || 0;
+                ethChange.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
+                ethChange.className = `sticky-change ${change >= 0 ? 'positive' : 'negative'}`;
+            }
+        }
+        
+        // Market = average of BTC + ETH
+        const marketEl = document.getElementById('sticky-market');
+        if (marketEl && btc && eth) {
+            const btcChange = btc.price_change_percentage_7d_in_currency || 0;
+            const ethChange = eth.price_change_percentage_7d_in_currency || 0;
+            const avgChange = (btcChange + ethChange) / 2;
+            marketEl.textContent = `${avgChange >= 0 ? '+' : ''}${avgChange.toFixed(1)}%`;
+        }
+    } catch (e) {
+        console.warn('[Weekend] Could not load sticky prices:', e);
+    }
 }
 
 function setMagazineDate() {

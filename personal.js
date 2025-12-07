@@ -90,7 +90,7 @@ function updateStickyPrices() {
     if (eth) {
         const ethPrice = document.getElementById('sticky-eth-price');
         const ethChange = document.getElementById('sticky-eth-change');
-        if (ethPrice) ethPrice.textContent = eth.price ? `$${eth.price.toFixed(0)}` : '---';
+        if (ethPrice) ethPrice.textContent = eth.price ? `$${(eth.price / 1000).toFixed(1)}k` : '---';
         if (ethChange) {
             const change = eth.change7d || 0;
             ethChange.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
