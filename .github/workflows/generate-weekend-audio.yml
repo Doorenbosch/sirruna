@@ -1,0 +1,81 @@
+# .github/workflows/generate-weekend-audio.yml
+# Generates audio for The Week in Review every Saturday
+
+name: 🎙️ Generate Weekend Audio
+
+on:
+  workflow_dispatch:  # Manual trigger
+    inputs:
+      force_regenerate:
+        description: 'Force regenerate even if audio exists'
+        required: false
+        default: 'false'
+        type: boolean
+  
+  # Run after weekend magazine is generated
+  workflow_run:
+    workflows: ["Generate Weekend Magazine"]
+    types:
+      - completed
+  
+  # Or on schedule - Saturday 9 AM UTC (after magazine generation)
+  schedule:
+    - cron: '0 9 * * 6'
+
+jobs:
+  generate-audio:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: 📦 Install dependencies
+        run: pip install requests
+      
+      - name: 🔍 Check if audio already exists
+        id: check
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          AUDIO_FILE="content/weekend/audio/week-in-review-${DATE}.mp3"
+          if [ -f "$AUDIO_FILE" ] && [ "${{ inputs.force_regenerate }}" != "true" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Audio already exists: $AUDIO_FILE"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: 🎙️ Generate audio
+        if: steps.check.outputs.exists != 'true'
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          ELEVENLABS_VOICE_ID: ${{ secrets.ELEVENLABS_VOICE_ID }}
+        run: python scripts/generate_audio.py
+      
+      - name: 📤 Commit and push
+        if: steps.check.outputs.exists != 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add content/weekend/audio/ || true
+          git add content/weekend/magazine.json || true
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "🎙️ Generate Week in Review audio - $(date +%Y-%m-%d)"
+            git push
+          fi
+      
+      - name: 🚀 Trigger Vercel deploy
+        if: steps.check.outputs.exists != 'true'
+        run: |
+          curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}" || echo "Deploy hook not configured"
