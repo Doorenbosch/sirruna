@@ -442,9 +442,32 @@ a {
     color: var(--ink);
 }
 
-/* ========== STICKY HEADER (Hidden - using fixed header instead) ========== */
-.sticky-header {
+/* ========== STICKY HEADER ========== */
+/* Hidden on Daily Edition (using fixed header instead) */
+/* Weekend Magazine uses .weekend-sticky class */
+.sticky-header:not(.weekend-sticky) {
     display: none;
+}
+
+.sticky-header.weekend-sticky {
+    position: fixed;
+    top: -60px;
+    left: 0;
+    right: 0;
+    height: 48px;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--xl);
+    z-index: 1000;
+    transition: top 0.25s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.sticky-header.weekend-sticky.visible {
+    top: 0;
 }
 
 .sticky-left {

@@ -107,6 +107,7 @@ max-width: 600px;
 grid-template-columns: 280px 1fr 320px;
 height: calc(100vh - 60px); /* Full height minus header */
 overflow: hidden;
+margin-top: var(--xl); /* Reset from Daily Edition's 250px */
 }
 
 /* Independent scrolling columns */
