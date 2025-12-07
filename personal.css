@@ -67,6 +67,25 @@ body {
     color: white;
 }
 
+/* Brand logo - match Weekend Magazine */
+.brand-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+}
+
+.brand-link {
+    display: flex;
+    align-items: center;
+    gap: var(--md);
+    text-decoration: none;
+}
+
+.brand-name em {
+    font-style: italic;
+    font-weight: 400;
+}
+
 /* ===== Main Content ===== */
 .personal-main {
     padding: var(--xl) 0;
