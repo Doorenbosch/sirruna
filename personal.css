@@ -86,6 +86,15 @@ body {
     font-weight: 400;
 }
 
+/* Navigation - ensure sans-serif */
+.section-nav {
+    font-family: var(--sans);
+}
+
+.section-link {
+    font-family: var(--sans);
+}
+
 /* ===== Main Content ===== */
 .personal-main {
     padding: var(--xl) 0;
