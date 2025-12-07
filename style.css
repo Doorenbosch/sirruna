@@ -423,6 +423,7 @@ a {
 /* ========== SECTION NAV ========== */
 .section-nav {
     display: flex;
+    justify-content: flex-end;
     gap: var(--lg);
     padding: var(--md) 0;
     border-bottom: 2px solid var(--ink);
@@ -554,8 +555,8 @@ a {
     display: grid;
     grid-template-columns: 260px 1fr 300px;
     gap: var(--xl);
-    margin-top: 130px; /* Below fixed header */
-    height: calc(100vh - 150px); /* Viewport minus header + padding */
+    margin-top: 160px; /* Below fixed header */
+    height: calc(100vh - 180px); /* Viewport minus header + padding */
 }
 
 /* ========== ARTICLE INDEX (Left) ========== */

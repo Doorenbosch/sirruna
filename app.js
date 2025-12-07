@@ -38,7 +38,7 @@ const SECTIONS_MORNING = {
         defaultHeadline: 'The Opening Take'
     },
     mechanism: {
-        label: 'THE MECHANISM',
+        label: 'THE DRIVER',
         field: 'the_mechanism',
         defaultHeadline: 'What\'s Driving This'
     },
