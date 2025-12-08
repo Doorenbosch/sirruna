@@ -939,3 +939,100 @@ body {
         max-height: 90vh;
     }
 }
+
+/* ========== SETTINGS SECTIONS ========== */
+.settings-section {
+    margin-bottom: var(--lg);
+}
+
+.settings-section h3 {
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 0 0 var(--xs) 0;
+}
+
+.settings-section h4 {
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ink-secondary);
+    margin: var(--md) 0 var(--xs) 0;
+}
+
+.settings-hint {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    color: var(--ink-tertiary);
+    margin: 0 0 var(--sm) 0;
+}
+
+.settings-divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: var(--lg) 0;
+}
+
+/* ========== REGION SELECTOR ========== */
+.region-options {
+    display: flex;
+    gap: var(--sm);
+}
+
+.region-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--xs);
+    padding: var(--md);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    background: var(--paper);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.region-btn:hover {
+    border-color: var(--teal);
+    background: rgba(26, 95, 90, 0.05);
+}
+
+.region-btn.active {
+    border-color: var(--teal);
+    background: rgba(26, 95, 90, 0.1);
+}
+
+.region-btn .region-icon {
+    font-size: 1.5rem;
+}
+
+.region-btn .region-name {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--ink);
+    text-align: center;
+}
+
+.region-btn.active .region-name {
+    color: var(--teal);
+    font-weight: 600;
+}
+
+@media (max-width: 480px) {
+    .region-options {
+        flex-direction: column;
+    }
+    
+    .region-btn {
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: var(--sm) var(--md);
+    }
+    
+    .region-btn .region-icon {
+        font-size: 1.2rem;
+    }
+}

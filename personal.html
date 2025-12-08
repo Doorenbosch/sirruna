@@ -46,11 +46,11 @@
             <!-- User dropdown menu -->
             <div class="user-menu" id="user-menu">
                 <div class="user-menu-header">
-                    <p class="user-menu-email" id="user-email">user@example.com</p>
+                    <p class="user-menu-email" id="user-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="225751475062475a434f524e470c414d4f">[email&#160;protected]</a></p>
                     <p class="user-menu-plan" id="user-plan">Free Plan</p>
                 </div>
                 <div class="user-menu-items">
-                    <button class="user-menu-item" onclick="window.location.href='personal.html'">
+                    <button class="user-menu-item" id="open-settings">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
                         Settings
                     </button>
@@ -196,29 +196,56 @@
     <div class="modal-overlay" id="settings-modal">
         <div class="modal">
             <header class="modal-header">
-                <h2>Your Coins</h2>
+                <h2>Settings</h2>
                 <button class="modal-close" id="close-settings">&times;</button>
             </header>
             
             <div class="modal-body">
-                <!-- Search -->
-                <div class="search-container">
-                    <input type="text" id="coin-search" placeholder="Search coins..." class="search-input">
-                </div>
-
-                <!-- Selected Coins -->
-                <div class="selected-coins" id="selected-coins">
-                    <h3>Selected <span id="selected-count">(0/5)</span></h3>
-                    <div class="selected-list" id="selected-list">
-                        <p class="empty-selected">No coins selected</p>
+                <!-- Region Selection -->
+                <div class="settings-section">
+                    <h3>Your Region</h3>
+                    <p class="settings-hint">Sets the timing for your morning brief</p>
+                    <div class="region-options" id="region-options">
+                        <button class="region-btn" data-region="apac">
+                            <span class="region-icon">🌏</span>
+                            <span class="region-name">Asia-Pacific</span>
+                        </button>
+                        <button class="region-btn" data-region="emea">
+                            <span class="region-icon">🌍</span>
+                            <span class="region-name">Europe & Middle East</span>
+                        </button>
+                        <button class="region-btn" data-region="americas">
+                            <span class="region-icon">🌎</span>
+                            <span class="region-name">Americas</span>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Available Coins -->
-                <div class="available-coins">
-                    <h3>Top 100 Coins</h3>
-                    <div class="coins-grid" id="available-coins">
-                        <!-- Populated by JS -->
+                <hr class="settings-divider">
+
+                <!-- Coin Selection -->
+                <div class="settings-section">
+                    <h3>Your Coins</h3>
+                    
+                    <!-- Search -->
+                    <div class="search-container">
+                        <input type="text" id="coin-search" placeholder="Search coins..." class="search-input">
+                    </div>
+
+                    <!-- Selected Coins -->
+                    <div class="selected-coins" id="selected-coins">
+                        <h4>Selected <span id="selected-count">(0/5)</span></h4>
+                        <div class="selected-list" id="selected-list">
+                            <p class="empty-selected">No coins selected</p>
+                        </div>
+                    </div>
+
+                    <!-- Available Coins -->
+                    <div class="available-coins">
+                        <h4>Top 100 Coins</h4>
+                        <div class="coins-grid" id="available-coins">
+                            <!-- Populated by JS -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -316,7 +343,7 @@
     </div>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     
@@ -360,12 +387,4 @@
     });
     
     // Listen for user data updates and refresh focus coins
-    window.addEventListener('userDataLoaded', (e) => {
-        console.log('[Personal] User data loaded, refreshing...');
-        if (typeof loadFocusCoins === 'function') {
-            loadFocusCoins();
-        }
-    });
-    </script>
-</body>
-</html>
+    window.addEventListen

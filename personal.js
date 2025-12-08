@@ -45,7 +45,8 @@ let state = {
     segmentChanges: {}, // { segment: { change7d, change30d, change90d } }
     availableCoins: [], // Top 100 from CoinGecko
     period: 30, // 7, 30, or 90 days
-    editingCoin: null
+    editingCoin: null,
+    region: 'americas' // apac, emea, americas
 };
 
 // ===== Initialize =====
@@ -121,6 +122,20 @@ function loadUserCoins() {
     } catch (e) {
         console.error('Failed to load saved coins:', e);
     }
+}
+
+function loadRegionSelection() {
+    // Get current region from userSync or localStorage
+    if (typeof userSync !== 'undefined' && userSync.getRegion) {
+        state.region = userSync.getRegion();
+    } else {
+        state.region = localStorage.getItem('litmus_region') || 'americas';
+    }
+    
+    // Update UI
+    document.querySelectorAll('#region-options .region-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.region === state.region);
+    });
 }
 
 async function saveUserCoins() {
@@ -741,41 +756,78 @@ function removeEditCoin() {
 
 // ===== Event Listeners =====
 function setupEventListeners() {
-    // Open settings
-    document.getElementById('open-settings').onclick = () => {
-        renderSelectedCoins();
-        renderAvailableCoins();
-        document.getElementById('settings-modal').classList.add('active');
-    };
+    // Open settings (from user menu)
+    const openSettingsBtn = document.getElementById('open-settings');
+    if (openSettingsBtn) {
+        openSettingsBtn.addEventListener('click', () => {
+            // Close user menu if open
+            const userMenu = document.getElementById('user-menu');
+            if (userMenu) userMenu.classList.remove('active');
+            
+            // Load current region
+            loadRegionSelection();
+            
+            renderSelectedCoins();
+            renderAvailableCoins();
+            document.getElementById('settings-modal').classList.add('active');
+        });
+    }
     
-    document.getElementById('empty-add-coins').onclick = () => {
-        renderSelectedCoins();
-        renderAvailableCoins();
-        document.getElementById('settings-modal').classList.add('active');
-    };
+    // Open settings from empty state
+    const emptyAddBtn = document.getElementById('empty-add-coins');
+    if (emptyAddBtn) {
+        emptyAddBtn.onclick = () => {
+            // Load current region
+            loadRegionSelection();
+            
+            renderSelectedCoins();
+            renderAvailableCoins();
+            document.getElementById('settings-modal').classList.add('active');
+        };
+    }
     
     // Close settings
-    document.getElementById('close-settings').onclick = () => {
-        document.getElementById('settings-modal').classList.remove('active');
-    };
+    const closeSettingsBtn = document.getElementById('close-settings');
+    if (closeSettingsBtn) {
+        closeSettingsBtn.onclick = () => {
+            document.getElementById('settings-modal').classList.remove('active');
+        };
+    }
     
-    document.getElementById('cancel-settings').onclick = () => {
-        // Reload from storage (discard changes)
-        loadUserCoins();
-        document.getElementById('settings-modal').classList.remove('active');
-    };
+    const cancelSettingsBtn = document.getElementById('cancel-settings');
+    if (cancelSettingsBtn) {
+        cancelSettingsBtn.onclick = () => {
+            // Reload from storage (discard changes)
+            loadUserCoins();
+            document.getElementById('settings-modal').classList.remove('active');
+        };
+    }
     
     // Save settings
-    document.getElementById('save-settings').onclick = () => {
-        saveUserCoins();
-        document.getElementById('settings-modal').classList.remove('active');
-        render();
-    };
+    const saveSettingsBtn = document.getElementById('save-settings');
+    if (saveSettingsBtn) {
+        saveSettingsBtn.onclick = async () => {
+            saveUserCoins();
+            
+            // Save region
+            if (typeof userSync !== 'undefined') {
+                await userSync.saveRegion(state.region);
+            } else {
+                localStorage.setItem('litmus_region', state.region);
+            }
+            
+            document.getElementById('settings-modal').classList.remove('active');
+            render();
+        };
+    }
     
     // Search
-    document.getElementById('coin-search').oninput = (e) => {
-        renderAvailableCoins(e.target.value);
-    };
+    const coinSearch = document.getElementById('coin-search');
+    if (coinSearch) {
+        coinSearch.oninput = (e) => {
+            renderAvailableCoins(e.target.value);
+        };
+    }
     
     // Edit coin modal
     document.getElementById('close-edit-coin').onclick = closeEditCoinModal;
@@ -795,6 +847,15 @@ function setupEventListeners() {
         btn.onclick = () => {
             document.querySelectorAll('#segment-options .segment-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+        };
+    });
+    
+    // Region buttons
+    document.querySelectorAll('#region-options .region-btn').forEach(btn => {
+        btn.onclick = () => {
+            document.querySelectorAll('#region-options .region-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            state.region = btn.dataset.region;
         };
     });
     
