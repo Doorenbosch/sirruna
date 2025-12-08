@@ -363,11 +363,14 @@
         if (menu) {
             menu.classList.toggle('active');
             console.log('[UI] User menu toggled:', menu.classList.contains('active'));
+        } else {
+            console.error('[UI] User menu element not found');
         }
     }
     
     // Handle auth button click
-    function handleAuthClick() {
+    function handleAuthClick(e) {
+        e.stopPropagation(); // Prevent document click from immediately closing
         console.log('[UI] Auth button clicked');
         if (typeof isSignedIn === 'function' && isSignedIn()) {
             console.log('[UI] User is signed in, showing menu');
@@ -381,14 +384,23 @@
     }
     
     // Set up auth button click handler
-    document.getElementById('auth-button').addEventListener('click', handleAuthClick);
+    const authBtn = document.getElementById('auth-button');
+    if (authBtn) {
+        authBtn.addEventListener('click', handleAuthClick);
+        console.log('[UI] Auth button handler attached');
+    } else {
+        console.error('[UI] Auth button not found!');
+    }
     
     // Close menu when clicking outside
     document.addEventListener('click', (e) => {
         const menu = document.getElementById('user-menu');
         const authBtn = document.getElementById('auth-button');
-        if (menu && authBtn && !menu.contains(e.target) && !authBtn.contains(e.target)) {
-            menu.classList.remove('active');
+        if (menu && menu.classList.contains('active')) {
+            if (!menu.contains(e.target) && !authBtn.contains(e.target)) {
+                menu.classList.remove('active');
+                console.log('[UI] Menu closed by outside click');
+            }
         }
     });
     

@@ -16,6 +16,8 @@
     justify-content: center;
     transition: all 0.2s ease;
     overflow: hidden;
+    position: relative;
+    z-index: 10;
 }
 
 .auth-button:hover {
@@ -308,7 +310,7 @@
     visibility: hidden;
     transform: translateY(-10px);
     transition: all 0.2s ease;
-    z-index: 100;
+    z-index: 9999;
 }
 
 .user-menu.active {
