@@ -1761,6 +1761,7 @@ function initSettings() {
     const settingsBtn = document.getElementById('settings-btn');
     const modal = document.getElementById('settings-modal');
     const closeBtn = document.getElementById('modal-close');
+    const cancelBtn = document.getElementById('cancel-settings');
     const saveBtn = document.getElementById('save-settings');
     const searchInput = document.getElementById('coin-search');
     
@@ -1774,6 +1775,10 @@ function initSettings() {
         closeBtn.addEventListener('click', closeSettingsModal);
     }
     
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', closeSettingsModal);
+    }
+    
     if (modal) {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
@@ -1783,7 +1788,31 @@ function initSettings() {
     }
     
     if (saveBtn) {
-        saveBtn.addEventListener('click', () => {
+        saveBtn.addEventListener('click', async () => {
+            // Save region
+            const activeRegionBtn = document.querySelector('#region-options .region-btn.active');
+            if (activeRegionBtn) {
+                const newRegion = activeRegionBtn.dataset.region;
+                localStorage.setItem('litmus_region', newRegion);
+                
+                // Update the region picker buttons in header
+                if (newRegion !== currentRegion) {
+                    currentRegion = newRegion;
+                    document.querySelectorAll('.edition').forEach(btn => {
+                        btn.classList.toggle('active', btn.dataset.region === newRegion);
+                    });
+                    updateStickyRegion();
+                    await checkBriefAvailability(newRegion);
+                    await loadContent(newRegion, currentBriefType);
+                }
+                
+                // Sync to cloud if signed in
+                if (typeof userSync !== 'undefined' && userSync.saveRegion) {
+                    await userSync.saveRegion(newRegion);
+                }
+            }
+            
+            // Save coins
             saveUserCoins();
             loadYourCoins();
             closeSettingsModal();
@@ -1795,12 +1824,30 @@ function initSettings() {
             filterCoinList(e.target.value);
         });
     }
+    
+    // Region button click handlers
+    document.querySelectorAll('#region-options .region-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('#region-options .region-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
 }
 
 // Open settings modal
 async function openSettingsModal() {
     const modal = document.getElementById('settings-modal');
     if (modal) {
+        // Close user menu if open
+        const userMenu = document.getElementById('user-menu');
+        if (userMenu) userMenu.classList.remove('active');
+        
+        // Load current region selection
+        const currentRegion = localStorage.getItem('litmus_region') || 'americas';
+        document.querySelectorAll('#region-options .region-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.region === currentRegion);
+        });
+        
         modal.classList.add('active');
         await loadCoinList();
         renderCoinList();

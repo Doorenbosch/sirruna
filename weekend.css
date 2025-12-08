@@ -1046,3 +1046,214 @@ font-style: italic;
     opacity: 0.4;
     z-index: 3;
 }
+
+/* ========== SETTINGS MODAL ========== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal {
+    background: var(--paper);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 480px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    transform: translateY(20px);
+    transition: transform 0.2s;
+}
+
+.modal-overlay.active .modal {
+    transform: translateY(0);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--lg);
+    border-bottom: 1px solid var(--rule);
+}
+
+.modal-title {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--ink-tertiary);
+    cursor: pointer;
+    border-radius: 50%;
+    transition: all 0.15s;
+}
+
+.modal-close:hover {
+    background: var(--paper-dark);
+    color: var(--ink);
+}
+
+.modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--lg);
+}
+
+.modal-footer {
+    padding: var(--md) var(--lg);
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Settings Section */
+.settings-section {
+    margin-bottom: var(--xl);
+}
+
+.settings-label {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--burgundy);
+    margin-bottom: var(--sm);
+}
+
+.settings-help {
+    font-size: 0.85rem;
+    color: var(--ink-secondary);
+    margin-bottom: var(--md);
+}
+
+/* Region Options */
+.region-options {
+    display: flex;
+    gap: var(--sm);
+}
+
+.region-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--xs);
+    padding: var(--md);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    background: var(--paper);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.region-btn:hover {
+    border-color: var(--teal);
+    background: rgba(26, 95, 90, 0.05);
+}
+
+.region-btn.active {
+    border-color: var(--teal);
+    background: rgba(26, 95, 90, 0.1);
+}
+
+.region-btn .region-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
+.region-btn .region-name {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--ink);
+    text-align: center;
+}
+
+.region-btn.active .region-name {
+    color: var(--teal);
+    font-weight: 600;
+}
+
+/* Buttons */
+.btn-primary {
+    padding: var(--sm) var(--lg);
+    background: var(--teal);
+    border: none;
+    border-radius: 6px;
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.btn-primary:hover {
+    background: var(--teal-dark, #155550);
+}
+
+.btn-secondary {
+    padding: var(--sm) var(--md);
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--ink-secondary);
+    cursor: pointer;
+    margin-right: var(--sm);
+    transition: all 0.15s;
+}
+
+.btn-secondary:hover {
+    border-color: var(--ink-tertiary);
+    color: var(--ink);
+}
+
+@media (max-width: 480px) {
+    .region-options {
+        flex-direction: column;
+    }
+    
+    .region-btn {
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: var(--sm) var(--md);
+    }
+    
+    .region-btn .region-icon {
+        width: 24px;
+        height: 24px;
+    }
+}
