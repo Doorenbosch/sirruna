@@ -397,7 +397,7 @@ function setActiveSection(sectionKey) {
     
     // Track section view in GA4
     const sections = getCurrentSections();
-    trackEvent('section_view', { 
+    trackEvent('section_view', {
         section: sectionKey,
         section_label: sections[sectionKey]?.label || sectionKey,
         brief_type: currentBriefType,
@@ -424,6 +424,9 @@ function setActiveSection(sectionKey) {
     if (briefData) {
         renderReadingPane(sectionKey);
     }
+    
+    // Open mobile reader on phones
+    openMobileReader();
 }
 
 // Load Content
@@ -1218,6 +1221,9 @@ function initWeekCards() {
             
             // Show in reading pane
             renderWeekAheadPane(sectionKey);
+            
+            // Open mobile reader on phones
+            openMobileReader();
         });
     });
 }
@@ -2023,6 +2029,49 @@ window.setRegion = function(region) {
         loadBrief();
     }
 };
+
+// ========== MOBILE READER FUNCTIONS ==========
+
+// Check if we're on mobile
+function isMobileView() {
+    return window.innerWidth < 768;
+}
+
+// Check if we're on tablet
+function isTabletView() {
+    return window.innerWidth >= 768 && window.innerWidth <= 1200;
+}
+
+// Open mobile reader overlay (and scroll to top on tablet)
+function openMobileReader() {
+    const readingPane = document.getElementById('reading-pane');
+    
+    if (isMobileView()) {
+        // Phone: show overlay
+        if (readingPane) {
+            readingPane.classList.add('active');
+            document.body.classList.add('reader-open');
+            readingPane.scrollTop = 0;
+        }
+    } else if (isTabletView() || window.innerWidth > 1200) {
+        // Tablet/Desktop: just scroll reading pane to top
+        if (readingPane) {
+            readingPane.scrollTop = 0;
+        }
+    }
+}
+
+// Close mobile reader overlay
+function closeMobileReader() {
+    const readingPane = document.getElementById('reading-pane');
+    if (readingPane) {
+        readingPane.classList.remove('active');
+        document.body.classList.remove('reader-open');
+    }
+}
+
+// Make closeMobileReader available globally
+window.closeMobileReader = closeMobileReader;
 
 // ========== GOOGLE ANALYTICS 4 TRACKING ==========
 // Helper function to track custom events
