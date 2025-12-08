@@ -1,386 +1,245 @@
 /**
- * The Litmus - Authentication Module
- * Firebase Auth with Google and Apple Sign-in
- * 
- * User data stored in Firestore:
- * - /users/{uid}/preferences (coin selections, etc.)
- * - /users/{uid}/profile (display name, avatar)
+ * Authentication Module - The Litmus
+ * Handles user sign in/out and auth state
  */
 
-// Firebase Configuration
-// TODO: Replace with your Firebase project config from Firebase Console
-const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "litmusdaily.firebaseapp.com",
-    projectId: "litmusdaily",
-    storageBucket: "litmusdaily.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
-};
-
-// Check if Firebase is configured
-const isFirebaseConfigured = firebaseConfig.apiKey !== "YOUR_API_KEY";
-
-// Initialize Firebase
-let app, auth, db;
+// Current user state
 let currentUser = null;
 
-function initFirebase() {
-    // Don't initialize if not configured
-    if (!isFirebaseConfigured) {
-        console.log('[Auth] Firebase not configured - sign-in disabled');
-        hideSignInButton();
-        return;
-    }
-    
-    try {
-        app = firebase.initializeApp(firebaseConfig);
-        auth = firebase.auth();
-        db = firebase.firestore();
-        
-        // Listen for auth state changes
-        auth.onAuthStateChanged(handleAuthStateChanged);
-        
-        console.log('[Auth] Firebase initialized');
-    } catch (error) {
-        console.error('[Auth] Firebase init error:', error);
-        hideSignInButton();
-    }
-}
+// Auth state change listeners
+const authListeners = [];
 
-// Hide sign-in button when Firebase isn't ready
-function hideSignInButton() {
-    const signinBtn = document.getElementById('signin-btn');
-    if (signinBtn) {
-        signinBtn.style.display = 'none';
-    }
-}
-
-// Handle auth state changes
-async function handleAuthStateChanged(user) {
-    currentUser = user;
-    
-    const signedOutEl = document.getElementById('auth-signed-out');
-    const signedInEl = document.getElementById('auth-signed-in');
-    const userAvatarEl = document.getElementById('user-avatar');
-    const userNameEl = document.getElementById('user-name');
-    
-    if (user) {
-        // User is signed in
-        console.log('[Auth] User signed in:', user.displayName);
+/**
+ * Initialize auth and set up listeners
+ */
+function initAuth() {
+    auth.onAuthStateChanged(async (user) => {
+        currentUser = user;
         
-        // Update UI
-        if (signedOutEl) signedOutEl.classList.add('auth-hidden');
-        if (signedInEl) signedInEl.classList.remove('auth-hidden');
-        
-        // Set user info
-        if (userAvatarEl) {
-            userAvatarEl.src = user.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.displayName || 'User');
-        }
-        if (userNameEl) {
-            userNameEl.textContent = user.displayName?.split(' ')[0] || 'User';
+        if (user) {
+            console.log('[Auth] User signed in:', user.email);
+            // Load user data from Firestore
+            await loadUserData(user.uid);
+            updateAuthUI(true, user);
+        } else {
+            console.log('[Auth] User signed out');
+            updateAuthUI(false, null);
         }
         
-        // Load user preferences from Firestore
-        await loadUserPreferences();
-        
-        // Close sign-in modal if open
-        closeSignInModal();
-        
-    } else {
-        // User is signed out
-        console.log('[Auth] User signed out');
-        
-        // Update UI
-        if (signedOutEl) signedOutEl.classList.remove('auth-hidden');
-        if (signedInEl) signedInEl.classList.add('auth-hidden');
-        
-        // Clear user data
-        clearUserPreferences();
-    }
+        // Notify all listeners
+        authListeners.forEach(listener => listener(user));
+    });
 }
 
-// Google Sign-In
+/**
+ * Sign in with Google
+ */
 async function signInWithGoogle() {
-    if (!isFirebaseConfigured) {
-        console.log('[Auth] Firebase not configured');
-        return;
-    }
-    
     try {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        provider.setCustomParameters({
-            prompt: 'select_account'
-        });
-        
-        const result = await auth.signInWithPopup(provider);
+        showAuthLoading(true);
+        const result = await auth.signInWithPopup(googleProvider);
         console.log('[Auth] Google sign-in successful');
         
-        // Track sign-in in GA4
-        if (window.trackEvent) {
-            window.trackEvent('sign_in', { method: 'google' });
+        // Check if new user, create profile
+        if (result.additionalUserInfo?.isNewUser) {
+            await createUserProfile(result.user);
         }
         
-        // Create/update user document
-        await createUserDocument(result.user);
-        
+        closeAuthModal();
+        return result.user;
     } catch (error) {
         console.error('[Auth] Google sign-in error:', error);
-        
-        // Track error
-        if (window.trackEvent) {
-            window.trackEvent('sign_in_error', { method: 'google', error: error.code });
-        }
-        
-        showAuthError(error.message);
+        showAuthError(getErrorMessage(error));
+        return null;
+    } finally {
+        showAuthLoading(false);
     }
 }
 
-// Apple Sign-In
+/**
+ * Sign in with Apple
+ */
 async function signInWithApple() {
-    if (!isFirebaseConfigured) {
-        console.log('[Auth] Firebase not configured');
-        return;
-    }
-    
     try {
-        const provider = new firebase.auth.OAuthProvider('apple.com');
-        provider.addScope('email');
-        provider.addScope('name');
-        
-        const result = await auth.signInWithPopup(provider);
+        showAuthLoading(true);
+        const result = await auth.signInWithPopup(appleProvider);
         console.log('[Auth] Apple sign-in successful');
         
-        // Track sign-in in GA4
-        if (window.trackEvent) {
-            window.trackEvent('sign_in', { method: 'apple' });
+        // Check if new user, create profile
+        if (result.additionalUserInfo?.isNewUser) {
+            await createUserProfile(result.user);
         }
         
-        // Create/update user document
-        await createUserDocument(result.user);
-        
+        closeAuthModal();
+        return result.user;
     } catch (error) {
         console.error('[Auth] Apple sign-in error:', error);
-        
-        // Track error
-        if (window.trackEvent) {
-            window.trackEvent('sign_in_error', { method: 'apple', error: error.code });
-        }
-        
-        showAuthError(error.message);
+        showAuthError(getErrorMessage(error));
+        return null;
+    } finally {
+        showAuthLoading(false);
     }
 }
 
-// Sign Out
+/**
+ * Sign out
+ */
 async function signOut() {
     try {
         await auth.signOut();
-        console.log('[Auth] Sign out successful');
-        
-        // Track sign-out in GA4
-        if (window.trackEvent) {
-            window.trackEvent('sign_out');
-        }
+        console.log('[Auth] Signed out successfully');
+        // Clear synced data, keep localStorage as fallback
     } catch (error) {
         console.error('[Auth] Sign out error:', error);
     }
 }
 
-// Create or update user document in Firestore
-async function createUserDocument(user) {
-    if (!user || !db) return;
-    
+/**
+ * Create user profile in Firestore
+ */
+async function createUserProfile(user) {
     const userRef = db.collection('users').doc(user.uid);
     
-    try {
-        const doc = await userRef.get();
-        
-        if (!doc.exists) {
-            // New user - create document with defaults
-            await userRef.set({
-                email: user.email,
-                displayName: user.displayName,
-                photoURL: user.photoURL,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                preferences: {
-                    selectedCoins: ['bitcoin', 'ethereum'],
-                    defaultRegion: 'americas'
-                }
-            });
-            console.log('[Auth] Created new user document');
-        } else {
-            // Existing user - update last login
-            await userRef.update({
-                lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-        }
-    } catch (error) {
-        console.error('[Auth] Error creating user document:', error);
-    }
+    // Get existing localStorage data to migrate
+    const localCoins = JSON.parse(localStorage.getItem('litmus_focus_coins') || '[]');
+    const localRegion = localStorage.getItem('litmus_region') || 'americas';
+    
+    const profile = {
+        email: user.email,
+        displayName: user.displayName || '',
+        photoURL: user.photoURL || '',
+        focusCoins: localCoins.length > 0 ? localCoins : ['BTC', 'ETH'],
+        region: localRegion,
+        accountType: 'free',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    await userRef.set(profile);
+    console.log('[Auth] User profile created');
+    
+    return profile;
 }
 
-// Load user preferences from Firestore
-async function loadUserPreferences() {
-    if (!currentUser || !db) return;
-    
-    try {
-        const userRef = db.collection('users').doc(currentUser.uid);
-        const doc = await userRef.get();
-        
-        if (doc.exists) {
-            const data = doc.data();
-            const prefs = data.preferences || {};
-            
-            // Apply preferences
-            if (prefs.selectedCoins) {
-                localStorage.setItem('litmus_selected_coins', JSON.stringify(prefs.selectedCoins));
-                // Trigger reload of coins display
-                if (typeof loadYourCoins === 'function') {
-                    loadYourCoins();
-                }
-            }
-            
-            if (prefs.defaultRegion && typeof setRegion === 'function') {
-                setRegion(prefs.defaultRegion);
-            }
-            
-            console.log('[Auth] Loaded user preferences');
-        }
-    } catch (error) {
-        console.error('[Auth] Error loading preferences:', error);
-    }
-}
-
-// Save user preferences to Firestore
-async function saveUserPreferences(prefs) {
-    if (!currentUser || !db) {
-        // Not signed in - save to localStorage only
-        console.log('[Auth] Not signed in, saving to localStorage only');
-        return false;
-    }
-    
-    try {
-        const userRef = db.collection('users').doc(currentUser.uid);
-        await userRef.update({
-            preferences: prefs,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        console.log('[Auth] Saved user preferences to Firestore');
-        return true;
-    } catch (error) {
-        console.error('[Auth] Error saving preferences:', error);
-        return false;
-    }
-}
-
-// Clear user preferences (on sign out)
-function clearUserPreferences() {
-    // Keep localStorage for anonymous usage, just mark as not synced
-    console.log('[Auth] Cleared synced preferences');
-}
-
-// Show auth error
-function showAuthError(message) {
-    // Could show a toast or modal with error
-    console.error('[Auth] Error:', message);
-    alert('Sign in error: ' + message);
-}
-
-// Modal controls
-function openSignInModal() {
-    const modal = document.getElementById('signin-modal');
-    if (modal) modal.classList.add('active');
-}
-
-function closeSignInModal() {
-    const modal = document.getElementById('signin-modal');
-    if (modal) modal.classList.remove('active');
-}
-
-// Initialize auth UI listeners
-function initAuthUI() {
-    // Sign in button
-    const signInBtn = document.getElementById('signin-btn');
-    if (signInBtn) {
-        signInBtn.addEventListener('click', openSignInModal);
-    }
-    
-    // Sign in modal close
-    const signInModalClose = document.getElementById('signin-modal-close');
-    if (signInModalClose) {
-        signInModalClose.addEventListener('click', closeSignInModal);
-    }
-    
-    // Close modal on overlay click
-    const signInModal = document.getElementById('signin-modal');
-    if (signInModal) {
-        signInModal.addEventListener('click', (e) => {
-            if (e.target === signInModal) closeSignInModal();
-        });
-    }
-    
-    // Google sign in
-    const googleBtn = document.getElementById('google-signin');
-    if (googleBtn) {
-        googleBtn.addEventListener('click', signInWithGoogle);
-    }
-    
-    // Apple sign in
-    const appleBtn = document.getElementById('apple-signin');
-    if (appleBtn) {
-        appleBtn.addEventListener('click', signInWithApple);
-    }
-    
-    // User menu toggle
-    const userMenuBtn = document.getElementById('user-menu-btn');
-    const userDropdown = document.getElementById('user-dropdown');
-    if (userMenuBtn && userDropdown) {
-        userMenuBtn.addEventListener('click', () => {
-            userDropdown.classList.toggle('open');
-        });
-        
-        // Close on outside click
-        document.addEventListener('click', (e) => {
-            if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
-                userDropdown.classList.remove('open');
-            }
-        });
-    }
-    
-    // Sign out
-    const signOutBtn = document.getElementById('signout-btn');
-    if (signOutBtn) {
-        signOutBtn.addEventListener('click', () => {
-            signOut();
-            if (userDropdown) userDropdown.classList.remove('open');
-        });
-    }
-    
-    console.log('[Auth] UI initialized');
-}
-
-// Check if user is signed in
-function isSignedIn() {
-    return currentUser !== null;
-}
-
-// Get current user
+/**
+ * Get current user
+ */
 function getCurrentUser() {
     return currentUser;
 }
 
-// Initialize on DOM ready
-document.addEventListener('DOMContentLoaded', () => {
-    initFirebase();
-    initAuthUI();
-});
+/**
+ * Check if user is signed in
+ */
+function isSignedIn() {
+    return currentUser !== null;
+}
 
-// Export functions for use in app.js
-window.LitmusAuth = {
-    isSignedIn,
-    getCurrentUser,
-    saveUserPreferences,
-    loadUserPreferences,
-    openSignInModal,
-    signOut
-};
+/**
+ * Add auth state listener
+ */
+function onAuthStateChange(callback) {
+    authListeners.push(callback);
+    // Call immediately with current state
+    if (currentUser !== undefined) {
+        callback(currentUser);
+    }
+}
+
+/**
+ * Get user-friendly error message
+ */
+function getErrorMessage(error) {
+    switch (error.code) {
+        case 'auth/popup-closed-by-user':
+            return 'Sign-in cancelled';
+        case 'auth/popup-blocked':
+            return 'Popup blocked. Please allow popups for this site.';
+        case 'auth/account-exists-with-different-credential':
+            return 'An account already exists with this email using a different sign-in method.';
+        case 'auth/network-request-failed':
+            return 'Network error. Please check your connection.';
+        default:
+            return error.message || 'An error occurred. Please try again.';
+    }
+}
+
+/**
+ * Update UI based on auth state
+ */
+function updateAuthUI(isLoggedIn, user) {
+    const authBtn = document.getElementById('auth-button');
+    const userAvatar = document.getElementById('user-avatar');
+    const userMenu = document.getElementById('user-menu');
+    
+    if (authBtn) {
+        if (isLoggedIn && user) {
+            authBtn.classList.add('signed-in');
+            authBtn.title = user.email;
+            
+            // Update avatar
+            if (userAvatar) {
+                if (user.photoURL) {
+                    userAvatar.innerHTML = `<img src="${user.photoURL}" alt="Profile" />`;
+                } else {
+                    userAvatar.innerHTML = user.email.charAt(0).toUpperCase();
+                }
+            }
+        } else {
+            authBtn.classList.remove('signed-in');
+            authBtn.title = 'Sign in';
+            if (userAvatar) {
+                userAvatar.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`;
+            }
+        }
+    }
+}
+
+/**
+ * Show/hide auth loading state
+ */
+function showAuthLoading(show) {
+    const modal = document.getElementById('auth-modal');
+    if (modal) {
+        modal.classList.toggle('loading', show);
+    }
+}
+
+/**
+ * Show auth error message
+ */
+function showAuthError(message) {
+    const errorEl = document.getElementById('auth-error');
+    if (errorEl) {
+        errorEl.textContent = message;
+        errorEl.style.display = 'block';
+        setTimeout(() => {
+            errorEl.style.display = 'none';
+        }, 5000);
+    }
+}
+
+/**
+ * Open auth modal
+ */
+function openAuthModal() {
+    const modal = document.getElementById('auth-modal');
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+/**
+ * Close auth modal
+ */
+function closeAuthModal() {
+    const modal = document.getElementById('auth-modal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', initAuth);

@@ -7,7 +7,10 @@
 const CONFIG = {
     maxCoinsFree: 5,
     maxCoinsPro: 10,
-    isPro: false, // TODO: integrate with auth
+    get isPro() {
+        // Check Firebase user sync for premium status
+        return typeof userSync !== 'undefined' && userSync.isPremium();
+    },
     storageKey: 'litmus_personal_coins',
     coingeckoApi: 'https://api.coingecko.com/api/v3'
 };
@@ -105,25 +108,77 @@ function updateStickyPrices() {
     }
 }
 
-// ===== LocalStorage =====
+// ===== Data Storage (LocalStorage + Firebase Sync) =====
 function loadUserCoins() {
     try {
+        // Try to get from localStorage first (cached/offline)
         const saved = localStorage.getItem(CONFIG.storageKey);
         if (saved) {
             state.userCoins = JSON.parse(saved);
         }
+        
+        // If user is signed in, data will be updated via userDataLoaded event
     } catch (e) {
         console.error('Failed to load saved coins:', e);
     }
 }
 
-function saveUserCoins() {
+async function saveUserCoins() {
     try {
+        // Always save to localStorage (offline fallback)
         localStorage.setItem(CONFIG.storageKey, JSON.stringify(state.userCoins));
+        
+        // If signed in, sync to Firebase
+        if (typeof userSync !== 'undefined' && typeof getCurrentUser === 'function' && getCurrentUser()) {
+            // Extract just coin IDs for focus coins sync
+            const coinIds = state.userCoins.map(c => c.id);
+            await userSync.saveFocusCoins(coinIds);
+            console.log('[Personal] Synced to cloud');
+        }
     } catch (e) {
         console.error('Failed to save coins:', e);
     }
 }
+
+// Listen for user data loaded from Firebase
+window.addEventListener('userDataLoaded', async (e) => {
+    const userData = e.detail;
+    if (userData?.focusCoins && Array.isArray(userData.focusCoins)) {
+        console.log('[Personal] Loading coins from cloud:', userData.focusCoins);
+        
+        // Convert focusCoins array to full coin objects
+        const cloudCoins = [];
+        for (const coinId of userData.focusCoins) {
+            // Check if we already have this coin with full data
+            const existing = state.userCoins.find(c => c.id === coinId);
+            if (existing) {
+                cloudCoins.push(existing);
+            } else {
+                // Create basic entry, will be enriched by price fetch
+                const coinData = typeof TOP_100_COINS !== 'undefined' 
+                    ? TOP_100_COINS.find(c => c.id === coinId) 
+                    : null;
+                    
+                if (coinData) {
+                    cloudCoins.push({
+                        id: coinId,
+                        symbol: coinData.symbol,
+                        name: coinData.name,
+                        weight: 'moderate',
+                        segment: coinData.segment || 'store_of_value'
+                    });
+                }
+            }
+        }
+        
+        if (cloudCoins.length > 0) {
+            state.userCoins = cloudCoins;
+            localStorage.setItem(CONFIG.storageKey, JSON.stringify(state.userCoins));
+            renderPortfolio();
+            await fetchLivePrices();
+        }
+    }
+});
 
 // ===== API =====
 async function loadAvailableCoins() {
