@@ -125,6 +125,27 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(loadYourCoins, CONFIG.marketUpdateInterval);
 });
 
+// Listen for user data loaded from cloud (handles signed-in users)
+window.addEventListener('userDataLoaded', (e) => {
+    const userData = e.detail;
+    if (userData?.region && userData.region !== currentRegion) {
+        // Update to cloud-synced region
+        currentRegion = userData.region;
+        
+        // Update UI
+        const buttons = document.querySelectorAll('.edition');
+        buttons.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.region === currentRegion);
+        });
+        updateStickyRegion();
+        
+        // Reload content for correct region
+        checkBriefAvailability(currentRegion).then(() => {
+            loadContent(currentRegion, currentBriefType);
+        });
+    }
+});
+
 // Initialize Sticky Header
 function initStickyHeader() {
     const stickyHeader = document.getElementById('sticky-header');
@@ -157,11 +178,26 @@ function initStickyHeader() {
 function initEditionPicker() {
     const buttons = document.querySelectorAll('.edition');
     
+    // Load saved region from localStorage
+    const savedRegion = localStorage.getItem('litmus_region');
+    if (savedRegion && ['americas', 'emea', 'apac'].includes(savedRegion)) {
+        currentRegion = savedRegion;
+        // Update button active states
+        buttons.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.region === savedRegion);
+        });
+        // Update sticky header region
+        updateStickyRegion();
+    }
+    
     buttons.forEach(btn => {
         btn.addEventListener('click', () => {
             buttons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentRegion = btn.dataset.region;
+            
+            // Save to localStorage
+            localStorage.setItem('litmus_region', currentRegion);
             
             // Track region change in GA4
             trackEvent('region_change', { region: currentRegion });
