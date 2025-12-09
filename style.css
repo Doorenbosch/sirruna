@@ -2622,32 +2622,23 @@ BREAKPOINTS:
    ============================================ */
 
 .week-focus {
-    margin-top: 220px; /* Push below fixed header */
-    margin-bottom: var(--lg);
-    padding: var(--md) var(--xl);
+    margin-top: 210px; /* Push below fixed header */
+    margin-bottom: var(--md);
+    padding: var(--sm) var(--xl);
     border-bottom: 1px solid var(--rule);
 }
 
 .week-focus-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: var(--md);
+    margin-bottom: var(--sm);
 }
 
 .week-focus-title {
     font-family: var(--sans);
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--teal);
-}
-
-.week-focus-date {
-    font-family: var(--sans);
-    font-size: 0.75rem;
-    color: var(--ink-tertiary);
 }
 
 .week-focus-cards {
@@ -2698,6 +2689,14 @@ BREAKPOINTS:
     font-weight: 600;
     color: var(--ink);
     line-height: 1.3;
+    margin-bottom: var(--xs);
+}
+
+.focus-excerpt {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    color: var(--ink-tertiary);
+    line-height: 1.4;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
