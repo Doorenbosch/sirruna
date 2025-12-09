@@ -803,6 +803,163 @@ def call_anthropic_api(prompt: str, attempt: int = 1) -> dict:
     return extract_json_from_response(content)
 
 
+# ============================================
+# WEEK AHEAD - Weekly Strategic Outlook
+# ============================================
+
+def get_week_ahead_prompt(market_data: dict) -> str:
+    """Generate prompt for Week Ahead brief - published once per week"""
+    
+    # Calculate the week dates
+    today = datetime.now(timezone.utc)
+    # Find next Monday (or today if it's Monday)
+    days_until_monday = (7 - today.weekday()) % 7
+    if days_until_monday == 0 and today.hour < 12:
+        week_start = today
+    else:
+        week_start = today + timedelta(days=days_until_monday)
+    week_end = week_start + timedelta(days=6)
+    
+    week_range = f"{week_start.strftime('%B %d')} - {week_end.strftime('%B %d, %Y')}"
+    
+    return f"""You are the senior strategist at The Litmus, a premium crypto intelligence publication. 
+Write the WEEK AHEAD outlook covering {week_range}.
+
+This is NOT a daily brief. This is a strategic weekly preview that helps sophisticated investors 
+prepare for the week's key events, levels, and opportunities.
+
+CURRENT MARKET CONTEXT:
+• BTC: ${market_data.get('btc_price', 0):,.0f} ({market_data.get('btc_24h_change', 0):+.1f}% 24h, {market_data.get('btc_7d_change', 0):+.1f}% 7d)
+• ETH: ${market_data.get('eth_price', 0):,.0f} ({market_data.get('eth_24h_change', 0):+.1f}% 24h, {market_data.get('eth_7d_change', 0):+.1f}% 7d)
+• Total Market Cap: ${market_data.get('total_market_cap', 0)/1e12:.2f}T
+• BTC Dominance: {market_data.get('btc_dominance', 0):.1f}%
+
+WEEK AHEAD STRUCTURE (4 sections):
+
+1. THE FULCRUM (200-250 words)
+The single most important event/catalyst of the coming week. This is the hinge point that everything else revolves around.
+- What is it? (Fed meeting, jobs report, ETF deadline, options expiry, etc.)
+- When exactly? (day and time if applicable)
+- What are the scenarios? (if X happens → Y, if A happens → B)
+- Why does it matter for crypto specifically?
+
+2. THE LEVELS (150-200 words)  
+The key price levels to watch this week. Be specific and explain WHY these levels matter.
+- BTC: Support and resistance with reasoning (not just "50-day MA" but why it matters NOW)
+- ETH: Key levels and the ETH/BTC ratio context
+- What would a break of each level signal?
+
+3. THE UNPRICED (150-200 words)
+What the market is missing. The contrarian or underappreciated angle that sophisticated investors should consider.
+- What data or signal is being ignored?
+- What's the historical analog or pattern?
+- What's your differentiated take?
+
+4. THE UNDERESTIMATED (150-200 words)
+The risk or opportunity the market is underestimating.
+- What could surprise to the upside or downside?
+- What's the tail risk or asymmetric opportunity?
+- What should investors prepare for that few are discussing?
+
+VOICE & STYLE:
+• Write like a senior strategist briefing institutional clients
+• Confident but not arrogant - show your reasoning
+• Specific numbers, dates, and levels - no vague handwaving
+• The reader has money on the line - respect that
+• FT editorial quality - sophisticated, measured, insightful
+
+ABSOLUTELY PROHIBITED:
+• "Crypto twitter" language - no moon, WAGMI, bearish/bullish
+• Vague statements like "things could go either way"
+• Exclamation marks
+• "It's worth noting" or "Interestingly"
+• Hedging every statement into meaninglessness
+
+HEADLINE:
+Write a 5-8 word headline that captures the week's dominant theme.
+
+OUTPUT FORMAT:
+Return ONLY valid JSON:
+{{
+    "headline": "5-8 word headline for the week",
+    "sections": {{
+        "fulcrum": {{
+            "title": "4-8 word title for the key event",
+            "content": "200-250 words on the week's fulcrum event"
+        }},
+        "levels": {{
+            "title": "4-8 word title about key levels",
+            "content": "150-200 words on price levels to watch"
+        }},
+        "unpriced": {{
+            "title": "4-8 word title on the contrarian angle",
+            "content": "150-200 words on what the market is missing"
+        }},
+        "underestimated": {{
+            "title": "4-8 word title on the underappreciated risk/opportunity",
+            "content": "150-200 words on what's being underestimated"
+        }}
+    }}
+}}
+
+Return ONLY the JSON object, no other text."""
+
+
+def generate_week_ahead() -> dict:
+    """Generate the Week Ahead brief"""
+    print("  Fetching market data...")
+    market_data = fetch_market_data()
+    
+    prompt = get_week_ahead_prompt(market_data)
+    
+    last_error = None
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            print(f"  Generating Week Ahead using {MODEL}... (attempt {attempt})")
+            brief_data = call_anthropic_api(prompt, attempt)
+            
+            # Transform nested structure to flat
+            transformed = transform_week_ahead_structure(brief_data)
+            
+            # Add metadata
+            transformed["region"] = "global"
+            transformed["type"] = "week-ahead"
+            transformed["generated_at"] = datetime.now(timezone.utc).isoformat()
+            transformed["btc_price"] = market_data.get("btc_price", 0)
+            transformed["eth_price"] = market_data.get("eth_price", 0)
+            transformed["total_market_cap"] = market_data.get("total_market_cap", 0)
+            transformed["btc_24h_change"] = market_data.get("btc_24h_change", 0)
+            
+            return transformed
+            
+        except Exception as e:
+            last_error = e
+            print(f"  Attempt {attempt} failed: {e}")
+            if attempt < MAX_RETRIES:
+                time.sleep(2)
+    
+    raise last_error
+
+
+def transform_week_ahead_structure(brief_data: dict) -> dict:
+    """Transform nested Week Ahead structure to flat format"""
+    flat_sections = {}
+    
+    for key, value in brief_data.get("sections", {}).items():
+        if isinstance(value, dict):
+            flat_sections[key] = {
+                "title": value.get("title", ""),
+                "content": value.get("content", "")
+            }
+        else:
+            flat_sections[key] = value
+    
+    return {
+        "headline": brief_data.get("headline", ""),
+        "sections": flat_sections
+    }
+
+
 def transform_to_flat_structure(brief_data: dict) -> dict:
     """Transform nested section structure to flat for backward compatibility"""
     flat_sections = {}
@@ -892,10 +1049,14 @@ def generate_brief(region: str, brief_type: str) -> dict:
 
 def save_brief(brief: dict, region: str, brief_type: str):
     """Save brief to content directory"""
-    region_dir = CONTENT_DIR / region
-    region_dir.mkdir(parents=True, exist_ok=True)
+    if brief_type == "week-ahead":
+        # Week Ahead is global - save to content root
+        output_file = CONTENT_DIR / "week-ahead.json"
+    else:
+        region_dir = CONTENT_DIR / region
+        region_dir.mkdir(parents=True, exist_ok=True)
+        output_file = region_dir / f"{brief_type}.json"
     
-    output_file = region_dir / f"{brief_type}.json"
     with open(output_file, "w") as f:
         json.dump(brief, f, indent=2)
     
@@ -903,32 +1064,42 @@ def save_brief(brief: dict, region: str, brief_type: str):
 
 
 def main():
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 2:
         print("Usage: python generate_brief.py <region> <type>")
-        print("  region: apac, emea, americas")
-        print("  type: morning, evening")
+        print("  region: apac, emea, americas, global")
+        print("  type: morning, evening, week-ahead")
+        print("")
+        print("For week-ahead: python generate_brief.py global week-ahead")
         sys.exit(1)
     
     region = sys.argv[1].lower()
-    brief_type = sys.argv[2].lower()
+    brief_type = sys.argv[2].lower() if len(sys.argv) > 2 else "morning"
     
-    if region not in ["apac", "emea", "americas"]:
+    # Handle week-ahead special case
+    if brief_type == "week-ahead":
+        region = "global"  # Week ahead is always global
+    elif region not in ["apac", "emea", "americas"]:
         print(f"Invalid region: {region}")
         sys.exit(1)
     
-    if brief_type not in ["morning", "evening"]:
+    if brief_type not in ["morning", "evening", "week-ahead"]:
         print(f"Invalid brief type: {brief_type}")
         sys.exit(1)
     
     print(f"\n[{datetime.now(timezone.utc).isoformat()}] Generating {region.upper()} {brief_type} brief")
     
     try:
-        brief = generate_brief(region, brief_type)
+        if brief_type == "week-ahead":
+            brief = generate_week_ahead()
+        else:
+            brief = generate_brief(region, brief_type)
         save_brief(brief, region, brief_type)
         print(f"  ✓ Complete: {brief['headline']}")
         return 0
     except Exception as e:
         print(f"  ✗ Error: {e}")
+        import traceback
+        traceback.print_exc()
         return 1
 
 
