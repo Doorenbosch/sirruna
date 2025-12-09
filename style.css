@@ -145,6 +145,25 @@ a {
     letter-spacing: 0;
 }
 
+.brand-name em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--ink);
+}
+
+/* Page-specific brand colors */
+.brand-name.brand-weekend em {
+    color: var(--teal);
+}
+
+.brand-name.brand-personal em {
+    color: var(--burgundy);
+}
+
+.brand-name.brand-media em {
+    color: var(--ink-tertiary);
+}
+
 .masthead-right {
     display: flex;
     align-items: center;
