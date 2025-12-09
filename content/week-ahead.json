@@ -1,28 +1,28 @@
 {
-    "region": "global",
-    "type": "week-ahead",
-    "generated_at": "2025-12-02T12:00:00Z",
-    "headline": "The Fed's Last Word Before Year-End",
-    "sections": {
-        "fulcrum": {
-            "title": "Friday's Jobs Report Is Everything",
-            "content": "December 6th's non-farm payrolls release will determine whether the Fed has cover to cut rates at its December 18th meeting—and by extension, whether risk assets finish the year with momentum or caution. The market is pricing 65% odds of a 25bp cut, but that probability is fragile. A strong print (above 200K) likely kills the cut and strengthens the dollar, creating headwinds for crypto that could persist into January. A weak print (below 150K) confirms the soft-landing narrative and removes the last macro obstacle to year-end positioning. For Bitcoin specifically, rate cut expectations have been the invisible hand supporting prices above $90K. Without that support, the $87K-$85K zone becomes the next battleground."
-        },
-        "levels": {
-            "title": "The Lines That Matter This Week",
-            "content": "Bitcoin's critical range is $87,000-$95,000. The lower bound represents the convergence of the 50-day moving average and significant options open interest—a break below triggers gamma hedging that could accelerate selling toward $82,000. The upper bound has been resistance three times since mid-November; a close above $95,000 would signal distribution is complete and accumulation has begun. For ETH, watch $3,000 as the psychological floor and $3,400 as the breakout trigger. The ETH/BTC ratio at 0.034 is approaching March lows—historically, this level has marked rotation points. If ETH holds this ratio while BTC consolidates, expect capital to flow down the risk curve in the week following."
-        },
-        "unpriced": {
-            "title": "Stablecoin Supply Divergence",
-            "content": "Here's what the market is missing: USDT market cap hit $119 billion this week—an all-time high—while prices have been falling. This divergence between growing stablecoin liquidity and declining crypto prices has historically preceded major accumulation phases. The last time we saw this pattern was October 2023, just before the rally that took BTC from $27K to $73K. The narrative is that institutions are exiting, but the plumbing tells a different story: someone is building dry powder. The question isn't whether this capital will be deployed, but at what price level the deployment begins. My read: the smart money is waiting for a flush below $85K to begin meaningful accumulation."
-        },
-        "underestimated": {
-            "title": "December Liquidity Vacuum",
-            "content": "The market is underpricing the liquidity vacuum that begins December 15th. As trading desks go on holiday and institutional mandates freeze for year-end, thin order books will amplify any move. This cuts both ways: a positive catalyst could produce outsized gains, but a negative shock could cascade further than normal market conditions would allow. The December 2017 blow-off top and December 2018 capitulation both occurred in this low-liquidity window. Add the FOMC meeting on December 18th—the last monetary policy event of the year—and you have a setup for volatility that current implied vol isn't capturing."
-        }
+  "headline": "The Fed's Final Word Before Year-End",
+  "sections": {
+    "fulcrum": {
+      "title": "FOMC Decision Defines December's Exit Velocity",
+      "content": "The Federal Reserve's final policy meeting of 2025 concludes Wednesday, December 18 at 2:00 PM ET, and the statement will set the tone for crypto's year-end positioning. Markets currently price a 73% probability of a 25 basis point cut, but the real signal lies in the dot plot projections and Powell's press conference language on the 2026 rate path. Three scenarios merit preparation. First, a cut with dovish guidance suggesting continued easing into Q1 would likely propel risk assets higher, with BTC testing overhead resistance as dollar weakness accelerates. Second, a cut accompanied by hawkish language emphasizing data dependency could produce a sell-the-news reaction, particularly given how far crypto has already run. Third, a surprise hold\u2014unlikely but not impossible given recent inflation stickiness\u2014would trigger a sharp deleveraging event across all risk assets. For crypto specifically, the Fed's tone matters more than the rate itself. Bitcoin's correlation with real yields has tightened considerably since October, and institutional allocators making year-end decisions will interpret Wednesday's outcome as a signal for Q1 positioning. The 48 hours following the announcement historically produce 60% of December's total BTC volatility. Liquidity thins dramatically after Friday as desks close books, meaning Wednesday's reaction will likely define where we enter 2026."
     },
-    "btc_price": 91245,
-    "eth_price": 3125,
-    "total_market_cap": 3180000000000,
-    "btc_24h_change": 0.8
+    "levels": {
+      "title": "BTC's $88K Floor Faces Its Real Test",
+      "content": "Bitcoin's $88,000-$89,000 zone represents the week's critical support, marking both the November breakout level and the current 21-day exponential moving average. A decisive close below $88,000 would suggest the post-election momentum has exhausted, opening a path toward $82,500 where significant buyer interest emerged in late November. Resistance sits at $94,200, the December 12 local high that capped the most recent advance. A weekly close above this level on meaningful volume would confirm the consolidation as accumulation rather than distribution. Ethereum's relative strength demands attention. The ETH/BTC ratio at 0.0345 has climbed 7% over two weeks, approaching the 0.036 level that has historically marked the beginning of sustained altcoin outperformance cycles. ETH faces immediate resistance at $3,280, the September high that preceded the Q4 correction. A break above with the ratio expanding would signal capital rotation into higher-beta assets is underway. The $3,000 psychological level serves as near-term support; a loss there while BTC holds its range would indicate the ratio expansion was merely a dead cat bounce."
+    },
+    "unpriced": {
+      "title": "Stablecoin Inflows Tell a Different Story",
+      "content": "While price action has consolidated, on-chain stablecoin flows suggest positioning for a move the market has not yet priced. USDC supply on Ethereum has increased by $2.1 billion since December 1, the largest two-week expansion since March 2024. This capital is not sitting idle\u2014exchange deposit volumes for stablecoins have risen 34% week-over-week, indicating dry powder moving into position rather than exiting to fiat. The historical analog worth examining is December 2020, when BTC consolidated between $18,000-$19,500 for three weeks while stablecoin supplies quietly expanded. The subsequent January move added 70% in thirty days. Current market structure shows similar characteristics: declining spot volume, compressing volatility, and accumulating stablecoin reserves. The market narrative focuses on year-end tax selling and institutional book-closing as headwinds. This framing ignores that the same institutions closing books are simultaneously positioning for January deployment. The stablecoin data suggests smart money is preparing for a Q1 move that current prices do not reflect. Sophisticated investors should interpret this consolidation as coiling rather than exhaustion."
+    },
+    "underestimated": {
+      "title": "Options Expiry Creates Asymmetric Friday Risk",
+      "content": "Friday, December 20 brings $4.2 billion in BTC options expiry on Deribit, the largest December expiry in the exchange's history. The max pain level sits at $85,000, a full 6% below current spot. Market makers hedging these positions will exert gravitational pull toward this level as expiry approaches, particularly if Wednesday's Fed outcome disappoints. The underappreciated dynamic is the gamma profile above $92,000. Significant call open interest clusters between $95,000-$100,000, meaning a move higher would force dealer hedging that accelerates the advance. Conversely, put concentration below $85,000 creates similar acceleration risk to the downside. This week presents a binary setup that few participants are positioning for. The combination of a pivotal Fed meeting on Wednesday and massive options expiry on Friday creates a volatility compression that typically resolves violently. Implied volatility for weekly options has actually declined over the past five days despite these known catalysts, suggesting the market is underpricing the potential for a 10%+ weekly range. Investors should consider that the calm surface conceals significant energy waiting for release. Position sizing should reflect the possibility of moves that exceed recent norms."
+    }
+  },
+  "region": "global",
+  "type": "week-ahead",
+  "generated_at": "2025-12-09T08:27:30.961244+00:00",
+  "btc_price": 90559,
+  "eth_price": 3122.09,
+  "total_market_cap": 3172031311400.763,
+  "btc_24h_change": -1.22005
 }
