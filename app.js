@@ -375,36 +375,16 @@ function formatBriefTime(isoString) {
     if (!isoString) return '';
     
     try {
-        // Extract time and timezone from ISO string
-        // e.g., "2025-12-03T06:00:00+08:00" → "06:00 SGT"
+        // Extract time from ISO string
+        // e.g., "2025-12-03T06:00:00+08:00" → "06:00"
         const timeMatch = isoString.match(/T(\d{2}):(\d{2})/);
-        const tzMatch = isoString.match(/([+-]\d{2}):?(\d{2})$/);
         
         if (!timeMatch) return '';
         
         const hours = timeMatch[1];
         const minutes = timeMatch[2];
-        const timeStr = `${hours}:${minutes}`;
         
-        if (!tzMatch) return timeStr;
-        
-        // Map timezone offset to abbreviation
-        const offsetStr = tzMatch[1];
-        const tzMap = {
-            '-05': 'EST',
-            '-04': 'EDT', 
-            '+00': 'GMT',
-            '+01': 'CET',
-            '+02': 'EET',
-            '+08': 'SGT',
-            '+09': 'JST',
-            '+10': 'AEST',
-            '+11': 'AEDT'
-        };
-        
-        const tzAbbrev = tzMap[offsetStr] || `UTC${offsetStr}`;
-        
-        return `${timeStr} ${tzAbbrev}`;
+        return `${hours}:${minutes}`;
     } catch (e) {
         console.error('Error formatting brief time:', e);
         return '';

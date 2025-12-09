@@ -1,10 +1,11 @@
 /* The Litmus - Editorial Design System */
 
 :root {
-    /* Palette */
+    /* Palette - Triad Colors */
     --burgundy: #8A123C;
     --burgundy-dark: #6d0e2f;
     --teal: #12728A;
+    --gold: #8A8012;
     --white: #FFFFFF;
     
     --paper: #FFF8F2;
@@ -610,7 +611,7 @@ a {
 /* ========== EDITORIAL GRID ========== */
 .editorial-grid {
     display: grid;
-    grid-template-columns: 260px 1fr 300px;
+    grid-template-columns: 260px 1fr 340px;
     gap: var(--xl);
     margin-top: var(--lg); /* Reduced - week-focus handles header offset */
     height: calc(100vh - 270px); /* Viewport minus header + padding */
@@ -1414,7 +1415,7 @@ a {
     color: var(--ink-secondary);
 }
 
-/* Individual Boxes */
+/* Individual Boxes - Triad Color System */
 .box {
     display: flex;
     align-items: center;
@@ -1430,21 +1431,29 @@ a {
     line-height: 1.2;
 }
 
-.box-neutral {
-    background: rgba(232, 223, 213, 0.3);
-    color: rgba(138, 18, 60, 0.5);
+/* Gold diagonal (boxes 1, 5, 9) - Neutral/Transition states */
+.box-gold {
+    background: rgba(138, 128, 18, 0.15);
+    color: var(--gold);
 }
 
+.box-gold-strong {
+    background: rgba(138, 128, 18, 0.25);
+    color: var(--gold);
+}
+
+/* Teal gradient (positive states) */
 .box-positive {
-    background: rgba(18, 108, 138, 0.15);
+    background: rgba(18, 114, 138, 0.12);
     color: var(--teal);
 }
 
 .box-positive-strong {
-    background: rgba(18, 108, 138, 0.25);
+    background: rgba(18, 114, 138, 0.22);
     color: var(--teal);
 }
 
+/* Burgundy gradient (negative states) */
 .box-negative {
     background: rgba(138, 18, 60, 0.12);
     color: var(--burgundy);
