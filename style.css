@@ -182,6 +182,20 @@ a {
     color: white;
 }
 
+/* Edition Badge (shown for logged-in users) */
+.edition-badge {
+    display: flex;
+    align-items: center;
+}
+
+.edition-badge-text {
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--burgundy);
+    letter-spacing: 0.02em;
+}
+
 /* Subscribe Button */
 .subscribe-btn {
     font-family: var(--sans);

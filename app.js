@@ -129,6 +129,45 @@ window.addEventListener('userDataLoaded', (e) => {
             loadContent(currentRegion, currentBriefType);
         });
     }
+    
+    // Show edition badge instead of picker for logged-in users
+    showEditionBadge(userData?.region || currentRegion);
+});
+
+// Edition badge display names
+const editionNames = {
+    americas: 'Americas · New York',
+    emea: 'EMEA · London',
+    apac: 'APAC · Singapore'
+};
+
+// Show edition badge (for logged-in users)
+function showEditionBadge(region) {
+    const picker = document.getElementById('edition-picker');
+    const badge = document.getElementById('edition-badge');
+    const badgeText = document.getElementById('edition-badge-text');
+    
+    if (picker && badge && badgeText) {
+        picker.style.display = 'none';
+        badge.style.display = 'flex';
+        badgeText.textContent = editionNames[region] || editionNames.americas;
+    }
+}
+
+// Hide edition badge (for logged-out users)
+function hideEditionBadge() {
+    const picker = document.getElementById('edition-picker');
+    const badge = document.getElementById('edition-badge');
+    
+    if (picker && badge) {
+        picker.style.display = 'flex';
+        badge.style.display = 'none';
+    }
+}
+
+// Listen for user signed out
+window.addEventListener('userSignedOut', () => {
+    hideEditionBadge();
 });
 
 // Initialize Sticky Header
@@ -1412,32 +1451,33 @@ function renderReadingPane(sectionKey) {
                 setText('ending-quote-text', summaryQuote);
             }
         }
-        
-        // Populate related reading with other sections
-        const relatedLinks = document.getElementById('related-links');
-        if (relatedLinks) {
-            const otherSections = Object.keys(sections)
-                .filter(k => k !== sectionKey && k !== 'takeaway')
-                .slice(0, 3);
             
-            relatedLinks.innerHTML = otherSections.map(key => {
-                const sec = sections[key];
-                const title = briefData.sections[`${sec.field}_title`] || sec.defaultHeadline;
-                return `<a href="#" class="related-link" data-section="${key}">${title}</a>`;
-            }).join('');
-            
-            // Add click handlers
-            relatedLinks.querySelectorAll('.related-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const targetSection = link.dataset.section;
-                    renderReadingPane(targetSection);
-                    // Update index card active state
-                    document.querySelectorAll('.index-card').forEach(c => {
-                        c.classList.toggle('active', c.dataset.section === targetSection);
+            // Populate related reading with other sections
+            const relatedLinks = document.getElementById('related-links');
+            if (relatedLinks) {
+                const otherSections = Object.keys(sections)
+                    .filter(k => k !== sectionKey && k !== 'takeaway')
+                    .slice(0, 3);
+                
+                relatedLinks.innerHTML = otherSections.map(key => {
+                    const sec = sections[key];
+                    const title = briefData.sections[`${sec.field}_title`] || sec.defaultHeadline;
+                    return `<a href="#" class="related-link" data-section="${key}">${title}</a>`;
+                }).join('');
+                
+                // Add click handlers
+                relatedLinks.querySelectorAll('.related-link').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const targetSection = link.dataset.section;
+                        renderReadingPane(targetSection);
+                        // Update index card active state
+                        document.querySelectorAll('.index-card').forEach(c => {
+                            c.classList.toggle('active', c.dataset.section === targetSection);
+                        });
                     });
                 });
-            });
+            }
         }
     }
 }

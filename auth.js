@@ -89,6 +89,8 @@ async function signOut() {
         await auth.signOut();
         console.log('[Auth] Signed out successfully');
         // Clear synced data, keep localStorage as fallback
+        // Dispatch event for UI updates
+        window.dispatchEvent(new CustomEvent('userSignedOut'));
     } catch (error) {
         console.error('[Auth] Sign out error:', error);
     }
