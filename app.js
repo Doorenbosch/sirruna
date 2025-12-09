@@ -1206,7 +1206,11 @@ function renderReadingPane(sectionKey) {
                         html += `<h3 class="sub-region-header">${subRegion.name}</h3>`;
                         if (subRegion.content) {
                             const paragraphs = splitIntoParagraphs(subRegion.content);
-                            html += paragraphs.map(p => `<p>${p}</p>`).join('');
+                            html += paragraphs.map(p => {
+                                // Don't wrap if already HTML (e.g., bullet list)
+                                if (p.startsWith('<ul') || p.startsWith('<ol')) return p;
+                                return `<p>${p}</p>`;
+                            }).join('');
                         }
                     }
                 }
@@ -1215,12 +1219,19 @@ function renderReadingPane(sectionKey) {
             } else {
                 // Fallback to regular content display
                 const paragraphs = splitIntoParagraphs(content);
-                bodyEl.innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
+                bodyEl.innerHTML = paragraphs.map(p => {
+                    if (p.startsWith('<ul') || p.startsWith('<ol')) return p;
+                    return `<p>${p}</p>`;
+                }).join('');
             }
         } else {
             // Standard paragraph rendering
             const paragraphs = splitIntoParagraphs(content);
-            bodyEl.innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
+            bodyEl.innerHTML = paragraphs.map(p => {
+                // Don't wrap if already HTML (e.g., bullet list)
+                if (p.startsWith('<ul') || p.startsWith('<ol')) return p;
+                return `<p>${p}</p>`;
+            }).join('');
         }
     }
 }
@@ -1435,9 +1446,25 @@ function truncate(text, maxLength) {
     return text.substring(0, maxLength).trim() + '...';
 }
 
-// Helper: Split content into paragraphs
+// Helper: Split content into paragraphs or bullet list
 function splitIntoParagraphs(content) {
     if (!content) return [];
+    
+    // Check if content contains bullet points (• or - at start of items)
+    const hasBullets = content.includes('•') || content.match(/^[-–—]\s/m);
+    
+    if (hasBullets) {
+        // Split on bullet characters and format as proper list
+        // Handle both "• item" and "item • item" patterns
+        let bullets = content.split(/\s*•\s*/).filter(b => b.trim());
+        
+        // If first item doesn't look like a bullet (might be intro text), handle separately
+        if (bullets.length > 0) {
+            // Return as formatted bullet list HTML
+            const listItems = bullets.map(b => `<li>${b.trim()}</li>`).join('');
+            return [`<ul class="editorial-bullets">${listItems}</ul>`];
+        }
+    }
     
     // If content is short, return as single paragraph
     if (content.length < 300) return [content];

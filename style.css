@@ -1239,6 +1239,32 @@ a {
     margin-top: 0;
 }
 
+/* Editorial bullet points (The Driver, The Signal, etc.) */
+.editorial-bullets {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.editorial-bullets li {
+    position: relative;
+    padding-left: 1.5em;
+    margin-bottom: var(--lg);
+    line-height: 1.75;
+}
+
+.editorial-bullets li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--burgundy);
+    font-weight: 600;
+}
+
+.editorial-bullets li:last-child {
+    margin-bottom: 0;
+}
+
 /* ========== CONTEXT SIDEBAR (Right) ========== */
 .context-sidebar {
     padding-left: var(--xl);
