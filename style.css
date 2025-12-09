@@ -4,16 +4,16 @@
     /* Palette */
     --burgundy: #8A123C;
     --burgundy-dark: #6d0e2f;
-    --teal: #126C8A;
+    --teal: #12728A;
     --white: #FFFFFF;
     
     --paper: #FFF8F2;
     --paper-dark: #F5EDE5;
     --rule: #E8DFD5;
     
-    --ink: #1C1C1C;
-    --ink-secondary: #4A4A4A;
-    --ink-tertiary: #888888;
+    --ink: #351822;
+    --ink-secondary: #5C3D45;
+    --ink-tertiary: #8A6B72;
     
     /* Typography */
     --serif: 'Source Serif Pro', Georgia, serif;
