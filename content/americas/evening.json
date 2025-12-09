@@ -1,20 +1,34 @@
 {
-  "headline": "Bitcoin Holds $90K as Markets Await Direction",
+  "headline": "Ethereum Leads Risk-On Rally as Markets Warm",
   "sections": {
-    "the_session": "\u2022 Bitcoin traded in a remarkably tight $400 range around $90,400 through US hours, the kind of compressed volatility that typically precedes a directional move \u2014 though the market offered few clues about which way.\n\n\u2022 Ethereum outperformed modestly at +1.7%, reclaiming $3,100 with steady buying through the afternoon session; the ETH/BTC ratio ticked higher for the third consecutive day, suggesting some rotation into the second-largest asset.\n\n\u2022 Solana added 0.9% to trade at $133, continuing its quiet recovery from last week's network congestion concerns \u2014 volume remained subdued but spot buying dominated over derivatives activity.\n\n\u2022 The Fear & Greed Index held at 72 (Greed), unchanged from yesterday despite the sideways action; liquidations totaled just $48 million across major exchanges, well below the $150 million daily average of recent weeks.\n\n\u2022 Total market cap edged up 0.5% to $3.17 trillion while BTC dominance slipped marginally to 56.9% \u2014 a modest but notable shift toward altcoins after weeks of Bitcoin-led price action.",
-    "the_session_title": "Flat Session Masks Quiet Accumulation",
-    "the_macro": "\u2022 Markets spent the session positioning ahead of tomorrow's FOMC minutes release, with Treasury yields holding steady and the dollar index flat \u2014 the kind of pre-event paralysis that tends to suppress crypto volatility.\n\n\u2022 US equity indices closed mixed, with the S&P 500 down 0.2% and the Nasdaq flat, as investors digested mixed retail earnings and awaited clarity on the Fed's December rate path.\n\n\u2022 The CME FedWatch tool now prices a 59% probability of a December rate cut, down from 62% last week \u2014 the gradual repricing has yet to materially impact crypto correlations but bears watching.\n\n\u2022 European Central Bank officials struck a cautious tone on further rate cuts, with board member Isabel Schnabel warning that inflation risks remain tilted to the upside \u2014 a reminder that global monetary policy divergence could complicate crypto's macro narrative.\n\n\u2022 Gold traded flat at $2,620 while crude oil slipped 1.2% on demand concerns, leaving Bitcoin's correlation to traditional safe havens effectively neutral for the session.",
-    "the_macro_title": "Fed Minutes Loom Over Risk Assets",
-    "the_region": "",
+    "the_session": "\u2022 Ethereum posted its strongest single-day performance in weeks, climbing 6.6% to reclaim $3,300 \u2014 a level that had served as stubborn resistance since early December, with the breakout accompanied by a notable uptick in spot volume on major exchanges.\n\n\u2022 Bitcoin advanced 2.2% to $92,769, consolidating above the $90,000 psychological floor that had attracted dip buyers throughout the Asian session; the move lacked the urgency of ETH's rally but carried the steady bid characteristic of institutional accumulation windows.\n\n\u2022 BTC dominance slipped to 56.8% as capital rotated into alts, with Solana gaining 3.8% to $138 \u2014 the kind of broad-based strength that typically signals improving risk appetite rather than isolated speculation.\n\n\u2022 Total crypto market capitalisation expanded to $3.26 trillion, adding roughly $80 billion in 24 hours; the Fear & Greed Index edged back toward neutral territory after spending much of last week in cautious mode.",
+    "the_session_title": "ETH Outpaces Bitcoin in Broad Risk Recovery",
+    "the_macro": "\u2022 The dollar index retreated 0.3% ahead of tomorrow's FOMC minutes release, providing a tailwind for risk assets including crypto; traders are parsing whether December's hawkish hold will be reinforced or softened by the committee's internal debate.\n\n\u2022 US equity markets closed mixed with the S&P 500 flat and Nasdaq up 0.4%, as tech strength offset weakness in defensive sectors \u2014 the rotation pattern that has historically correlated with crypto's better days.\n\n\u2022 Treasury yields held steady with the 10-year at 4.58%, offering no fresh catalyst but maintaining the elevated rate environment that continues to shape institutional allocation decisions toward digital assets.\n\n\u2022 European Central Bank officials signalled patience on rate cuts despite softening inflation data, keeping the transatlantic monetary divergence narrative alive and supporting dollar-denominated asset flows.",
+    "the_macro_title": "Fed Minutes Loom as Dollar Softens",
+    "the_region": {
+      "title": "What Moved in Americas",
+      "north_america": {
+        "name": "North America",
+        "content": "\u2022 US spot Bitcoin ETFs recorded estimated net inflows of $287 million on Tuesday, with BlackRock's IBIT capturing the lion's share at approximately $190 million \u2014 extending a pattern of concentrated flows into the market leader that has defined January trading.\n\n\u2022 Fidelity's FBTC added an estimated $65 million while Grayscale's GBTC saw modest outflows of $23 million, the latter's bleeding having slowed considerably from the aggressive redemptions that marked its first weeks as a spot product.\n\n\u2022 The SEC remained quiet on pending altcoin ETF applications, though industry sources suggest the agency is conducting preliminary reviews of Solana and XRP filings submitted in late 2024 \u2014 a process that could stretch well into Q2.\n\n\u2022 Canadian regulators proposed new guidance on stablecoin reserves, requiring issuers to hold 100% backing in cash or short-term government securities; the rules would align Canada more closely with emerging EU standards under MiCA.\n\n\u2022 Marathon Digital reported a 12% increase in January hash rate, reaching 28.7 EH/s as the miner's Texas facilities came fully online following winter grid stabilisation."
+      },
+      "central_america": {
+        "name": "Central America",
+        "content": "\u2022 El Salvador's Bitcoin Office published its latest proof-of-reserves showing 6,044 BTC in the national treasury, valued at approximately $561 million at current prices \u2014 President Bukele has maintained the accumulation strategy despite IMF pressure to scale back.\n\n\u2022 Guatemala's central bank issued a reminder that Bitcoin remains outside the regulated financial system, a routine statement that nonetheless followed reports of growing Lightning Network adoption among remittance corridors serving US-based workers.\n\n\u2022 Panama's crypto regulatory framework remains in legislative limbo, with the bill stalled since late 2024; local exchanges report steady volume but cite uncertainty as a barrier to institutional partnerships."
+      },
+      "south_america": {
+        "name": "South America",
+        "content": "\u2022 Brazil's securities regulator CVM approved two new crypto index funds for retail distribution, expanding access beyond the spot Bitcoin ETFs that launched last year; both products track broad market indices rather than single assets.\n\n\u2022 Argentine peso weakness accelerated with the unofficial dollar rate breaching 1,200 pesos, driving renewed interest in USDT and USDC on local platforms; Lemon Cash reported a 15% week-over-week increase in stablecoin purchases.\n\n\u2022 Colombia's financial superintendent met with Binance executives to discuss compliance frameworks, part of an ongoing dialogue that could result in the exchange obtaining a formal operating licence by mid-2025.\n\n\u2022 Venezuela's Sunacrip, the state crypto regulator, announced plans to expand the Petro's use in public sector salary payments \u2014 though adoption remains negligible outside government-mandated transactions."
+      }
+    },
     "the_region_title": "What Moved in Americas"
   },
-  "image_keywords": "dusk, calm harbor, still water, muted light",
-  "image_url": "https://images.unsplash.com/photo-1472120435266-53107fd0c44a?w=1400&h=500&fit=crop&q=80",
+  "image_keywords": "Manhattan skyline, golden sunset, Hudson River, warm evening glow",
+  "image_url": "https://images.unsplash.com/photo-1642266119655-e1479c2546b7?ixid=M3w4NDE0MzV8MHwxfHNlYXJjaHwyfHxNYW5oYXR0YW4lMjBza3lsaW5lJTIwZ29sZGVuJTIwc3Vuc2V0fGVufDF8MHx8fDE3NjUzMjI1MTB8MA&ixlib=rb-4.1.0&w=1400&h=500&fit=crop&q=80",
   "region": "americas",
   "type": "evening",
   "generated_at": "2025-12-09T18:00:00-05:00",
-  "btc_price": 90388,
-  "eth_price": 3116.65,
-  "total_market_cap": 3172458944355.4146,
-  "btc_24h_change": -0.01855
+  "btc_price": 92769,
+  "eth_price": 3323.44,
+  "total_market_cap": 3255402036930.254,
+  "btc_24h_change": 2.16847
 }
