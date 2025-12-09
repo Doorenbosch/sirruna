@@ -807,8 +807,8 @@ a {
     background: var(--paper-dark);
     border-left: 3px solid var(--burgundy);
     margin: 0 calc(var(--md) * -1);
-    margin-left: calc(var(--md) * -1 - 3px);
-    padding-left: calc(var(--md) - 0px);
+    margin-left: calc(var(--md) * -1);
+    padding-left: calc(var(--md) + var(--sm));
     padding-right: var(--md);
 }
 
@@ -817,12 +817,12 @@ a {
 }
 
 .card-label {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 600;
     letter-spacing: 0.08em;
     color: var(--burgundy);
     display: block;
-    margin-bottom: var(--xs);
+    margin-bottom: var(--sm);
 }
 
 .card-headline {
