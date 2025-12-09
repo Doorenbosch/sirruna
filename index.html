@@ -230,6 +230,32 @@
     <!-- Main Content Container -->
     <div class="container content-offset">
 
+        <!-- THIS WEEK'S FOCUS - Context Cards (Teal themed) -->
+        <section class="week-focus" id="week-focus">
+            <header class="week-focus-header">
+                <h2 class="week-focus-title">This Week's Focus</h2>
+                <span class="week-focus-date" id="week-focus-date">Week of Dec 9</span>
+            </header>
+            <div class="week-focus-cards">
+                <article class="focus-card" data-week-section="fulcrum">
+                    <span class="focus-label">THE FULCRUM</span>
+                    <h4 class="focus-headline" id="focus-fulcrum-headline">Loading...</h4>
+                </article>
+                <article class="focus-card" data-week-section="levels">
+                    <span class="focus-label">KEY LEVELS</span>
+                    <h4 class="focus-headline" id="focus-levels-headline">Loading...</h4>
+                </article>
+                <article class="focus-card" data-week-section="unpriced">
+                    <span class="focus-label">UNPRICED</span>
+                    <h4 class="focus-headline" id="focus-unpriced-headline">Loading...</h4>
+                </article>
+                <article class="focus-card" data-week-section="underestimated">
+                    <span class="focus-label">UNDERESTIMATED</span>
+                    <h4 class="focus-headline" id="focus-underestimated-headline">Loading...</h4>
+                </article>
+            </div>
+        </section>
+
         <!-- Main Grid -->
         <main class="editorial-grid">
             
@@ -318,6 +344,40 @@
                     <div class="article-body" id="reading-body">
                         <p>Loading today's intelligence brief...</p>
                     </div>
+                    
+                    <!-- Article Ending - Editorial Signature -->
+                    <footer class="article-ending" id="article-ending" style="display: none;">
+                        <div class="ending-divider"></div>
+                        
+                        <!-- Pull Quote -->
+                        <blockquote class="ending-quote">
+                            <span class="quote-mark">"</span>
+                            <p class="quote-text" id="ending-quote-text">The market isn't pricing risk. It's pricing the absence of imagination.</p>
+                        </blockquote>
+                        
+                        <!-- Analyst Byline -->
+                        <div class="analyst-byline">
+                            <div class="analyst-avatar" id="analyst-avatar">
+                                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="20" cy="20" r="20" fill="#1a1a1a"/>
+                                    <circle cx="20" cy="15" r="7" fill="#f5f1eb"/>
+                                    <path d="M8 36c0-6.627 5.373-12 12-12s12 5.373 12 12" fill="#f5f1eb"/>
+                                </svg>
+                            </div>
+                            <div class="analyst-info">
+                                <span class="analyst-name">Litmus Intelligence</span>
+                                <span class="analyst-role">Senior Market Analyst</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Related Reading -->
+                        <div class="related-reading" id="related-reading">
+                            <span class="related-label">CONTINUE READING</span>
+                            <div class="related-links" id="related-links">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </footer>
                     
                     <!-- Audio Card - The Breakdown (below article) -->
                     <div class="audio-card" id="audio-card">

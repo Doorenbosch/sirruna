@@ -1029,6 +1029,7 @@ async function loadWeekAhead() {
         weekAheadData = await response.json();
         renderWeekAhead(weekAheadData);
         initWeekCards();
+        initFocusCards();
         
     } catch (error) {
         console.log('Week ahead not available');
@@ -1318,16 +1319,68 @@ function renderReadingPane(sectionKey) {
             }).join('');
         }
     }
+    
+    // Show/update article ending for THE LEAD only
+    const articleEnding = document.getElementById('article-ending');
+    if (articleEnding) {
+        const isLead = (currentBriefType === 'morning' && sectionKey === 'lead') ||
+                       (currentBriefType === 'evening' && sectionKey === 'session');
+        
+        if (isLead) {
+            articleEnding.style.display = 'block';
+            
+            // Get THE TAKEAWAY for pull quote
+            const takeawayContent = briefData.sections.the_takeaway || briefData.sections.takeaway || '';
+            if (takeawayContent) {
+                // Extract first sentence or first ~100 chars as quote
+                const firstSentence = takeawayContent.split(/[.!?]/)[0];
+                const quoteText = firstSentence.length > 120 
+                    ? firstSentence.substring(0, 117) + '...'
+                    : firstSentence + '.';
+                setText('ending-quote-text', quoteText);
+            }
+            
+            // Populate related reading with other sections
+            const relatedLinks = document.getElementById('related-links');
+            if (relatedLinks) {
+                const otherSections = Object.keys(sections)
+                    .filter(k => k !== sectionKey && k !== 'takeaway')
+                    .slice(0, 3);
+                
+                relatedLinks.innerHTML = otherSections.map(key => {
+                    const sec = sections[key];
+                    const title = briefData.sections[`${sec.field}_title`] || sec.defaultHeadline;
+                    return `<a href="#" class="related-link" data-section="${key}">${title}</a>`;
+                }).join('');
+                
+                // Add click handlers
+                relatedLinks.querySelectorAll('.related-link').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const targetSection = link.dataset.section;
+                        renderReadingPane(targetSection);
+                        // Update index card active state
+                        document.querySelectorAll('.index-card').forEach(c => {
+                            c.classList.toggle('active', c.dataset.section === targetSection);
+                        });
+                    });
+                });
+            }
+        } else {
+            articleEnding.style.display = 'none';
+        }
+    }
 }
 
 // Render Week Ahead
 function renderWeekAhead(data) {
     if (!data.sections) return;
     
-    // Update date
+    // Update date in sidebar
     if (data.generated_at) {
         const date = new Date(data.generated_at);
         setText('week-ahead-date', `Week of ${formatShortDate(date)}`);
+        setText('week-focus-date', `Week of ${formatShortDate(date)}`);
     }
     
     // Render each section
@@ -1336,9 +1389,42 @@ function renderWeekAhead(data) {
     sections.forEach(key => {
         const section = data.sections[key];
         if (section) {
+            // Sidebar cards
             setText(`week-${key}-headline`, section.title || key);
             setText(`week-${key}-excerpt`, truncate(section.content, 80));
+            
+            // Top focus cards
+            setText(`focus-${key}-headline`, section.title || key);
         }
+    });
+}
+
+// Initialize Focus Cards (top) clicks
+function initFocusCards() {
+    const cards = document.querySelectorAll('.focus-card');
+    
+    cards.forEach(card => {
+        card.addEventListener('click', () => {
+            const sectionKey = card.dataset.weekSection;
+            
+            // Update active state for focus cards
+            cards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            
+            // Also update sidebar week cards
+            document.querySelectorAll('.week-card').forEach(c => {
+                c.classList.toggle('active', c.dataset.weekSection === sectionKey);
+            });
+            
+            // Deactivate brief cards
+            document.querySelectorAll('.index-card').forEach(c => c.classList.remove('active'));
+            
+            // Show in reading pane
+            renderWeekAheadPane(sectionKey);
+            
+            // Open mobile reader on phones
+            openMobileReader();
+        });
     });
 }
 
