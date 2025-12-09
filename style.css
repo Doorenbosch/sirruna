@@ -611,7 +611,7 @@ a {
 /* ========== EDITORIAL GRID ========== */
 .editorial-grid {
     display: grid;
-    grid-template-columns: 260px 1fr 340px;
+    grid-template-columns: 340px 1fr 340px;
     gap: var(--xl);
     margin-top: var(--lg); /* Reduced - week-focus handles header offset */
     height: calc(100vh - 270px); /* Viewport minus header + padding */
@@ -1963,7 +1963,7 @@ BREAKPOINTS:
 @media (min-width: 1201px) {
     .editorial-grid {
         display: grid;
-        grid-template-columns: 260px 1fr 300px;
+        grid-template-columns: 340px 1fr 340px;
         grid-template-areas: "left center right";
         gap: var(--xl);
     }
