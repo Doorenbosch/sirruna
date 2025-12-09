@@ -2672,10 +2672,6 @@ BREAKPOINTS:
     color: var(--white);
 }
 
-.focus-card.active .focus-excerpt {
-    color: rgba(255, 255, 255, 0.8);
-}
-
 .focus-label {
     font-family: var(--sans);
     font-size: 0.6rem;
@@ -2793,8 +2789,6 @@ BREAKPOINTS:
     height: 100%;
     object-fit: cover;
 }
-    object-fit: cover;
-}
 
 .analyst-info {
     display: flex;
@@ -2812,6 +2806,7 @@ BREAKPOINTS:
     font-family: var(--sans);
     font-size: 0.75rem;
     color: var(--ink-tertiary);
+    margin-top: 2px;
 }
 
 /* Related Reading */

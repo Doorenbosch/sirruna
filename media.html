@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media | Litmus Daily</title>
+    
+    <link rel="icon" type="image/png" href="litmuslogo.png">
+    <link rel="apple-touch-icon" href="litmuslogo.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Fixed Header -->
+    <div class="header-fixed">
+        <!-- Header - FT Style: Region | Logo | Auth -->
+        <header class="masthead">
+            <!-- Left: Region Picker -->
+            <div class="masthead-left">
+                <div class="edition-picker">
+                    <button class="edition" data-region="americas">Americas</button>
+                    <button class="edition" data-region="emea">EMEA</button>
+                    <button class="edition" data-region="apac">APAC</button>
+                </div>
+            </div>
+            
+            <!-- Center: Brand -->
+            <div class="masthead-center">
+                <a href="/" class="masthead-brand">
+                    <img src="litmuslogo.png" alt="Litmus Daily" class="logo-icon">
+                    <span class="brand-name">Litmus<em> Daily</em></span>
+                </a>
+            </div>
+            
+            <!-- Right: Date -->
+            <div class="masthead-right">
+                <span class="publication-date" id="publication-date"></span>
+            </div>
+        </header>
+        
+        <!-- Ticker -->
+        <div class="ticker-bar">
+            <div class="ticker">
+                <span class="ticker-label">Bitcoin</span>
+                <span class="ticker-value">---</span>
+            </div>
+            <div class="ticker">
+                <span class="ticker-label">Ether</span>
+                <span class="ticker-value">---</span>
+            </div>
+            <div class="ticker">
+                <span class="ticker-label">Total Market</span>
+                <span class="ticker-value">---</span>
+            </div>
+            <div class="ticker">
+                <span class="ticker-label">Market Activity</span>
+                <span class="ticker-value">---</span>
+            </div>
+        </div>
+
+        <!-- Section Navigation -->
+        <nav class="section-nav">
+            <a href="index.html" class="section-link">Daily Edition</a>
+            <a href="weekend.html" class="section-link">Weekend Magazine</a>
+            <a href="personal.html" class="section-link">Personal Edition</a>
+            <a href="media.html" class="section-link active">Media</a>
+        </nav>
+    </div>
+    
+    <!-- Main Content Container -->
+    <div class="container content-offset">
+        <div class="media-page" style="margin-top: 220px; padding: var(--xl);">
+            
+            <header class="media-header" style="margin-bottom: var(--2xl);">
+                <h1 style="font-family: var(--serif); font-size: 2.5rem; font-weight: 700; color: var(--ink); margin-bottom: var(--sm);">Media</h1>
+                <p style="font-family: var(--sans); font-size: 1rem; color: var(--ink-secondary);">Audio briefs, video analysis, and curated podcasts from the Litmus Intelligence team.</p>
+            </header>
+
+            <!-- Daily Audio Section -->
+            <section class="media-section" style="margin-bottom: var(--2xl);">
+                <h2 style="font-family: var(--sans); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--teal); margin-bottom: var(--lg);">Daily Audio Brief</h2>
+                
+                <div class="audio-card" id="audio-card" style="max-width: 600px;">
+                    <div class="audio-card-content">
+                        <div class="audio-header">
+                            <span class="audio-label">LATEST EPISODE</span>
+                            <span class="audio-duration" id="audio-duration">-- MIN</span>
+                        </div>
+     
+                        <div class="audio-episode">
+                            <div class="audio-artwork" id="audio-artwork">
+                                <img src="https://megaphone.imgix.net/podcasts/bcb63e62-d56f-11eb-9e47-43b3c17dbba3/image/The_Breakdown_Show_Art.jpg" alt="The Breakdown">
+                            </div>
+                            <h3 class="audio-title" id="audio-title">Loading...</h3>
+                        </div>
+     
+                        <div class="audio-source">
+                            <span class="audio-show-name">THE BREAKDOWN</span>
+                            <span class="audio-dot">•</span>
+                            <span class="audio-recency" id="audio-recency">Loading...</span>
+                        </div>
+                    </div>
+ 
+                    <div class="audio-player">
+                        <button class="audio-play-btn" id="audio-play-btn" aria-label="Play">
+                            <svg class="play-icon" id="play-icon" viewBox="0 0 24 24" width="22" height="22">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                            <svg class="pause-icon" id="pause-icon" viewBox="0 0 24 24" width="22" height="22" style="display:none;">
+                                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                            </svg>
+                        </button>
+                        <div class="audio-progress-container">
+                            <div class="audio-progress-bar">
+                                <div class="audio-progress" id="audio-progress"></div>
+                            </div>
+                            <div class="audio-times">
+                                <span class="audio-current-time" id="audio-current-time">0:00</span>
+                                <span class="audio-total-time" id="audio-total-time">0:00</span>
+                            </div>
+                        </div>
+                    </div>
+ 
+                    <audio id="audio-element" preload="none"></audio>
+                </div>
+            </section>
+
+            <!-- Video Section -->
+            <section class="media-section" style="margin-bottom: var(--2xl);">
+                <h2 style="font-family: var(--sans); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--burgundy); margin-bottom: var(--lg);">Video Analysis</h2>
+                
+                <div style="background: var(--paper-dark); border: 1px solid var(--rule); padding: var(--xl); text-align: center; max-width: 600px;">
+                    <p style="font-family: var(--sans); font-size: 0.9rem; color: var(--ink-tertiary);">Weekly video analysis coming soon.</p>
+                </div>
+            </section>
+
+            <!-- Podcast Archive -->
+            <section class="media-section" style="margin-bottom: var(--2xl);">
+                <h2 style="font-family: var(--sans); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-secondary); margin-bottom: var(--lg);">Podcast Archive</h2>
+                
+                <div style="background: var(--paper-dark); border: 1px solid var(--rule); padding: var(--xl); text-align: center; max-width: 600px;">
+                    <p style="font-family: var(--sans); font-size: 0.9rem; color: var(--ink-tertiary);">Archive of past episodes coming soon.</p>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer" style="padding: var(--xl); text-align: center; border-top: 1px solid var(--rule);">
+        <p class="footer-tagline">Intelligence for the informed investor</p>
+        <p class="footer-legal" style="font-size: 0.75rem; color: var(--ink-tertiary); margin-top: var(--sm);">Editorial & Analysis supported by AI. Not financial advice.</p>
+    </footer>
+
+    <script>
+    // Set publication date
+    (function() {
+        var dateEl = document.getElementById('publication-date');
+        if (dateEl) {
+            var now = new Date();
+            var options = { month: 'long', day: 'numeric', year: 'numeric' };
+            dateEl.textContent = now.toLocaleDateString('en-US', options);
+        }
+    })();
+
+    // Load audio (simplified version)
+    async function loadAudio() {
+        try {
+            const response = await fetch('/api/breakdown');
+            if (!response.ok) return;
+            const data = await response.json();
+            
+            if (data.title) {
+                document.getElementById('audio-title').textContent = data.title;
+            }
+            if (data.duration) {
+                document.getElementById('audio-duration').textContent = data.duration + ' MIN';
+            }
+            if (data.recency) {
+                document.getElementById('audio-recency').textContent = data.recency;
+            }
+            if (data.audioUrl) {
+                document.getElementById('audio-element').src = data.audioUrl;
+            }
+        } catch (e) {
+            console.log('Audio not available');
+        }
+    }
+
+    // Audio player controls
+    const audioEl = document.getElementById('audio-element');
+    const playBtn = document.getElementById('audio-play-btn');
+    const playIcon = document.getElementById('play-icon');
+    const pauseIcon = document.getElementById('pause-icon');
+    const progressBar = document.getElementById('audio-progress');
+    const currentTimeEl = document.getElementById('audio-current-time');
+    const totalTimeEl = document.getElementById('audio-total-time');
+
+    if (playBtn && audioEl) {
+        playBtn.addEventListener('click', () => {
+            if (audioEl.paused) {
+                audioEl.play();
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+            } else {
+                audioEl.pause();
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+            }
+        });
+
+        audioEl.addEventListener('timeupdate', () => {
+            if (audioEl.duration) {
+                const pct = (audioEl.currentTime / audioEl.duration) * 100;
+                progressBar.style.width = pct + '%';
+                currentTimeEl.textContent = formatTime(audioEl.currentTime);
+            }
+        });
+
+        audioEl.addEventListener('loadedmetadata', () => {
+            totalTimeEl.textContent = formatTime(audioEl.duration);
+        });
+    }
+
+    function formatTime(secs) {
+        const mins = Math.floor(secs / 60);
+        const s = Math.floor(secs % 60);
+        return mins + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+    loadAudio();
+    </script>
+</body>
+</html>
