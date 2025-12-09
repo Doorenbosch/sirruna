@@ -579,7 +579,7 @@ a {
     display: grid;
     grid-template-columns: 260px 1fr 300px;
     gap: var(--xl);
-    margin-top: 250px; /* Below fixed header */
+    margin-top: var(--lg); /* Reduced - week-focus handles header offset */
     height: calc(100vh - 270px); /* Viewport minus header + padding */
 }
 
@@ -2622,11 +2622,10 @@ BREAKPOINTS:
    ============================================ */
 
 .week-focus {
+    margin-top: 220px; /* Push below fixed header */
     margin-bottom: var(--lg);
-    padding: var(--md) 0;
+    padding: var(--md) var(--xl);
     border-bottom: 1px solid var(--rule);
-    background: #ffcccc; /* DEBUG - bright pink background */
-    min-height: 100px; /* DEBUG - force minimum height */
 }
 
 .week-focus-header {
