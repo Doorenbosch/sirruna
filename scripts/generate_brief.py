@@ -638,12 +638,13 @@ EDITORIAL (primary): What/where is the story happening?
 - Named entities if story-relevant: BlackRock, SEC building, specific companies
 
 MOOD (secondary): How should it feel?
-- Light conditions: dawn light, golden hour, overcast, dramatic sky, soft morning
-- Atmosphere: quiet streets, busy, tension, calm, empty plaza
+- Light conditions: soft morning light, bright, golden hour, clear sky, blue hour
+- Atmosphere: quiet streets, calm, open, spacious, airy
+- PREFER: Light, bright, optimistic imagery. Avoid dark, moody, dramatic images.
 
-FORMAT: "Canary Wharf, dawn light, glass towers, quiet streets" or "Hong Kong skyline, morning fog, harbor"
+FORMAT: "Canary Wharf, soft morning light, glass towers, bright" or "Hong Kong skyline, clear sky, harbor"
 
-✗ NEVER use: crypto, bitcoin, trading, chart, money, stock, market, coin, currency, generic
+✗ NEVER use: crypto, bitcoin, trading, chart, money, stock, market, coin, currency, generic, dark, dramatic, storm
 
 CRITICAL JSON FORMATTING RULES:
 • All string values must have quotes escaped as \\"
@@ -869,12 +870,13 @@ EDITORIAL (primary): What/where is the story happening?
 - Named entities if story-relevant: specific exchanges, institutions
 
 MOOD (secondary): How should it feel?
-- Light conditions: sunset, golden hour, dusk, evening light, city lights
-- Atmosphere: end of day, quiet, reflection, closing time
+- Light conditions: golden sunset, warm light, golden hour, soft evening glow
+- Atmosphere: calm end of day, peaceful, reflective, warm tones
+- PREFER: Warm, golden, inviting imagery. Avoid dark, harsh, cold images.
 
-FORMAT: "Manhattan skyline, sunset, Hudson River, golden light" or "Singapore Marina Bay, dusk, city lights"
+FORMAT: "Manhattan skyline, golden sunset, warm light" or "Singapore Marina Bay, golden hour, harbor"
 
-✗ NEVER use: crypto, bitcoin, trading, chart, money, stock, market, coin, currency, generic
+✗ NEVER use: crypto, bitcoin, trading, chart, money, stock, market, coin, currency, generic, dark, cold, harsh
 
 CRITICAL JSON FORMATTING RULES:
 • All string values must have quotes escaped as \\"
