@@ -1,0 +1,38 @@
+name: Generate Week Ahead
+
+on:
+  # Run every Sunday at 20:00 UTC (prepares for Monday morning globally)
+  schedule:
+    - cron: '0 20 * * 0'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Generate Week Ahead
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          python scripts/generate_brief.py global week-ahead
+      
+      - name: Commit and push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add content/week-ahead.json
+          git diff --staged --quiet || git commit -m "Update Week Ahead - $(date -u +%Y-%m-%d)"
+          git push
