@@ -1320,52 +1320,98 @@ function renderReadingPane(sectionKey) {
         }
     }
     
-    // Show/update article ending for THE LEAD only
+    // Show/update article ending with analyst persona
     const articleEnding = document.getElementById('article-ending');
     if (articleEnding) {
+        articleEnding.style.display = 'block';
+        
+        // Editorial team personas
+        const analysts = {
+            lead: {
+                name: 'Marcus',
+                role: 'Senior Market Analyst',
+                photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&h=96&fit=crop&crop=face&q=80'
+            },
+            session: {
+                name: 'Marcus',
+                role: 'Senior Market Analyst', 
+                photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&h=96&fit=crop&crop=face&q=80'
+            },
+            angle: {
+                name: 'Hakima',
+                role: 'Market Strategist',
+                photo: 'https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=96&h=96&fit=crop&crop=face&q=80'
+            },
+            driver: {
+                name: 'Hakima',
+                role: 'Market Strategist',
+                photo: 'https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=96&h=96&fit=crop&crop=face&q=80'
+            },
+            signal: {
+                name: 'Hakima',
+                role: 'Market Strategist',
+                photo: 'https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=96&h=96&fit=crop&crop=face&q=80'
+            },
+            weekahead: {
+                name: 'James',
+                role: 'Chief Strategist',
+                photo: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=96&h=96&fit=crop&crop=face&q=80'
+            }
+        };
+        
+        // Set analyst for current section
+        const analyst = analysts[sectionKey] || analysts.lead;
+        const photoEl = document.getElementById('analyst-photo');
+        const nameEl = document.getElementById('analyst-name');
+        const roleEl = document.getElementById('analyst-role');
+        
+        if (photoEl) photoEl.src = analyst.photo;
+        if (nameEl) nameEl.textContent = `${analyst.name} · Litmus Intelligence`;
+        if (roleEl) roleEl.textContent = analyst.role;
+        
+        // Generate a one-sentence editorial insight from content
         const isLead = (currentBriefType === 'morning' && sectionKey === 'lead') ||
                        (currentBriefType === 'evening' && sectionKey === 'session');
         
+        // Use different source content based on section
+        let sourceContent = content;
         if (isLead) {
-            articleEnding.style.display = 'block';
-            
-            // Generate a one-sentence editorial insight from THE ANGLE (not takeaway - too repetitive)
             const angleContent = briefData.sections.the_angle || briefData.sections.angle || '';
-            const leadContent = briefData.sections.the_lead || briefData.sections.lead || content || '';
-            const sourceContent = angleContent || leadContent;
+            sourceContent = angleContent || content;
+        }
+        
+        if (sourceContent) {
+            // Extract key insight sentence
+            const sentences = sourceContent.match(/[^.!?]+[.!?]+/g) || [];
+            let summaryQuote = '';
             
-            if (sourceContent) {
-                // Extract key insight sentence
-                const sentences = sourceContent.match(/[^.!?]+[.!?]+/g) || [];
-                let summaryQuote = '';
-                
-                // Find a sentence with editorial insight
-                const insightPatterns = /matter|signal|suggest|reveal|indicate|mean|imply|show|tell|point|watch|key|critical|important|question|real|actual|beneath/i;
-                
-                for (let i = 0; i < sentences.length; i++) {
-                    const sentence = sentences[i].trim();
-                    if (sentence.length > 50 && sentence.length < 180) {
-                        if (insightPatterns.test(sentence)) {
-                            summaryQuote = sentence;
-                            break;
-                        }
+            // Find a sentence with editorial insight
+            const insightPatterns = /matter|signal|suggest|reveal|indicate|mean|imply|show|tell|point|watch|key|critical|important|question|real|actual|beneath/i;
+            
+            for (let i = 0; i < sentences.length; i++) {
+                const sentence = sentences[i].trim();
+                if (sentence.length > 50 && sentence.length < 180) {
+                    if (insightPatterns.test(sentence)) {
+                        summaryQuote = sentence;
+                        break;
                     }
-                }
-                
-                // Fallback to first substantial sentence from angle
-                if (!summaryQuote && sentences.length > 0) {
-                    for (const sentence of sentences) {
-                        if (sentence.trim().length > 50 && sentence.trim().length < 180) {
-                            summaryQuote = sentence.trim();
-                            break;
-                        }
-                    }
-                }
-                
-                if (summaryQuote) {
-                    setText('ending-quote-text', summaryQuote);
                 }
             }
+            
+            // Fallback to first substantial sentence
+            if (!summaryQuote && sentences.length > 0) {
+                for (const sentence of sentences) {
+                    if (sentence.trim().length > 50 && sentence.trim().length < 180) {
+                        summaryQuote = sentence.trim();
+                        break;
+                    }
+                }
+            }
+            
+            if (summaryQuote) {
+                setText('ending-quote-text', summaryQuote);
+            }
+        }
             
             // Populate related reading with other sections
             const relatedLinks = document.getElementById('related-links');
@@ -1393,8 +1439,6 @@ function renderReadingPane(sectionKey) {
                     });
                 });
             }
-        } else {
-            articleEnding.style.display = 'none';
         }
     }
 }
