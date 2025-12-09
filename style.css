@@ -2672,6 +2672,10 @@ BREAKPOINTS:
     color: var(--white);
 }
 
+.focus-card.active .focus-excerpt {
+    color: rgba(255, 255, 255, 0.8);
+}
+
 .focus-label {
     font-family: var(--sans);
     font-size: 0.6rem;
