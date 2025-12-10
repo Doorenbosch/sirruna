@@ -380,24 +380,6 @@ body {
     border: 1px solid var(--rule);
 }
 
-/* Segment rows */
-.chart-area::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: repeating-linear-gradient(
-        to bottom,
-        transparent 0px,
-        transparent 50px,
-        var(--rule) 50px,
-        var(--rule) 51px
-    );
-    pointer-events: none;
-}
-
 /* Market benchmark line */
 .market-line {
     position: absolute;
@@ -508,7 +490,7 @@ body {
 /* Segment indicator lines */
 .segment-line {
     position: absolute;
-    height: 2px;
+    height: 1px;
     transform: translateY(-50%);
     z-index: 5;
     pointer-events: none;
@@ -524,8 +506,8 @@ body {
 
 .segment-dot {
     position: absolute;
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     top: 50%;
     transform: translateY(-50%);
