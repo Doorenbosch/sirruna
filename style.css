@@ -2035,8 +2035,8 @@ BREAKPOINTS:
    ============================================ */
 
 /* iPad Portrait (768px - 1024px) */
-/* iPad Portrait - includes iPad Mini (744px - 1024px) */
-@media (min-width: 744px) and (max-width: 1024px) {
+/* iPad Portrait - includes iPad Mini (720px - 1024px) */
+@media (min-width: 720px) and (max-width: 1024px) {
     /* Tighter container */
     .container {
         padding: var(--sm) var(--md) !important;
@@ -2427,7 +2427,7 @@ BREAKPOINTS:
 }
 
 /* Phone: Single column with fullscreen reader overlay */
-@media (max-width: 743px) {
+@media (max-width: 719px) {
     .header-fixed {
         position: relative; /* Not fixed on mobile */
     }
