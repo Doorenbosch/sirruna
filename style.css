@@ -2077,16 +2077,17 @@ BREAKPOINTS:
 @media (min-width: 1201px) and (max-width: 1440px) {
     .container {
         max-width: 100%;
-        padding: var(--lg) var(--lg);
+        padding: var(--lg) var(--xl);
     }
     
     .header-fixed {
-        padding: var(--md) var(--lg) 0 var(--lg);
+        padding: var(--md) var(--xl) 0 var(--xl);
     }
     
     .header-fixed .masthead,
     .header-fixed .section-nav {
-        max-width: 100%;
+        max-width: calc(100% - var(--xl));
+        margin: 0 auto;
     }
     
     .editorial-grid {
