@@ -2034,12 +2034,12 @@ BREAKPOINTS:
 
 /* iPad Portrait (768px - 1024px) */
 @media (min-width: 768px) and (max-width: 1024px) {
-    /* Much tighter container */
+    /* Tighter container */
     .container {
         padding: var(--sm) var(--md) !important;
     }
     
-    /* Compact header */
+    /* Compact header - reduce height */
     .header-fixed {
         padding: var(--xs) var(--md) 0 var(--md) !important;
     }
@@ -2056,23 +2056,19 @@ BREAKPOINTS:
     /* Compact ticker */
     .market-ticker {
         gap: var(--sm) !important;
-        padding: var(--xs) 0 !important;
-    }
-    
-    .ticker-item {
-        gap: 4px !important;
+        padding: 2px 0 !important;
     }
     
     .ticker-label {
-        font-size: 0.55rem !important;
+        font-size: 0.5rem !important;
     }
     
     .ticker-value {
-        font-size: 0.8rem !important;
+        font-size: 0.75rem !important;
     }
     
     .ticker-change {
-        font-size: 0.65rem !important;
+        font-size: 0.6rem !important;
     }
     
     /* Compact nav */
@@ -2083,105 +2079,110 @@ BREAKPOINTS:
     }
     
     .section-link {
-        font-size: 0.75rem !important;
-        padding: var(--xs) 0 !important;
+        font-size: 0.7rem !important;
+        padding: 2px 0 !important;
     }
     
-    /* WEEK FOCUS - 2x2 grid, all visible */
+    /* WEEK FOCUS - 2x2 grid, compact */
     .week-focus {
-        margin-top: var(--md) !important;
-        margin-bottom: var(--md) !important;
+        margin-top: var(--sm) !important;
+        margin-bottom: var(--sm) !important;
         padding-top: 0 !important;
-        overflow: visible !important;
     }
     
     .week-focus-header {
-        margin-bottom: var(--sm) !important;
+        margin-bottom: var(--xs) !important;
     }
     
     .week-focus-title {
-        font-size: 0.7rem !important;
+        font-size: 0.6rem !important;
     }
     
     .week-focus-cards {
         display: grid !important;
         grid-template-columns: repeat(2, 1fr) !important;
-        grid-template-rows: auto auto !important;
-        gap: var(--sm) !important;
-        overflow: visible !important;
+        gap: var(--xs) !important;
     }
     
     .focus-card {
-        padding: var(--sm) var(--md) !important;
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
+        padding: var(--xs) var(--sm) !important;
     }
     
     .focus-label {
-        font-size: 0.55rem !important;
-        margin-bottom: 4px !important;
+        font-size: 0.5rem !important;
+        margin-bottom: 2px !important;
     }
     
     .focus-headline {
-        font-size: 0.85rem !important;
-        line-height: 1.3 !important;
-        margin-bottom: 4px !important;
+        font-size: 0.75rem !important;
+        line-height: 1.25 !important;
+        margin-bottom: 2px !important;
     }
     
     .focus-excerpt {
-        font-size: 0.75rem !important;
+        font-size: 0.65rem !important;
         -webkit-line-clamp: 2 !important;
-        line-height: 1.4 !important;
-        display: -webkit-box !important;
-        -webkit-box-orient: vertical !important;
-        overflow: hidden !important;
+        line-height: 1.3 !important;
     }
     
-    /* MAIN GRID - 2 columns */
+    /* MAIN GRID - 2 columns, sidebar below */
     .editorial-grid {
         display: grid !important;
-        grid-template-columns: 240px 1fr !important;
-        gap: var(--md) !important;
-        height: calc(100vh - 280px) !important;
-        margin-top: var(--sm) !important;
+        grid-template-columns: 200px 1fr !important;
+        grid-template-rows: 1fr auto !important;
+        grid-template-areas: 
+            "index reading"
+            "sidebar sidebar" !important;
+        gap: var(--sm) !important;
+        height: auto !important;
+        min-height: calc(100vh - 280px) !important;
+        margin-top: var(--xs) !important;
     }
     
     .article-index {
+        grid-area: index !important;
         border-right: 1px solid var(--rule) !important;
         padding-right: var(--sm) !important;
-        padding-left: var(--xs) !important;
+        padding-left: 0 !important;
         overflow-y: auto !important;
-        overflow-x: hidden !important;
+        max-height: calc(100vh - 300px) !important;
     }
     
     .reading-pane {
+        grid-area: reading !important;
         overflow-y: auto !important;
         padding-right: var(--sm) !important;
+        max-height: calc(100vh - 300px) !important;
     }
     
-    /* Hide sidebar on portrait */
+    /* Show sidebar below main content */
     .context-sidebar {
-        display: none !important;
+        grid-area: sidebar !important;
+        display: block !important;
+        border-left: none !important;
+        border-top: 1px solid var(--rule) !important;
+        padding-left: 0 !important;
+        padding-top: var(--md) !important;
+        margin-top: var(--md) !important;
     }
     
     /* Compact index */
     .index-header {
         padding-bottom: var(--xs) !important;
-        margin-bottom: var(--sm) !important;
+        margin-bottom: var(--xs) !important;
     }
     
     .index-header-top {
         flex-wrap: wrap !important;
-        gap: var(--xs) !important;
+        gap: 2px !important;
     }
     
     .index-title {
-        font-size: 0.7rem !important;
+        font-size: 0.6rem !important;
     }
     
     .index-date {
-        font-size: 0.65rem !important;
+        font-size: 0.55rem !important;
     }
     
     .brief-selector {
@@ -2190,15 +2191,15 @@ BREAKPOINTS:
     
     .brief-tab {
         padding: var(--xs) var(--sm) !important;
-        min-height: 40px !important;
+        min-height: 36px !important;
     }
     
     .brief-tab-label {
-        font-size: 0.7rem !important;
+        font-size: 0.65rem !important;
     }
     
     .brief-tab-time {
-        font-size: 0.6rem !important;
+        font-size: 0.55rem !important;
     }
     
     .index-card {
@@ -2207,39 +2208,39 @@ BREAKPOINTS:
     }
     
     .index-label {
-        font-size: 0.5rem !important;
+        font-size: 0.45rem !important;
         margin-bottom: 2px !important;
     }
     
     .index-headline {
-        font-size: 0.8rem !important;
+        font-size: 0.75rem !important;
         line-height: 1.25 !important;
         margin-bottom: 2px !important;
     }
     
     .index-excerpt {
-        font-size: 0.7rem !important;
+        font-size: 0.65rem !important;
         -webkit-line-clamp: 2 !important;
         line-height: 1.3 !important;
     }
     
     /* Reading pane */
     .article-title {
-        font-size: 1.5rem !important;
+        font-size: 1.4rem !important;
         line-height: 1.2 !important;
     }
     
     .article-body {
-        font-size: 0.95rem !important;
+        font-size: 0.9rem !important;
         line-height: 1.6 !important;
     }
     
     .article-body p {
-        margin-bottom: var(--md) !important;
+        margin-bottom: var(--sm) !important;
     }
     
     .reading-byline {
-        font-size: 0.75rem !important;
+        font-size: 0.7rem !important;
         margin-bottom: var(--sm) !important;
     }
     
@@ -2342,7 +2343,6 @@ BREAKPOINTS:
         border-right: 1px solid var(--rule) !important;
         padding-right: var(--sm) !important;
         padding-left: var(--xs) !important;
-    }
     }
     
     .context-sidebar {
