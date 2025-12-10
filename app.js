@@ -931,9 +931,9 @@ async function loadTheNumber() {
         
         if (apiResponse.ok) {
             const data = await apiResponse.json();
-            if (data.value && data.source !== 'fallback') {
+            if (data.value) {
                 renderTheNumber(data);
-                console.log('The Number: Live data loaded');
+                console.log('The Number: Data loaded', data.source || 'live');
                 return;
             }
         }
