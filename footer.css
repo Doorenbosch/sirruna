@@ -79,12 +79,12 @@
     color: var(--ink-tertiary);
 }
 
-/* Links (when enabled) */
+/* Links */
 .footer-links {
     display: flex;
     justify-content: center;
     gap: var(--lg);
-    margin-top: var(--md);
+    margin-top: var(--lg);
 }
 
 .footer-links a {
@@ -97,6 +97,10 @@
 
 .footer-links a:hover {
     color: var(--ink);
+}
+
+.footer-links .separator {
+    color: var(--ink-tertiary);
 }
 
 /* Responsive */
