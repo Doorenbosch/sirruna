@@ -1548,7 +1548,8 @@ function renderWeekAhead(data) {
         const date = new Date(data.generated_at);
         const titleEl = document.getElementById('week-focus-title');
         if (titleEl) {
-            titleEl.textContent = `The Week of ${formatShortDate(date)} Focus`;
+            // Format: "This Week · Dec 9" - cleaner, more editorial
+            titleEl.textContent = `This Week · ${formatShortDate(date)}`;
         }
     }
     

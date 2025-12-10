@@ -3089,6 +3089,13 @@ BREAKPOINTS:
     color: var(--teal);
 }
 
+.week-focus-subtitle {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    color: var(--ink-tertiary);
+    margin-top: 2px;
+}
+
 .week-focus-cards {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
