@@ -458,6 +458,16 @@ a {
 .ticker-activity.moderate { color: var(--teal); }
 .ticker-activity.quiet { color: var(--ink-tertiary); }
 
+.ticker-meta {
+    margin-left: auto;
+    opacity: 0.6;
+}
+
+.ticker-timestamp {
+    font-size: 0.75rem;
+    color: var(--ink-tertiary);
+}
+
 /* ========== SECTION NAV ========== */
 .section-nav {
     display: flex;

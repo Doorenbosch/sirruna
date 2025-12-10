@@ -525,20 +525,62 @@ function showBriefUnavailable(briefType) {
 // Load Live Market Data from CoinGecko
 async function loadMarketData() {
     try {
-        // Fetch coin data (BTC, ETH)
+        // Use cached market data endpoint for stability
+        const response = await fetch('/api/market-cache');
+        
+        if (!response.ok) {
+            // Fallback to direct CoinGecko if cache fails
+            return loadMarketDataDirect();
+        }
+        
+        const data = await response.json();
+        
+        // Update BTC
+        if (data.btc) {
+            setText('btc-price', formatPrice(data.btc.price));
+            updateChangeElement('btc-change', data.btc.change24h);
+            setText('sticky-btc-price', formatPriceCompact(data.btc.price));
+            updateStickyChange('sticky-btc-change', data.btc.change24h);
+        }
+        
+        // Update ETH
+        if (data.eth) {
+            setText('eth-price', formatPrice(data.eth.price));
+            updateChangeElement('eth-change', data.eth.change24h);
+            setText('sticky-eth-price', formatPriceCompact(data.eth.price));
+            updateStickyChange('sticky-eth-change', data.eth.change24h);
+        }
+        
+        // Update total market
+        if (data.market) {
+            setText('total-market', formatMarketCap(data.market.totalMarketCap));
+            setText('sticky-market', formatMarketCap(data.market.totalMarketCap));
+            updateChangeElement('market-change', data.market.marketCapChange24h);
+        }
+        
+        // Update last refresh timestamp
+        updateMarketTimestamp(data.updated, data.cached);
+        
+    } catch (error) {
+        console.error('Error loading market data:', error);
+        // Try direct API as fallback
+        loadMarketDataDirect();
+    }
+}
+
+// Fallback: direct CoinGecko fetch
+async function loadMarketDataDirect() {
+    try {
         const coinsResponse = await fetch(CONFIG.coinGeckoAPI);
         if (!coinsResponse.ok) throw new Error('Failed to fetch coin data');
         
         const coins = await coinsResponse.json();
-        
-        // Find BTC and ETH
         const btc = coins.find(c => c.id === 'bitcoin');
         const eth = coins.find(c => c.id === 'ethereum');
         
         if (btc) {
             setText('btc-price', formatPrice(btc.current_price));
             updateChangeElement('btc-change', btc.price_change_percentage_24h);
-            // Update sticky header
             setText('sticky-btc-price', formatPriceCompact(btc.current_price));
             updateStickyChange('sticky-btc-change', btc.price_change_percentage_24h);
         }
@@ -546,12 +588,10 @@ async function loadMarketData() {
         if (eth) {
             setText('eth-price', formatPrice(eth.current_price));
             updateChangeElement('eth-change', eth.price_change_percentage_24h);
-            // Update sticky header
             setText('sticky-eth-price', formatPriceCompact(eth.current_price));
             updateStickyChange('sticky-eth-change', eth.price_change_percentage_24h);
         }
         
-        // Fetch global market data
         const globalResponse = await fetch(CONFIG.globalAPI);
         if (globalResponse.ok) {
             const globalData = await globalResponse.json();
@@ -562,15 +602,39 @@ async function loadMarketData() {
                 setText('total-market', formatMarketCap(totalMarketCap));
                 setText('sticky-market', formatMarketCap(totalMarketCap));
             }
-            
             if (marketCapChange !== undefined) {
                 updateChangeElement('market-change', marketCapChange);
             }
         }
         
+        updateMarketTimestamp(new Date().toISOString(), false);
+        
     } catch (error) {
-        console.error('Error loading market data:', error);
+        console.error('Error loading market data (direct):', error);
     }
+}
+
+// Update the market data timestamp display
+function updateMarketTimestamp(isoString, cached) {
+    const el = document.getElementById('market-updated');
+    if (!el) return;
+    
+    const date = new Date(isoString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    
+    let text;
+    if (diffMins < 1) {
+        text = 'just now';
+    } else if (diffMins < 60) {
+        text = `${diffMins}m ago`;
+    } else {
+        text = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+    
+    el.textContent = text;
+    el.title = `Last updated: ${date.toLocaleString()}${cached ? ' (cached)' : ''}`;
 }
 
 // Format price compact (e.g., $92.1K)
