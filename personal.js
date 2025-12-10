@@ -304,14 +304,9 @@ async function fetchPriceData() {
             });
         }
         
-        // Calculate market average from top coins
-        const btc = state.coinData['bitcoin'];
-        const eth = state.coinData['ethereum'];
-        if (btc && eth) {
-            state.marketChange7d = ((btc.change7d || 0) + (eth.change7d || 0)) / 2;
-            state.marketChange30d = ((btc.change30d || 0) + (eth.change30d || 0)) / 2;
-            state.marketChange90d = ((btc.change90d || 0) + (eth.change90d || 0)) / 2;
-        }
+        // Calculate market change as market-cap-weighted average of all coins
+        // This represents the actual total market movement
+        calculateMarketChange();
         
         // Calculate segment averages
         calculateSegmentChanges();
@@ -321,9 +316,44 @@ async function fetchPriceData() {
         
     } catch (e) {
         console.error('Failed to fetch price data:', e);
-        state.marketChange7d = 2;
-        state.marketChange30d = 5;
-        state.marketChange90d = 12;
+        state.marketChange7d = 0;
+        state.marketChange30d = 0;
+        state.marketChange90d = 0;
+    }
+}
+
+// Calculate market change as market-cap-weighted average
+function calculateMarketChange() {
+    let totalMarketCap = 0;
+    let weighted7d = 0;
+    let weighted30d = 0;
+    let weighted90d = 0;
+    
+    // Use all available coins with price data
+    state.availableCoins.forEach(coin => {
+        const data = state.coinData[coin.id];
+        if (data && data.marketCap && data.marketCap > 0) {
+            const cap = data.marketCap;
+            totalMarketCap += cap;
+            weighted7d += (data.change7d || 0) * cap;
+            weighted30d += (data.change30d || 0) * cap;
+            weighted90d += (data.change90d || 0) * cap;
+        }
+    });
+    
+    if (totalMarketCap > 0) {
+        state.marketChange7d = weighted7d / totalMarketCap;
+        state.marketChange30d = weighted30d / totalMarketCap;
+        state.marketChange90d = weighted90d / totalMarketCap;
+    } else {
+        // Fallback to BTC+ETH average if no market cap data
+        const btc = state.coinData['bitcoin'];
+        const eth = state.coinData['ethereum'];
+        if (btc && eth) {
+            state.marketChange7d = ((btc.change7d || 0) + (eth.change7d || 0)) / 2;
+            state.marketChange30d = ((btc.change30d || 0) + (eth.change30d || 0)) / 2;
+            state.marketChange90d = ((btc.change90d || 0) + (eth.change90d || 0)) / 2;
+        }
     }
 }
 
