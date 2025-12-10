@@ -467,10 +467,14 @@ function updateDataTimestamp(isoString, dataPeriod) {
     const nextEl = document.getElementById('next-update');
     if (!el) return;
     
-    // Check if user is logged in
-    const isLoggedIn = typeof userSync !== 'undefined' && 
-                       typeof getCurrentUser === 'function' && 
-                       getCurrentUser();
+    // Check if user is logged in by checking if getCurrentUser exists and returns a user
+    // Also check firebase auth directly as fallback
+    let isLoggedIn = false;
+    if (typeof getCurrentUser === 'function' && getCurrentUser()) {
+        isLoggedIn = true;
+    } else if (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
+        isLoggedIn = true;
+    }
     
     // Region timezone mapping
     const regionTimezones = {
@@ -480,6 +484,7 @@ function updateDataTimestamp(isoString, dataPeriod) {
     };
     
     // Get user's timezone info (or default to UTC)
+    // Use state.region which is already loaded from userSync or localStorage
     const userRegion = state.region || 'americas';
     const tz = isLoggedIn ? regionTimezones[userRegion] : { offset: 0, abbrev: 'UTC' };
     
