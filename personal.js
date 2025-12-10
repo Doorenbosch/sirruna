@@ -240,33 +240,66 @@ async function fetchPriceData() {
     const idsToFetch = [...new Set([...userCoinIds, ...segmentRepresentatives])];
     
     try {
-        const response = await fetch(
-            `${CONFIG.coingeckoApi}/coins/markets?vs_currency=usd&ids=${idsToFetch.join(',')}&order=market_cap_desc&sparkline=false&price_change_percentage=7d,30d`
-        );
+        // Try cached API first (daily refresh, includes 7d/30d/90d data)
+        let coins = [];
+        const cacheResponse = await fetch('/api/personal-cache');
         
-        if (!response.ok) throw new Error('API request failed');
-        
-        const coins = await response.json();
-        
-        coins.forEach(c => {
-            // Create or update coinData entry
-            if (!state.coinData[c.id]) {
-                state.coinData[c.id] = {
-                    id: c.id,
-                    symbol: c.symbol.toUpperCase(),
-                    name: c.name,
-                    image: c.image
-                };
+        if (cacheResponse.ok) {
+            const cacheData = await cacheResponse.json();
+            // Filter to only coins we need
+            coins = (cacheData.coins || []).filter(c => idsToFetch.includes(c.id));
+            
+            // Update market data from cache
+            if (cacheData.market) {
+                state.marketChange7d = cacheData.market.marketCapChange24h * 7 / 24 || 0; // Estimate
             }
             
-            const entry = state.coinData[c.id];
-            entry.price = c.current_price;
-            entry.marketCap = c.market_cap;
-            entry.change7d = c.price_change_percentage_7d_in_currency || 0;
-            entry.change30d = c.price_change_percentage_30d_in_currency || 0;
-            // Estimate 90d from 30d (roughly 3x with dampening)
-            entry.change90d = (c.price_change_percentage_30d_in_currency || 0) * 2.2;
-        });
+            // Map cached format to expected format
+            coins.forEach(c => {
+                if (!state.coinData[c.id]) {
+                    state.coinData[c.id] = {
+                        id: c.id,
+                        symbol: c.symbol,
+                        name: c.name,
+                        image: c.image
+                    };
+                }
+                
+                const entry = state.coinData[c.id];
+                entry.price = c.price;
+                entry.marketCap = c.marketCap;
+                entry.change7d = c.change7d || 0;
+                entry.change30d = c.change30d || 0;
+                entry.change90d = c.change90d || 0;
+            });
+        } else {
+            // Fallback to direct CoinGecko
+            const response = await fetch(
+                `${CONFIG.coingeckoApi}/coins/markets?vs_currency=usd&ids=${idsToFetch.join(',')}&order=market_cap_desc&sparkline=false&price_change_percentage=7d,30d`
+            );
+            
+            if (!response.ok) throw new Error('API request failed');
+            
+            coins = await response.json();
+            
+            coins.forEach(c => {
+                if (!state.coinData[c.id]) {
+                    state.coinData[c.id] = {
+                        id: c.id,
+                        symbol: c.symbol.toUpperCase(),
+                        name: c.name,
+                        image: c.image
+                    };
+                }
+                
+                const entry = state.coinData[c.id];
+                entry.price = c.current_price;
+                entry.marketCap = c.market_cap;
+                entry.change7d = c.price_change_percentage_7d_in_currency || 0;
+                entry.change30d = c.price_change_percentage_30d_in_currency || 0;
+                entry.change90d = (c.price_change_percentage_30d_in_currency || 0) * 2.2;
+            });
+        }
         
         // Calculate market average from top coins
         const btc = state.coinData['bitcoin'];
@@ -353,9 +386,46 @@ function render() {
         renderChart();
         renderPortfolioRead();
         renderCoinsList();
+        updateMarketConditionHeader();
     }
     
     updateCoinCount();
+}
+
+// ===== Dynamic Market Condition Header =====
+function updateMarketConditionHeader() {
+    const labelEl = document.getElementById('market-condition-label');
+    if (!labelEl) return;
+    
+    // Get market change for selected period
+    let marketChange;
+    switch (state.period) {
+        case 7:
+            marketChange = state.marketChange7d;
+            break;
+        case 90:
+            marketChange = state.marketChange90d;
+            break;
+        default: // 30
+            marketChange = state.marketChange30d;
+    }
+    
+    // Determine headline based on market condition
+    // Using ±0.5% as the "flat" buffer
+    let headline;
+    if (marketChange > 3) {
+        headline = 'Riding the Wave';
+    } else if (marketChange > 0.5) {
+        headline = 'Steady Gains';
+    } else if (marketChange >= -0.5) {
+        headline = 'Holding Pattern';
+    } else if (marketChange >= -3) {
+        headline = 'Against the Tide';
+    } else {
+        headline = 'Weathering the Storm';
+    }
+    
+    labelEl.textContent = headline;
 }
 
 function renderChart() {
