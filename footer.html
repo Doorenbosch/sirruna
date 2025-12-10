@@ -1,0 +1,35 @@
+<!-- Sirruna Site Footer - Include via JavaScript or copy into each page -->
+<footer class="site-footer">
+    <div class="footer-content">
+        <!-- Brand Mark -->
+        <div class="footer-brand">
+            <span class="footer-logo"><strong>S</strong><span class="footer-dot">.</span></span>
+            <span class="footer-name">SIRRUNA</span>
+        </div>
+        
+        <!-- Tagline -->
+        <p class="footer-tagline"><em>Our secret. Your edge.</em></p>
+        
+        <!-- Legal -->
+        <div class="footer-legal">
+            <p class="footer-disclaimer">Editorial & Analysis supported by AI. Not financial advice.</p>
+            <p class="footer-copyright">&copy; <span id="footer-year">2025</span> Sirruna. All rights reserved.</p>
+        </div>
+        
+        <!-- Links (optional - uncomment when ready)
+        <nav class="footer-links">
+            <a href="/terms">Terms</a>
+            <a href="/privacy">Privacy</a>
+            <a href="/contact">Contact</a>
+        </nav>
+        -->
+    </div>
+</footer>
+
+<script>
+// Auto-update year
+(function() {
+    var yearEl = document.getElementById('footer-year');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+})();
+</script>
