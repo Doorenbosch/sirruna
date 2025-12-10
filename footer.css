@@ -1,33 +1,37 @@
 /* ========================================
    SIRRUNA SITE FOOTER
-   Consistent footer across all pages
+   Compact, stylish, horizontal layout
    ======================================== */
 
 .site-footer {
     background: var(--paper-dark);
     color: var(--ink);
-    padding: var(--2xl) var(--xl);
+    padding: var(--xl) var(--xl);
     margin-top: var(--2xl);
-    text-align: center;
     border-top: 1px solid var(--rule);
 }
 
 .footer-content {
-    max-width: 600px;
+    max-width: 1400px;
     margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--lg);
 }
 
-/* Brand Mark */
+/* Left: Brand */
 .footer-brand {
-    margin-bottom: var(--lg);
+    display: flex;
+    align-items: center;
+    gap: var(--sm);
 }
 
 .footer-logo {
     font-family: var(--serif-display);
-    font-size: 3rem;
+    font-size: 1.5rem;
     font-weight: 400;
     color: var(--ink);
-    display: block;
     line-height: 1;
 }
 
@@ -41,79 +45,78 @@
 }
 
 .footer-name {
-    display: block;
     font-family: var(--sans);
-    font-size: 0.875rem;
+    font-size: 0.7rem;
     font-weight: 500;
-    letter-spacing: 0.3em;
+    letter-spacing: 0.2em;
     color: var(--ink-tertiary);
-    margin-top: var(--sm);
+    text-transform: uppercase;
 }
 
-/* Tagline */
+/* Center: Tagline */
 .footer-tagline {
     font-family: var(--serif);
-    font-size: 1.25rem;
+    font-size: 0.95rem;
     font-style: italic;
     color: var(--ink-secondary);
-    margin: var(--lg) 0;
+    margin: 0;
+    text-align: center;
 }
 
-/* Legal */
+/* Right: Legal + Links */
 .footer-legal {
-    margin-top: var(--xl);
-    padding-top: var(--lg);
-    border-top: 1px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
 }
 
 .footer-disclaimer {
     font-family: var(--sans);
-    font-size: 0.8rem;
-    color: var(--ink-secondary);
-    margin-bottom: var(--sm);
+    font-size: 0.7rem;
+    color: var(--ink-tertiary);
+    margin: 0;
 }
 
 .footer-copyright {
-    font-family: var(--sans);
-    font-size: 0.75rem;
-    color: var(--ink-tertiary);
+    display: none; /* Hidden in compact mode - covered by disclaimer */
 }
 
 /* Links */
 .footer-links {
     display: flex;
-    justify-content: center;
-    gap: var(--lg);
-    margin-top: var(--lg);
+    gap: var(--md);
 }
 
 .footer-links a {
     font-family: var(--sans);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--ink-secondary);
     text-decoration: none;
     transition: color 0.2s ease;
 }
 
 .footer-links a:hover {
-    color: var(--ink);
+    color: var(--burgundy);
 }
 
-.footer-links .separator {
-    color: var(--ink-tertiary);
-}
-
-/* Responsive */
+/* Responsive - stack on mobile */
 @media (max-width: 768px) {
-    .site-footer {
-        padding: var(--xl) var(--md);
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--md);
     }
     
-    .footer-logo {
-        font-size: 2.5rem;
+    .footer-brand {
+        justify-content: center;
+    }
+    
+    .footer-legal {
+        align-items: center;
     }
     
     .footer-tagline {
-        font-size: 1.1rem;
+        font-size: 0.875rem;
     }
 }
