@@ -95,7 +95,7 @@ a {
 
 /* Content offset for fixed header */
 .content-offset {
-    padding-top: 0; /* Handled by editorial-grid position */
+    padding-top: 160px; /* Space for fixed header */
 }
 
 /* Wide screens - expand container for editorial grid */
@@ -512,7 +512,7 @@ a {
     justify-content: flex-end;
     gap: var(--lg);
     padding: var(--sm) 0;
-    border-bottom: 2px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
 }
 
 .section-link {
@@ -3063,7 +3063,7 @@ BREAKPOINTS:
    ============================================ */
 
 .week-focus {
-    margin-top: 180px; /* Push below fixed header - tighter */
+    margin-top: var(--sm); /* Small margin, offset handled by container */
     margin-bottom: var(--sm);
     padding: var(--xs) 0;
 }
