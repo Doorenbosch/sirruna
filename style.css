@@ -2036,14 +2036,14 @@ BREAKPOINTS:
 
 /* iPad Portrait (768px - 1024px) */
 @media (min-width: 768px) and (max-width: 1024px) {
-    /* Content offset for fixed header on iPad */
-    .container.content-offset {
-        padding-top: 160px !important;
-    }
-    
     /* Tighter container */
     .container {
         padding: var(--sm) var(--md) !important;
+    }
+    
+    /* Content offset for fixed header on iPad - MUST come after .container */
+    .container.content-offset {
+        padding-top: 145px !important;
     }
     
     /* Compact header - reduce height */
@@ -2150,7 +2150,7 @@ BREAKPOINTS:
         grid-area: index !important;
         border-right: 1px solid var(--rule) !important;
         padding-right: var(--sm) !important;
-        padding-left: 0 !important;
+        padding-left: var(--xs) !important;
         overflow-y: auto !important;
         max-height: calc(100vh - 300px) !important;
     }
