@@ -4,7 +4,7 @@
    ======================================== */
 
 .site-footer {
-    background: var(--paper-dark);
+    background: var(--paper);
     color: var(--ink);
     padding: var(--xl) var(--xl);
     margin-top: var(--2xl);
@@ -46,7 +46,7 @@
 
 .footer-name {
     font-family: var(--sans);
-    font-size: 0.7rem;
+    font-size: 1.5rem;
     font-weight: 500;
     letter-spacing: 0.2em;
     color: var(--ink-tertiary);
