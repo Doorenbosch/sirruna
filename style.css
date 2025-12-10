@@ -17,7 +17,8 @@
     --ink-tertiary: #7a7a7a;
     
     /* Typography */
-    --serif: 'Bodoni Moda', Georgia, serif;
+    --serif-display: 'Bodoni Moda', Georgia, serif;  /* Logo, masthead, S. brand */
+    --serif: 'DM Serif Display', Georgia, serif;     /* Headers, titles */
     --sans: 'DM Sans', -apple-system, sans-serif;
     
     /* Spacing */
@@ -162,7 +163,7 @@ a {
 }
 
 .brand-name {
-    font-family: var(--serif);
+    font-family: var(--serif-display);
     font-weight: 400;
     font-size: 2rem;
     color: var(--ink);
@@ -2899,7 +2900,7 @@ BREAKPOINTS:
 }
 
 .brand-mark {
-    font-family: var(--serif);
+    font-family: var(--serif-display);
     font-size: 1.5rem;
     color: var(--ink);
 }
