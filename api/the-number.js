@@ -110,7 +110,7 @@ async function getFearAndGreed() {
         let context = '';
         
         if (current <= 20) {
-            interpretation = 'bearish';
+            interpretation = 'extreme-fear';
             context = 'Extreme fear often precedes reversals - historically a buying opportunity';
         } else if (current <= 40) {
             interpretation = 'cautious';
@@ -120,9 +120,9 @@ async function getFearAndGreed() {
             context = 'Neither fear nor greed dominates - market in equilibrium';
         } else if (current <= 80) {
             interpretation = 'optimistic';
-            context = 'Greed is building - momentum favors bulls, but watch for overextension';
+            context = 'Greed is building - momentum favors continuation, watch for overextension';
         } else {
-            interpretation = 'bullish';
+            interpretation = 'extreme-greed';
             context = 'Extreme greed - historically precedes corrections. Caution warranted';
         }
         
@@ -284,9 +284,9 @@ async function getActiveAddresses() {
         let interpretation = 'neutral';
         let context = '';
         
-        if (change30d > 10) {
+        if change30d > 10:
             interpretation = 'strong-growth';
-            context = 'Network activity surging - strong adoption signal, fundamentally bullish';
+            context = 'Network activity surging - strong adoption signal, fundamentally constructive';
         } else if (change30d > 3) {
             interpretation = 'growing';
             context = 'Healthy network growth - more users engaging with Bitcoin';
@@ -295,10 +295,10 @@ async function getActiveAddresses() {
             context = 'Network activity stable - neither expansion nor contraction';
         } else if (change30d > -10) {
             interpretation = 'declining';
-            context = 'Network usage declining - fewer active users, watch for trend reversal';
+            context = 'Network usage declining - fewer active users, monitor for trend reversal';
         } else {
             interpretation = 'contracting';
-            context = 'Significant drop in activity - bearish fundamental signal';
+            context = 'Significant drop in network activity - a cautionary fundamental signal';
         }
         
         return {
