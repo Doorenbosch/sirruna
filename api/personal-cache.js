@@ -2,7 +2,7 @@
  * Personal Data Cache
  * 
  * Fetches extended historical data for portfolio analysis
- * Refreshes once daily (or on first request of the day)
+ * Refreshes twice daily: 00:00 UTC and 12:00 UTC
  * 
  * Used by: Personal Edition (7d/30d/90d views)
  * 
@@ -13,25 +13,32 @@
 let cache = {
     data: null,
     timestamp: 0,
-    date: null
+    period: null // '00' or '12'
 };
 
-const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+// Determine which 12-hour period we're in
+function getCurrentPeriod() {
+    const hour = new Date().getUTCHours();
+    return hour < 12 ? '00' : '12';
+}
 
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
-    res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate=3600');
+    res.setHeader('Cache-Control', 's-maxage=43200, stale-while-revalidate=3600'); // 12 hours
     
     const now = Date.now();
+    const currentPeriod = getCurrentPeriod();
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const cacheKey = `${today}-${currentPeriod}`; // e.g., "2025-12-10-12"
     
-    // Return cached data if same day
-    if (cache.data && cache.date === today) {
+    // Return cached data if same period
+    if (cache.data && cache.period === cacheKey) {
         return res.status(200).json({
             ...cache.data,
             cached: true,
-            cacheAge: Math.round((now - cache.timestamp) / 1000)
+            cacheAge: Math.round((now - cache.timestamp) / 1000),
+            nextRefresh: currentPeriod === '00' ? '12:00 UTC' : '00:00 UTC'
         });
     }
     
@@ -47,19 +54,21 @@ export default async function handler(req, res) {
             market: marketHistory,
             updated: new Date().toISOString(),
             updatedTimestamp: now,
-            dataDate: today
+            dataDate: today,
+            dataPeriod: currentPeriod === '00' ? '00:00 UTC' : '12:00 UTC'
         };
         
         // Update cache
         cache = {
             data: freshData,
             timestamp: now,
-            date: today
+            period: cacheKey
         };
         
         return res.status(200).json({
             ...freshData,
-            cached: false
+            cached: false,
+            nextRefresh: currentPeriod === '00' ? '12:00 UTC' : '00:00 UTC'
         });
         
     } catch (error) {
