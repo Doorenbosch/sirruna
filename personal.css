@@ -218,12 +218,21 @@ body {
     padding-top: var(--xs);
 }
 
+.data-timestamp-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--xs);
+    align-items: baseline;
+}
+
+.data-timestamp-row:first-child {
+    margin-bottom: 2px;
+}
+
 .data-timestamp-label {
     font-family: var(--sans);
     font-size: 0.65rem;
     color: var(--ink-tertiary);
-    display: block;
-    margin-bottom: 2px;
 }
 
 .data-timestamp {
@@ -231,6 +240,7 @@ body {
     font-size: 0.75rem;
     font-weight: 500;
     color: var(--ink-secondary);
+    min-width: 65px;
 }
 
 .section-label {

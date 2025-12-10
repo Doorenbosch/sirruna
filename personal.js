@@ -461,22 +461,70 @@ function updateMarketConditionHeader() {
     labelEl.textContent = headline;
 }
 
-// Update data timestamp display
+// Update data timestamp display with regional time for logged-in users
 function updateDataTimestamp(isoString, dataPeriod) {
     const el = document.getElementById('data-timestamp');
+    const nextEl = document.getElementById('next-update');
     if (!el) return;
     
+    // Check if user is logged in
+    const isLoggedIn = typeof userSync !== 'undefined' && 
+                       typeof getCurrentUser === 'function' && 
+                       getCurrentUser();
+    
+    // Region timezone mapping
+    const regionTimezones = {
+        'apac': { offset: 8, abbrev: 'SGT' },
+        'emea': { offset: 0, abbrev: 'GMT' },
+        'americas': { offset: -5, abbrev: 'EST' }
+    };
+    
+    // Get user's timezone info (or default to UTC)
+    const userRegion = state.region || 'americas';
+    const tz = isLoggedIn ? regionTimezones[userRegion] : { offset: 0, abbrev: 'UTC' };
+    
+    // Data refresh times in UTC: 00:00 and 12:00
+    const refreshTimesUTC = [0, 12];
+    
+    // Convert UTC refresh time to regional time
+    function utcToRegional(utcHour) {
+        let regionalHour = utcHour + tz.offset;
+        if (regionalHour < 0) regionalHour += 24;
+        if (regionalHour >= 24) regionalHour -= 24;
+        return String(regionalHour).padStart(2, '0') + ':00';
+    }
+    
+    // Determine current data time and next update time
+    let currentDataTime, nextUpdateTime;
+    
     if (dataPeriod) {
-        // Show the fetch period (00:00 UTC or 12:00 UTC)
-        el.textContent = dataPeriod;
+        // dataPeriod is like "00:00 UTC" or "12:00 UTC"
+        const utcHour = dataPeriod.startsWith('00') ? 0 : 12;
+        currentDataTime = utcToRegional(utcHour);
+        
+        // Next update is the other refresh time
+        const nextUtcHour = utcHour === 0 ? 12 : 0;
+        nextUpdateTime = utcToRegional(nextUtcHour);
     } else if (isoString) {
-        // Fallback: parse ISO string and show time
+        // Parse from ISO string
         const date = new Date(isoString);
-        const hours = date.getUTCHours().toString().padStart(2, '0');
-        const mins = date.getUTCMinutes().toString().padStart(2, '0');
-        el.textContent = `${hours}:${mins} UTC`;
+        const utcHour = date.getUTCHours();
+        
+        // Find which refresh period this belongs to
+        const periodUtcHour = utcHour < 12 ? 0 : 12;
+        currentDataTime = utcToRegional(periodUtcHour);
+        
+        const nextUtcHour = periodUtcHour === 0 ? 12 : 0;
+        nextUpdateTime = utcToRegional(nextUtcHour);
     } else {
-        el.textContent = '--:-- UTC';
+        currentDataTime = '--:--';
+        nextUpdateTime = '--:--';
+    }
+    
+    // Display with timezone abbreviation
+    el.textContent = `${currentDataTime} ${tz.abbrev}`;
+    if (nextEl) {
+        nextEl.textContent = `${nextUpdateTime} ${tz.abbrev}`;
     }
 }
 
