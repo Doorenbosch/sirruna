@@ -1,4 +1,4 @@
-// The Litmus - Editorial App
+// Sirruna - Editorial App
 
 const CONFIG = {
     contentPath: './content',
@@ -1385,7 +1385,7 @@ function renderReadingPane(sectionKey) {
         const roleEl = document.getElementById('analyst-role');
         
         if (photoEl) photoEl.src = analyst.photo;
-        if (nameEl) nameEl.textContent = `${analyst.name} · Litmus Intelligence`;
+        if (nameEl) nameEl.textContent = `${analyst.name} · Sirruna Edge`;
         if (roleEl) roleEl.textContent = analyst.role;
         
         // Generate a one-sentence editorial insight from content
