@@ -52,7 +52,9 @@ body {
 /* DM Serif Display - slightly open kerning for headers */
 h1, h2, h3, h4, h5, h6,
 .article-title,
-.focus-headline,
+.focus-headline {
+    letter-spacing: 0.01em;
+},
 .index-title,
 .mood-title,
 .section-title {
