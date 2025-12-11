@@ -3020,6 +3020,7 @@ BREAKPOINTS:
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
         padding: 0;
+        padding-top: env(safe-area-inset-top, 0); /* iOS safe area */
     }
     
     .reading-pane.active {
@@ -3039,6 +3040,7 @@ BREAKPOINTS:
         border: none;
         border-bottom: 1px solid var(--rule);
         padding: var(--md);
+        padding-top: calc(var(--md) + env(safe-area-inset-top, 0)); /* Extra padding for iOS notch */
         font-family: var(--sans);
         font-size: 0.85rem;
         font-weight: 500;
