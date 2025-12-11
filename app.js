@@ -1186,7 +1186,9 @@ function renderIndexCards(data) {
         
         // Only show excerpt for first section (THE LEAD or THE SESSION)
         if (key === firstSectionKey && content) {
-            cardHTML += `<p class="card-excerpt" id="index-${key}-excerpt">${truncate(content, 100)}</p>`;
+            // More characters on phone for 4 lines
+            const excerptLength = window.innerWidth < 720 ? 160 : 100;
+            cardHTML += `<p class="card-excerpt" id="index-${key}-excerpt">${truncate(content, excerptLength)}</p>`;
             
             // Add image for THE LEAD on phone
             if (data.image_url) {

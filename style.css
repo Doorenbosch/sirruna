@@ -2857,6 +2857,9 @@ BREAKPOINTS:
         grid-row: 3;
         align-self: start;
         -webkit-line-clamp: 4 !important;
+        display: -webkit-box !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
     }
     
     .index-card:first-child::after {
