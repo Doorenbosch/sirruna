@@ -136,9 +136,9 @@ window.addEventListener('userDataLoaded', (e) => {
 
 // Edition badge display names
 const editionNames = {
-    americas: 'Americas · New York',
-    emea: 'EMEA · London',
-    apac: 'APAC · Singapore'
+    americas: { region: 'Americas', city: 'New York' },
+    emea: { region: 'EMEA', city: 'London' },
+    apac: { region: 'APAC', city: 'Singapore' }
 };
 
 // Show edition badge (for logged-in users)
@@ -150,7 +150,8 @@ function showEditionBadge(region) {
     if (picker && badge && badgeText) {
         picker.style.display = 'none';
         badge.style.display = 'flex';
-        badgeText.textContent = editionNames[region] || editionNames.americas;
+        const edition = editionNames[region] || editionNames.americas;
+        badgeText.innerHTML = `<span class="region-name">${edition.region}</span><span class="region-city">${edition.city}</span>`;
     }
 }
 
@@ -542,7 +543,7 @@ async function loadMarketData() {
         
         // Update BTC
         if (data.btc) {
-            setText('btc-price', formatPrice(data.btc.price));
+            setText('btc-price', formatPriceResponsive(data.btc.price));
             updateChangeElement('btc-change', data.btc.change24h);
             setText('sticky-btc-price', formatPriceCompact(data.btc.price));
             updateStickyChange('sticky-btc-change', data.btc.change24h);
@@ -550,7 +551,7 @@ async function loadMarketData() {
         
         // Update ETH
         if (data.eth) {
-            setText('eth-price', formatPrice(data.eth.price));
+            setText('eth-price', formatPriceResponsive(data.eth.price));
             updateChangeElement('eth-change', data.eth.change24h);
             setText('sticky-eth-price', formatPriceCompact(data.eth.price));
             updateStickyChange('sticky-eth-change', data.eth.change24h);
@@ -584,14 +585,14 @@ async function loadMarketDataDirect() {
         const eth = coins.find(c => c.id === 'ethereum');
         
         if (btc) {
-            setText('btc-price', formatPrice(btc.current_price));
+            setText('btc-price', formatPriceResponsive(btc.current_price));
             updateChangeElement('btc-change', btc.price_change_percentage_24h);
             setText('sticky-btc-price', formatPriceCompact(btc.current_price));
             updateStickyChange('sticky-btc-change', btc.price_change_percentage_24h);
         }
         
         if (eth) {
-            setText('eth-price', formatPrice(eth.current_price));
+            setText('eth-price', formatPriceResponsive(eth.current_price));
             updateChangeElement('eth-change', eth.price_change_percentage_24h);
             setText('sticky-eth-price', formatPriceCompact(eth.current_price));
             updateStickyChange('sticky-eth-change', eth.price_change_percentage_24h);
@@ -648,6 +649,14 @@ function formatPriceCompact(price) {
         return '$' + (price / 1000).toFixed(1) + 'K';
     }
     return '$' + price.toFixed(0);
+}
+
+// Phone-aware price format - use compact on small screens
+function formatPriceResponsive(price) {
+    if (window.innerWidth < 720) {
+        return formatPriceCompact(price);
+    }
+    return formatPrice(price);
 }
 
 // Update sticky change element

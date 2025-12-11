@@ -2529,17 +2529,31 @@ BREAKPOINTS:
     
     /* Hide edition picker buttons, show badge instead */
     .edition-picker {
-        display: none;
+        display: none !important;
     }
     
     .edition-badge {
-        display: block !important;
+        display: flex !important;
+        flex-direction: column;
+        line-height: 1.2;
     }
     
     .edition-badge-text {
         font-size: 0.7rem;
         font-weight: 500;
         color: var(--teal);
+    }
+    
+    /* Style for two-line region display */
+    .region-name {
+        display: block;
+        font-weight: 600;
+    }
+    
+    .region-city {
+        display: block;
+        font-weight: 400;
+        color: var(--ink-tertiary);
     }
     
     .masthead-center {
