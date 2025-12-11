@@ -3089,7 +3089,9 @@ BREAKPOINTS:
         border-left: 3px solid var(--teal);
         border-radius: 4px;
         padding: var(--md);
+        padding-right: calc(var(--md) + 24px);
         cursor: pointer;
+        position: relative;
     }
     
     .phone-week-card.active {
@@ -3128,11 +3130,13 @@ BREAKPOINTS:
     
     .phone-week-card::after {
         content: "›";
-        float: right;
+        position: absolute;
+        right: var(--md);
+        top: var(--md);
         color: var(--ink-tertiary);
         font-size: 1.5rem;
         font-weight: 300;
-        margin-top: -2.5em;
+        line-height: 1;
     }
     
     /* Phone Week Reading Pane */

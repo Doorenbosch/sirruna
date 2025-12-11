@@ -2761,12 +2761,12 @@ function showPhoneWeekReading(sectionKey, label, headline) {
     
     if (!reading || !content) return;
     
-    // Get content from the week data if available
+    // Get content from the weekAheadData
     let bodyContent = '';
     
-    // Try to get from weekAheadData global or fetch
-    if (window.weekAheadContent && window.weekAheadContent[sectionKey]) {
-        bodyContent = window.weekAheadContent[sectionKey];
+    if (weekAheadData && weekAheadData.sections && weekAheadData.sections[sectionKey]) {
+        const section = weekAheadData.sections[sectionKey];
+        bodyContent = section.content || section.excerpt || '';
     } else {
         // Fallback - get excerpt from the card
         const card = document.querySelector(`.focus-card[data-week-section="${sectionKey}"]`);
