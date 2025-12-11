@@ -2164,7 +2164,7 @@ BREAKPOINTS:
     /* MAIN GRID - 2 columns, fixed widths to prevent wiggle */
     .editorial-grid {
         display: grid !important;
-        grid-template-columns: minmax(180px, 200px) 1fr !important;
+        grid-template-columns: 220px 1fr !important;
         grid-template-rows: 1fr auto !important;
         grid-template-areas: 
             "index reading"
@@ -2174,18 +2174,20 @@ BREAKPOINTS:
         min-height: calc(100vh - 280px) !important;
         margin-top: var(--xs) !important;
         width: 100% !important;
-        overflow-x: hidden !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
     }
     
     .article-index {
         grid-area: index !important;
         border-right: 1px solid var(--rule) !important;
         padding-right: var(--sm) !important;
-        padding-left: var(--xs) !important;
+        padding-left: 0 !important;
         overflow-y: auto !important;
         overflow-x: hidden !important;
         max-height: calc(100vh - 300px) !important;
-        min-width: 0 !important; /* Prevent flex overflow */
+        min-width: 0 !important;
+        width: 100% !important;
     }
     
     .reading-pane {
@@ -2194,7 +2196,7 @@ BREAKPOINTS:
         overflow-x: hidden !important;
         padding-right: var(--sm) !important;
         max-height: calc(100vh - 300px) !important;
-        min-width: 0 !important; /* Prevent flex overflow */
+        min-width: 0 !important;
     }
     
     /* Show sidebar below main content */
@@ -2383,13 +2385,14 @@ BREAKPOINTS:
         -webkit-line-clamp: 2 !important;
     }
     
-    /* Main grid - 3 columns, tighter */
+    /* Main grid - 3 columns, balanced sidebars */
     .editorial-grid {
         display: grid !important;
-        grid-template-columns: 220px 1fr 240px !important;
+        grid-template-columns: 240px 1fr 240px !important;
         gap: var(--sm) !important;
         height: calc(100vh - 240px) !important;
         margin-top: 0 !important;
+        overflow: hidden !important;
     }
     
     .article-index {
