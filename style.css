@@ -2480,32 +2480,348 @@ BREAKPOINTS:
 
 /* Phone: Single column with fullscreen reader overlay */
 @media (max-width: 719px) {
+    /* ============================================
+       PHONE LAYOUT - Card-based check-in experience
+       ============================================ */
+    
+    /* Reset body/html for phone */
+    html, body {
+        overflow-x: hidden;
+    }
+    
+    .container {
+        padding: var(--sm) var(--md);
+        padding-top: 0;
+    }
+    
+    .container.content-offset {
+        padding-top: var(--sm);
+    }
+    
+    /* ========== PHONE HEADER ========== */
     .header-fixed {
-        position: relative; /* Not fixed on mobile */
+        position: sticky;
+        top: 0;
+        background: var(--paper);
+        z-index: 100;
+        padding: var(--sm) var(--md) 0 var(--md);
+        border-bottom: none;
     }
     
+    .masthead {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--xs) 0;
+        margin-bottom: 0;
+    }
+    
+    .masthead-left {
+        display: none; /* Hide region picker on phone - use icon instead */
+    }
+    
+    .masthead-center {
+        order: 1;
+        flex: 0 0 auto;
+    }
+    
+    .brand-name {
+        font-size: 1.3rem;
+    }
+    
+    .brand-name.brand-full {
+        font-size: 1.2rem;
+        letter-spacing: 0.1em;
+    }
+    
+    .masthead-right {
+        order: 2;
+        display: flex;
+        align-items: center;
+        gap: var(--sm);
+    }
+    
+    .publication-date {
+        display: none; /* Hide date on phone */
+    }
+    
+    /* Show region indicator as icon */
+    .phone-region-btn {
+        display: flex;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--paper-dark);
+        border: 1px solid var(--rule);
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+    
+    .phone-region-btn svg {
+        width: 16px;
+        height: 16px;
+        color: var(--ink-secondary);
+    }
+    
+    .auth-button {
+        width: 32px;
+        height: 32px;
+    }
+    
+    /* ========== PHONE TICKER ========== */
+    .market-strip {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: var(--md);
+        padding: var(--xs) 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-bottom: 1px solid var(--rule);
+        margin: 0 calc(var(--md) * -1);
+        padding-left: var(--md);
+        padding-right: var(--md);
+    }
+    
+    .ticker {
+        flex-shrink: 0;
+        gap: 4px;
+    }
+    
+    .ticker-label {
+        font-size: 0.6rem;
+    }
+    
+    .ticker-value {
+        font-size: 0.8rem;
+    }
+    
+    .ticker-change {
+        font-size: 0.7rem;
+    }
+    
+    .ticker-meta {
+        display: none; /* Hide "Updated" on phone */
+    }
+    
+    /* ========== PHONE NAVIGATION ========== */
+    /* Main section nav - simplified for phone */
+    .section-nav {
+        display: flex;
+        gap: 0;
+        padding: 0;
+        margin: 0 calc(var(--md) * -1);
+        border-bottom: 1px solid var(--rule);
+    }
+    
+    .section-link {
+        flex: 1;
+        text-align: center;
+        padding: var(--sm) var(--xs);
+        font-size: 0.8rem;
+        font-weight: 500;
+        white-space: nowrap;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+    }
+    
+    .section-link.active {
+        border-bottom-color: var(--burgundy);
+        color: var(--burgundy);
+    }
+    
+    /* On phone: hide Personal, rename links */
+    .section-nav a[href="personal.html"] {
+        display: none;
+    }
+    
+    /* Hide the Evening link on desktop nav - it's in brief selector */
+    .section-nav .phone-recap {
+        display: none;
+    }
+    
+    /* ========== HIDE WEEK FOCUS ON PHONE ========== */
+    .week-focus {
+        display: none;
+    }
+    
+    /* ========== PHONE CONTENT GRID ========== */
     .editorial-grid {
-        display: block; /* Stack everything */
+        display: block;
         height: auto;
-        margin-top: var(--md);
+        margin-top: 0;
     }
     
+    /* ========== PHONE INDEX (Main Content) ========== */
     .article-index {
         display: block;
         border-right: none;
-        padding-right: 0;
-        overflow-y: visible;
+        padding: 0;
+        overflow: visible;
         height: auto;
     }
     
-    .context-sidebar {
-        display: block;
-        border-top: 1px solid var(--rule);
-        padding-top: var(--xl);
-        margin-top: var(--xl);
+    .index-header {
+        padding: var(--md) 0 var(--sm) 0;
+        margin-bottom: 0;
+        border-bottom: none;
     }
     
-    /* Reader hidden by default on mobile */
+    .index-header-top {
+        display: none; /* Hide "Intelligence" title + date on phone */
+    }
+    
+    .brief-selector {
+        display: flex;
+        gap: 0;
+        background: var(--paper-dark);
+        border-radius: 8px;
+        padding: 4px;
+        margin-bottom: var(--sm);
+    }
+    
+    .brief-tab {
+        flex: 1;
+        padding: var(--sm);
+        border-radius: 6px;
+        text-align: center;
+        background: transparent;
+        border: none;
+        min-height: auto;
+    }
+    
+    .brief-tab.active {
+        background: var(--paper);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .brief-tab-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .brief-tab-time {
+        font-size: 0.65rem;
+        display: block;
+        margin-top: 2px;
+    }
+    
+    .brief-tab.unavailable {
+        opacity: 0.4;
+    }
+    
+    /* ========== PHONE INDEX CARDS ========== */
+    .index-list {
+        display: block;
+    }
+    
+    .index-card {
+        padding: var(--md);
+        margin: 0 calc(var(--md) * -1);
+        margin-bottom: 0;
+        border-bottom: 1px solid var(--rule);
+        border-left: none;
+        background: var(--paper);
+    }
+    
+    .index-card:first-child {
+        /* THE LEAD gets special treatment */
+        background: var(--paper-dark);
+        padding: var(--lg) var(--md);
+    }
+    
+    .index-card.active {
+        background: var(--paper-dark);
+        border-left: none;
+        margin: 0 calc(var(--md) * -1);
+        margin-bottom: 0;
+    }
+    
+    .card-label {
+        font-size: 0.6rem;
+        margin-bottom: var(--xs);
+    }
+    
+    .card-headline {
+        font-size: 1.1rem;
+        line-height: 1.3;
+        margin-bottom: var(--xs);
+    }
+    
+    .card-excerpt {
+        font-size: 0.85rem;
+        line-height: 1.5;
+        color: var(--ink-secondary);
+        -webkit-line-clamp: 3;
+    }
+    
+    /* Arrow indicator for expandable cards */
+    .index-card::after {
+        content: "→";
+        position: absolute;
+        right: var(--md);
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--ink-tertiary);
+        font-size: 1rem;
+    }
+    
+    .index-card {
+        position: relative;
+        padding-right: calc(var(--md) + 24px);
+    }
+    
+    /* ========== PHONE TAKEAWAY ========== */
+    .takeaway-quote {
+        margin: var(--md) calc(var(--md) * -1);
+        padding: var(--lg) var(--md);
+        background: var(--burgundy);
+        border-left: none;
+    }
+    
+    .takeaway-label {
+        color: rgba(255,255,255,0.7);
+    }
+    
+    .takeaway-text {
+        font-size: 1.1rem;
+        color: var(--white);
+    }
+    
+    /* ========== PHONE YOUR COINS ========== */
+    .relative-performance {
+        margin: var(--md) calc(var(--md) * -1);
+        padding: var(--md);
+        background: var(--paper-dark);
+        border-top: 1px solid var(--rule);
+    }
+    
+    .relative-header {
+        margin-bottom: var(--sm);
+    }
+    
+    .relative-label {
+        font-size: 0.65rem;
+    }
+    
+    .relative-row {
+        padding: var(--sm) 0;
+    }
+    
+    .rel-name {
+        font-size: 0.8rem;
+    }
+    
+    .rel-change {
+        font-size: 0.8rem;
+    }
+    
+    /* ========== HIDE SIDEBAR ON PHONE ========== */
+    .context-sidebar {
+        display: none;
+    }
+    
+    /* ========== PHONE READING PANE (Fullscreen Overlay) ========== */
     .reading-pane {
         display: none;
         position: fixed;
@@ -2516,16 +2832,14 @@ BREAKPOINTS:
         background: var(--paper);
         z-index: 1000;
         overflow-y: auto;
-        padding: var(--lg);
-        padding-top: 60px; /* Space for back button */
+        -webkit-overflow-scrolling: touch;
+        padding: 0;
     }
     
-    /* Show reader when article selected */
     .reading-pane.active {
         display: block;
     }
     
-    /* Mobile back button */
     .mobile-back-btn {
         display: flex;
         align-items: center;
@@ -2533,19 +2847,19 @@ BREAKPOINTS:
         position: sticky;
         top: 0;
         left: 0;
+        right: 0;
         z-index: 10;
         background: var(--paper);
-        border: 1px solid var(--rule);
-        border-radius: 20px;
-        padding: var(--sm) var(--md);
-        margin-bottom: var(--lg);
+        border: none;
+        border-bottom: 1px solid var(--rule);
+        padding: var(--md);
         font-family: var(--sans);
         font-size: 0.85rem;
         font-weight: 500;
         color: var(--ink);
         cursor: pointer;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        width: fit-content;
+        width: 100%;
+        justify-content: flex-start;
     }
     
     .mobile-back-btn:hover {
@@ -2553,85 +2867,83 @@ BREAKPOINTS:
     }
     
     .mobile-back-btn svg {
-        width: 16px;
-        height: 16px;
+        width: 20px;
+        height: 20px;
+    }
+    
+    /* Reading pane content */
+    .article-content {
+        padding: 0 var(--md) var(--xl) var(--md);
+    }
+    
+    .article-image {
+        margin: 0 calc(var(--md) * -1);
+        margin-bottom: var(--md);
+    }
+    
+    .article-label {
+        font-size: 0.65rem;
+    }
+    
+    .article-headline {
+        font-size: 1.5rem;
+        line-height: 1.25;
+    }
+    
+    .article-body {
+        font-size: 1rem;
+        line-height: 1.7;
+    }
+    
+    .article-body p {
+        margin-bottom: var(--md);
+    }
+    
+    /* Hide article ending extras on phone */
+    .article-ending {
+        display: none;
     }
     
     /* Prevent body scroll when reader is open */
     body.reader-open {
         overflow: hidden;
     }
-    
-    .container {
-        padding: var(--md);
-    }
-    
-    .masthead {
-        flex-wrap: wrap;
-        gap: var(--sm);
-    }
-    
-    .masthead-left {
-        order: 2;
-        width: 100%;
-    }
-    
-    .masthead-center {
-        order: 1;
-    }
-    
-    .masthead-right {
-        order: 3;
-        margin-left: auto;
-    }
-    
-    .edition-picker {
-        width: 100%;
-        justify-content: center;
-    }
-    
-    .index-list {
-        display: block;
-    }
-    
-    .index-card {
-        padding: var(--md) 0;
-    }
-    
-    .article-headline {
-        font-size: 1.5rem;
-    }
-    
-    .article-body {
-        font-size: 1rem;
-    }
-    
-    .section-nav {
-        overflow-x: auto;
-        gap: var(--md);
-        padding-bottom: var(--sm);
-        -webkit-overflow-scrolling: touch;
-    }
-    
-    .market-strip {
-        flex-wrap: wrap;
-        gap: var(--sm);
-    }
 }
 
 /* Small phones */
 @media (max-width: 400px) {
-    .edition-picker {
-        gap: var(--xs);
-    }
-    
-    .edition {
-        padding: var(--xs) var(--sm);
-        font-size: 0.7rem;
-    }
-    
     .brand-name {
-        font-size: 1.25rem;
+        font-size: 1.1rem;
+    }
+    
+    .brand-name.brand-full {
+        font-size: 1rem;
+        letter-spacing: 0.08em;
+    }
+    
+    .ticker {
+        gap: 2px;
+    }
+    
+    .ticker-label {
+        font-size: 0.55rem;
+    }
+    
+    .ticker-value {
+        font-size: 0.75rem;
+    }
+    
+    .section-link {
+        font-size: 0.7rem;
+        padding: var(--sm) var(--xs);
+    }
+    
+    .card-headline {
+        font-size: 1rem;
+    }
+    
+    .article-headline {
+        font-size: 1.3rem;
     }
 }
 
