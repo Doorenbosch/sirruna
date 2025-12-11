@@ -2672,7 +2672,7 @@ function showMarketMoodDetail() {
     console.log('showMarketMoodDetail called');
     const detail = document.getElementById('phone-mood-detail');
     const clone = document.getElementById('mood-widget-clone');
-    const moodSection = document.querySelector('.mood-section');
+    const moodSection = document.querySelector('.market-mood');
     
     if (detail) {
         if (clone && moodSection) {

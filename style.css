@@ -2849,12 +2849,14 @@ BREAKPOINTS:
         grid-column: 1;
         grid-row: 3;
         display: block !important;
+        align-self: start;
     }
     
     .index-card:first-child .card-excerpt {
         grid-column: 2;
         grid-row: 3;
         align-self: start;
+        -webkit-line-clamp: 4 !important;
     }
     
     .index-card:first-child::after {
