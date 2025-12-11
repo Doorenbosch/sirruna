@@ -2701,6 +2701,162 @@ function closeMarketMoodDetail() {
 window.showMarketMoodDetail = showMarketMoodDetail;
 window.closeMarketMoodDetail = closeMarketMoodDetail;
 
+// ========== PHONE THE WEEK VIEW ==========
+let weekAheadData = null;
+
+// Show The Week view (phone)
+function showPhoneWeekView() {
+    const weekView = document.getElementById('phone-week-view');
+    const cardsContainer = document.getElementById('phone-week-cards');
+    const titleEl = document.getElementById('phone-week-title');
+    
+    if (!weekView) return;
+    
+    // Hide other views
+    document.getElementById('phone-mood-detail')?.classList.remove('active');
+    document.querySelector('.reading-pane')?.classList.remove('active');
+    
+    // Try to get week data from the existing week-focus section
+    const weekFocus = document.getElementById('week-focus');
+    const weekTitle = document.getElementById('week-focus-title');
+    
+    if (titleEl && weekTitle) {
+        titleEl.textContent = weekTitle.textContent;
+    }
+    
+    // Build cards from existing focus cards data
+    if (cardsContainer) {
+        const focusCards = document.querySelectorAll('.focus-card');
+        cardsContainer.innerHTML = '';
+        
+        focusCards.forEach((card, index) => {
+            const label = card.querySelector('.focus-label')?.textContent || '';
+            const headline = card.querySelector('.focus-headline')?.textContent || '';
+            const excerpt = card.querySelector('.focus-excerpt')?.textContent || '';
+            const sectionKey = card.dataset.weekSection || '';
+            
+            const phoneCard = document.createElement('div');
+            phoneCard.className = 'phone-week-card';
+            phoneCard.dataset.section = sectionKey;
+            phoneCard.innerHTML = `
+                <div class="phone-week-label">${label}</div>
+                <h3 class="phone-week-headline">${headline}</h3>
+                <p class="phone-week-excerpt">${excerpt}</p>
+            `;
+            
+            phoneCard.addEventListener('click', () => {
+                showPhoneWeekReading(sectionKey, label, headline);
+            });
+            
+            cardsContainer.appendChild(phoneCard);
+        });
+    }
+    
+    weekView.classList.add('active');
+    document.body.classList.add('reader-open');
+}
+
+// Show week reading pane
+function showPhoneWeekReading(sectionKey, label, headline) {
+    const reading = document.getElementById('phone-week-reading');
+    const content = document.getElementById('phone-week-content');
+    
+    if (!reading || !content) return;
+    
+    // Get content from the week data if available
+    let bodyContent = '';
+    
+    // Try to get from weekAheadData global or fetch
+    if (window.weekAheadContent && window.weekAheadContent[sectionKey]) {
+        bodyContent = window.weekAheadContent[sectionKey];
+    } else {
+        // Fallback - get excerpt from the card
+        const card = document.querySelector(`.focus-card[data-week-section="${sectionKey}"]`);
+        bodyContent = card?.querySelector('.focus-excerpt')?.textContent || '';
+    }
+    
+    content.innerHTML = `
+        <div class="week-label">${label}</div>
+        <h1 class="week-headline">${headline}</h1>
+        <div class="week-body">${bodyContent}</div>
+    `;
+    
+    reading.classList.add('active');
+}
+
+// Close week reading pane
+function closePhoneWeekReading() {
+    const reading = document.getElementById('phone-week-reading');
+    if (reading) {
+        reading.classList.remove('active');
+    }
+}
+
+// Close The Week view
+function closePhoneWeekView() {
+    const weekView = document.getElementById('phone-week-view');
+    if (weekView) {
+        weekView.classList.remove('active');
+        document.body.classList.remove('reader-open');
+    }
+}
+
+// Make functions available globally
+window.showPhoneWeekView = showPhoneWeekView;
+window.closePhoneWeekView = closePhoneWeekView;
+window.closePhoneWeekReading = closePhoneWeekReading;
+
+// ========== PHONE NAV HANDLERS ==========
+function initPhoneNav() {
+    const phoneNav = document.getElementById('phone-nav');
+    if (!phoneNav) return;
+    
+    const navLinks = phoneNav.querySelectorAll('.phone-nav-link');
+    
+    navLinks.forEach(link => {
+        if (link.tagName === 'A') return; // Skip actual links like Media
+        
+        link.addEventListener('click', () => {
+            const view = link.dataset.view;
+            
+            // Don't do anything if disabled
+            if (link.classList.contains('disabled')) return;
+            
+            // Update active states
+            navLinks.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+            
+            // Close all views first
+            document.getElementById('phone-week-view')?.classList.remove('active');
+            document.getElementById('phone-week-reading')?.classList.remove('active');
+            document.getElementById('phone-mood-detail')?.classList.remove('active');
+            document.querySelector('.reading-pane')?.classList.remove('active');
+            document.body.classList.remove('reader-open');
+            
+            // Show appropriate view
+            if (view === 'week') {
+                showPhoneWeekView();
+            } else if (view === 'day') {
+                // Default view - just show the index
+                // Already closed other views above
+            } else if (view === 'recap') {
+                // Switch to evening brief
+                const eveningTab = document.querySelector('.brief-tab[data-brief="evening"]');
+                if (eveningTab && !eveningTab.classList.contains('unavailable')) {
+                    eveningTab.click();
+                }
+            }
+        });
+    });
+}
+
+// Initialize phone nav on load
+document.addEventListener('DOMContentLoaded', () => {
+    if (window.innerWidth < 720) {
+        initPhoneNav();
+    }
+});
+
 // ========== GOOGLE ANALYTICS 4 TRACKING ==========
 // Helper function to track custom events
 function trackEvent(eventName, params = {}) {

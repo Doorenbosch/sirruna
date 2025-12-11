@@ -3043,6 +3043,164 @@ BREAKPOINTS:
         margin-bottom: var(--md);
     }
     
+    /* ========== PHONE THE WEEK VIEW ========== */
+    .phone-week-view {
+        display: none;
+        position: fixed;
+        top: 140px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--paper);
+        z-index: 50;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: var(--md);
+    }
+    
+    .phone-week-view.active {
+        display: block;
+    }
+    
+    .phone-week-header {
+        margin-bottom: var(--md);
+        padding-bottom: var(--sm);
+        border-bottom: 2px solid var(--teal);
+    }
+    
+    .phone-week-title {
+        font-family: var(--sans);
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--teal);
+    }
+    
+    .phone-week-cards {
+        display: flex;
+        flex-direction: column;
+        gap: var(--sm);
+    }
+    
+    .phone-week-card {
+        background: var(--paper);
+        border: 1px solid var(--rule);
+        border-left: 3px solid var(--teal);
+        border-radius: 4px;
+        padding: var(--md);
+        cursor: pointer;
+    }
+    
+    .phone-week-card.active {
+        background: var(--paper-dark);
+    }
+    
+    .phone-week-label {
+        font-family: var(--sans);
+        font-size: 0.6rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--teal);
+        margin-bottom: var(--xs);
+    }
+    
+    .phone-week-headline {
+        font-family: var(--serif);
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: var(--ink);
+        margin-bottom: var(--xs);
+    }
+    
+    .phone-week-excerpt {
+        font-family: var(--sans);
+        font-size: 0.85rem;
+        line-height: 1.5;
+        color: var(--ink-secondary);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .phone-week-card::after {
+        content: "›";
+        float: right;
+        color: var(--ink-tertiary);
+        font-size: 1.5rem;
+        font-weight: 300;
+        margin-top: -2.5em;
+    }
+    
+    /* Phone Week Reading Pane */
+    .phone-week-reading {
+        display: none;
+        position: fixed;
+        top: 140px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--paper);
+        z-index: 60;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .phone-week-reading.active {
+        display: block;
+    }
+    
+    .phone-week-back {
+        display: flex;
+        align-items: center;
+        gap: var(--sm);
+        position: sticky;
+        top: 0;
+        background: var(--paper);
+        border: none;
+        border-bottom: 1px solid var(--rule);
+        padding: var(--md);
+        font-family: var(--sans);
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--ink);
+        cursor: pointer;
+        width: 100%;
+    }
+    
+    .phone-week-back svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .phone-week-content {
+        padding: var(--md);
+    }
+    
+    .phone-week-content .week-label {
+        font-size: 0.65rem;
+        color: var(--teal);
+        margin-bottom: var(--xs);
+    }
+    
+    .phone-week-content .week-headline {
+        font-family: var(--serif);
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.25;
+        margin-bottom: var(--md);
+    }
+    
+    .phone-week-content .week-body {
+        font-family: var(--sans);
+        font-size: 1rem;
+        line-height: 1.7;
+        color: var(--ink);
+    }
+    
     /* ========== PHONE TAKEAWAY ========== */
     .takeaway-quote {
         margin: var(--md) calc(var(--md) * -1);
@@ -3783,9 +3941,9 @@ BREAKPOINTS:
 
 .focus-excerpt {
     font-family: var(--sans);
-    font-size: 0.75rem;
-    color: var(--ink-tertiary);
-    line-height: 1.4;
+    font-size: 0.85rem;
+    color: var(--ink-secondary);
+    line-height: 1.5;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;

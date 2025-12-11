@@ -44,7 +44,7 @@
     
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
-    <link rel="stylesheet" href="style.css?v=21">
+    <link rel="stylesheet" href="style.css?v=22">
     <link rel="stylesheet" href="footer.css">
     <link rel="stylesheet" href="auth.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -669,6 +669,29 @@
         <div class="phone-mood-content">
             <!-- This will be populated by cloning the sidebar mood widget -->
             <div class="mood-widget-clone" id="mood-widget-clone"></div>
+        </div>
+    </div>
+    
+    <!-- Phone The Week View -->
+    <div class="phone-week-view" id="phone-week-view">
+        <header class="phone-week-header">
+            <h2 class="phone-week-title" id="phone-week-title">What to Watch · Dec 8</h2>
+        </header>
+        <div class="phone-week-cards" id="phone-week-cards">
+            <!-- Cards populated by JS -->
+        </div>
+    </div>
+    
+    <!-- Phone Week Reading Pane -->
+    <div class="phone-week-reading" id="phone-week-reading">
+        <button class="phone-week-back" onclick="closePhoneWeekReading()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back
+        </button>
+        <div class="phone-week-content" id="phone-week-content">
+            <!-- Content populated by JS -->
         </div>
     </div>
 </body>
