@@ -2702,7 +2702,6 @@ window.showMarketMoodDetail = showMarketMoodDetail;
 window.closeMarketMoodDetail = closeMarketMoodDetail;
 
 // ========== PHONE THE WEEK VIEW ==========
-let weekAheadData = null;
 
 // Show The Week view (phone)
 function showPhoneWeekView() {
