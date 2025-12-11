@@ -2297,9 +2297,9 @@ BREAKPOINTS:
         padding: var(--sm) var(--md) !important;
     }
     
-    /* Content offset for fixed header */
+    /* Content offset for fixed header - tighter */
     .container.content-offset {
-        padding-top: 130px !important;
+        padding-top: 120px !important;
     }
     
     .header-fixed {
@@ -2344,10 +2344,10 @@ BREAKPOINTS:
         font-size: 0.8rem !important;
     }
     
-    /* Week Focus - 4 columns, compact, minimal top space */
+    /* Week Focus - 4 columns, compact top, breathing room below */
     .week-focus {
-        margin-top: var(--xs) !important;
-        margin-bottom: var(--sm) !important;
+        margin-top: 0 !important;
+        margin-bottom: var(--md) !important;
         padding-top: 0 !important;
     }
     
@@ -2389,7 +2389,7 @@ BREAKPOINTS:
         grid-template-columns: 220px 1fr 240px !important;
         gap: var(--sm) !important;
         height: calc(100vh - 240px) !important;
-        margin-top: var(--xs) !important;
+        margin-top: 0 !important;
     }
     
     .article-index {
