@@ -757,6 +757,10 @@ function renderMarketMood(data) {
     setText('mood-title', MOOD_ZONES[zone]?.label || 'Market Mood');
     setText('mood-description', MOOD_DESCRIPTIONS[zone] || '');
     
+    // Update phone market mood
+    setText('phone-mood-title', MOOD_ZONES[zone]?.label || 'Market Mood');
+    setText('phone-mood-text', MOOD_DESCRIPTIONS[zone] || '');
+    
     // Update breadth display
     setText('breadth-value', `${Math.round(breadth)}% of coins are green`);
     
@@ -1183,6 +1187,11 @@ function renderIndexCards(data) {
         // Only show excerpt for first section (THE LEAD or THE SESSION)
         if (key === firstSectionKey && content) {
             cardHTML += `<p class="card-excerpt" id="index-${key}-excerpt">${truncate(content, 100)}</p>`;
+            
+            // Add image for THE LEAD on phone
+            if (data.image_url) {
+                cardHTML += `<div class="card-image"><img src="${data.image_url}" alt=""></div>`;
+            }
         }
         
         card.innerHTML = cardHTML;
@@ -1207,6 +1216,14 @@ function renderIndexCards(data) {
         });
         
         indexList.appendChild(card);
+        
+        // Insert phone market mood after THE LEAD (first card) on phone
+        if (index === 0 && window.innerWidth < 720) {
+            const phoneMood = document.getElementById('phone-market-mood');
+            if (phoneMood) {
+                indexList.appendChild(phoneMood);
+            }
+        }
     });
     
     // Scroll index content to top

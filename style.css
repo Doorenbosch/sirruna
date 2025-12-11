@@ -876,6 +876,15 @@ a {
     color: var(--burgundy);
 }
 
+/* Phone-only elements hidden on desktop */
+.phone-market-mood {
+    display: none;
+}
+
+.card-image {
+    display: none;
+}
+
 .card-label {
     font-size: 0.65rem;
     font-weight: 600;
@@ -2541,19 +2550,20 @@ BREAKPOINTS:
     .edition-badge-text {
         font-size: 0.7rem;
         font-weight: 500;
-        color: var(--teal);
     }
     
     /* Style for two-line region display */
     .region-name {
         display: block;
         font-weight: 600;
+        color: var(--burgundy);
     }
     
     .region-city {
         display: block;
         font-weight: 400;
-        color: var(--ink-tertiary);
+        color: var(--burgundy);
+        opacity: 0.7;
     }
     
     .masthead-center {
@@ -2711,6 +2721,31 @@ BREAKPOINTS:
         margin-top: 0;
     }
     
+    /* Remove top padding from container on phone */
+    .container.content-offset {
+        padding-top: 0 !important;
+    }
+    
+    /* ========== PHONE INDEX (Main Content) ========== */
+    .article-index {
+        display: block;
+        border-right: none;
+        padding: 0;
+        overflow: visible;
+        height: auto;
+    }
+    
+    .index-content {
+        padding-top: var(--sm);
+    }
+    
+    /* ========== PHONE CONTENT GRID ========== */
+    .editorial-grid {
+        display: block;
+        height: auto;
+        margin-top: 0;
+    }
+    
     /* ========== PHONE INDEX (Main Content) ========== */
     .article-index {
         display: block;
@@ -2776,24 +2811,53 @@ BREAKPOINTS:
     
     .index-card {
         padding: var(--md);
-        margin: 0 calc(var(--md) * -1);
+        margin: 0;
         margin-bottom: 0;
         border-bottom: 1px solid var(--rule);
         border-left: none;
         background: var(--paper);
+        position: relative;
     }
     
+    /* THE LEAD card - special with image */
     .index-card:first-child {
-        /* THE LEAD gets special treatment */
+        display: grid;
+        grid-template-columns: 1fr 100px;
+        grid-template-rows: auto auto auto;
+        gap: var(--xs) var(--sm);
         background: var(--paper-dark);
-        padding: var(--lg) var(--md);
+        padding: var(--md);
+    }
+    
+    .index-card:first-child .card-label {
+        grid-column: 1;
+        grid-row: 1;
+    }
+    
+    .index-card:first-child .card-headline {
+        grid-column: 1;
+        grid-row: 2;
+    }
+    
+    .index-card:first-child .card-excerpt {
+        grid-column: 1;
+        grid-row: 3;
+    }
+    
+    .index-card:first-child .card-image {
+        grid-column: 2;
+        grid-row: 1 / 4;
+        display: block !important;
+    }
+    
+    .index-card:first-child::after {
+        display: none; /* No arrow on LEAD - image is the visual */
     }
     
     .index-card.active {
         background: var(--paper-dark);
         border-left: none;
-        margin: 0 calc(var(--md) * -1);
-        margin-bottom: 0;
+        margin: 0;
     }
     
     .card-label {
@@ -2814,8 +2878,23 @@ BREAKPOINTS:
         -webkit-line-clamp: 3;
     }
     
-    /* Arrow indicator for expandable cards */
-    .index-card::after {
+    /* Card image (for THE LEAD on phone) */
+    .card-image {
+        display: none; /* Hidden by default */
+        width: 100px;
+        height: 80px;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    
+    .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    /* Arrow indicator for expandable cards (not LEAD) */
+    .index-card:not(:first-child)::after {
         content: "→";
         position: absolute;
         right: var(--md);
@@ -2825,9 +2904,47 @@ BREAKPOINTS:
         font-size: 1rem;
     }
     
-    .index-card {
-        position: relative;
+    .index-card:not(:first-child) {
         padding-right: calc(var(--md) + 24px);
+    }
+    
+    /* ========== PHONE MARKET MOOD (after THE LEAD) ========== */
+    .phone-market-mood {
+        display: block;
+        padding: var(--md);
+        background: var(--paper);
+        border-bottom: 1px solid var(--rule);
+        cursor: pointer;
+    }
+    
+    .phone-mood-label {
+        font-size: 0.6rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--teal);
+        margin-bottom: var(--xs);
+    }
+    
+    .phone-mood-title {
+        font-family: var(--serif);
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: var(--xs);
+    }
+    
+    .phone-mood-text {
+        font-family: var(--sans);
+        font-size: 0.85rem;
+        line-height: 1.5;
+        color: var(--ink-secondary);
+    }
+    
+    .phone-mood-arrow {
+        float: right;
+        color: var(--ink-tertiary);
+        margin-top: -2em;
     }
     
     /* ========== PHONE TAKEAWAY ========== */

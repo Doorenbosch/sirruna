@@ -44,7 +44,7 @@
     
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
-    <link rel="stylesheet" href="style.css?v=11">
+    <link rel="stylesheet" href="style.css?v=12">
     <link rel="stylesheet" href="footer.css">
     <link rel="stylesheet" href="auth.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -361,6 +361,14 @@
                     <nav class="index-list">
                         <!-- Index cards are dynamically generated based on brief type -->
                     </nav>
+                    
+                    <!-- Phone Market Mood (shown after THE LEAD on phone) -->
+                    <div class="phone-market-mood" id="phone-market-mood" onclick="showMarketMoodDetail()">
+                        <div class="phone-mood-label">MARKET MOOD</div>
+                        <div class="phone-mood-title" id="phone-mood-title">Loading...</div>
+                        <div class="phone-mood-text" id="phone-mood-text"></div>
+                        <span class="phone-mood-arrow">→</span>
+                    </div>
                     
                     <!-- THE TAKEAWAY - Rory-style quote box (not clickable) -->
                     <aside class="takeaway-quote" id="takeaway-quote" style="display: none;">
