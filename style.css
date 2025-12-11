@@ -2824,7 +2824,7 @@ BREAKPOINTS:
         position: relative;
     }
     
-    /* THE LEAD card - image LEFT, text RIGHT */
+    /* THE LEAD card - label & headline full width, then image left + excerpt right */
     .index-card:first-child {
         display: grid;
         grid-template-columns: 100px 1fr;
@@ -2834,25 +2834,27 @@ BREAKPOINTS:
         padding: var(--md);
     }
     
-    .index-card:first-child .card-image {
-        grid-column: 1;
-        grid-row: 1 / 4;
-        display: block !important;
-    }
-    
     .index-card:first-child .card-label {
-        grid-column: 2;
+        grid-column: 1 / -1;
         grid-row: 1;
     }
     
     .index-card:first-child .card-headline {
-        grid-column: 2;
+        grid-column: 1 / -1;
         grid-row: 2;
+        margin-bottom: var(--sm);
+    }
+    
+    .index-card:first-child .card-image {
+        grid-column: 1;
+        grid-row: 3;
+        display: block !important;
     }
     
     .index-card:first-child .card-excerpt {
         grid-column: 2;
         grid-row: 3;
+        align-self: start;
     }
     
     .index-card:first-child::after {
@@ -2881,7 +2883,7 @@ BREAKPOINTS:
         line-height: 1.4;
         color: var(--ink-secondary);
         display: -webkit-box;
-        -webkit-line-clamp: 2;
+        -webkit-line-clamp: 4;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
