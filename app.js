@@ -321,9 +321,8 @@ async function checkBriefAvailability(region) {
             eveningTimestamp = eveningData.generated_at ? new Date(eveningData.generated_at) : null;
             
             // Evening brief is valid if it exists and has a timestamp
-            // For phone Recap tab, show if evening exists (even if from yesterday)
+            // Evening brief is only valid if it's AFTER the morning brief
             const eveningIsValid = eveningTimestamp && morningTimestamp && (eveningTimestamp > morningTimestamp);
-            const eveningExists = eveningTimestamp !== null;
             
             if (eveningIsValid) {
                 if (eveningTab) {
@@ -333,25 +332,12 @@ async function checkBriefAvailability(region) {
                         timeEl.textContent = formatBriefTime(eveningData.generated_at);
                     }
                 }
-                // Enable phone recap tab
-                if (phoneRecapTab) {
-                    phoneRecapTab.classList.remove('disabled');
-                }
-            } else if (eveningExists) {
-                // Evening exists but is older than morning - still show on phone but mark desktop as unavailable
-                if (eveningTab) {
-                    eveningTab.classList.add('unavailable');
-                    const timeEl = eveningTab.querySelector('.brief-tab-time');
-                    if (timeEl) {
-                        timeEl.textContent = '18:00 · Soon';
-                    }
-                }
-                // Still enable phone recap for yesterday's evening
+                // Enable phone recap tab - ONLY when evening is newer than morning
                 if (phoneRecapTab) {
                     phoneRecapTab.classList.remove('disabled');
                 }
             } else {
-                // Evening exists but is older than morning - mark as unavailable
+                // Evening doesn't exist or is older than morning - mark as unavailable
                 if (eveningTab) {
                     eveningTab.classList.add('unavailable');
                     const timeEl = eveningTab.querySelector('.brief-tab-time');
