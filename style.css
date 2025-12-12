@@ -257,15 +257,29 @@ a {
 /* Edition Badge (shown for logged-in users) */
 .edition-badge {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.2;
+    cursor: pointer;
 }
 
 .edition-badge-text {
     font-family: var(--sans);
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: 0.85rem;
     color: var(--burgundy);
     letter-spacing: 0.02em;
+}
+
+.region-name {
+    display: block;
+    font-weight: 600;
+}
+
+.region-city {
+    display: block;
+    font-weight: 400;
+    font-size: 0.75rem;
+    opacity: 0.7;
 }
 
 /* Subscribe Button */
@@ -541,6 +555,126 @@ a {
 .section-link:hover,
 .section-link.active {
     color: var(--ink);
+}
+
+/* ========== LOGIN POPUP ========== */
+.login-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-overlay.active {
+    display: flex;
+}
+
+.login-popup {
+    background: var(--paper);
+    border-radius: 8px;
+    padding: var(--xl);
+    max-width: 380px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.login-close {
+    position: absolute;
+    top: var(--md);
+    right: var(--md);
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--ink-tertiary);
+    cursor: pointer;
+    line-height: 1;
+    padding: var(--xs);
+}
+
+.login-close:hover {
+    color: var(--ink);
+}
+
+.login-title {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: var(--xs);
+    text-align: center;
+}
+
+.login-subtitle {
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    color: var(--ink-secondary);
+    text-align: center;
+    margin-bottom: var(--lg);
+}
+
+.login-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sm);
+}
+
+.login-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sm);
+    padding: var(--md) var(--lg);
+    border-radius: 6px;
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.login-google {
+    background: white;
+    border: 1px solid var(--rule);
+    color: var(--ink);
+}
+
+.login-google:hover {
+    background: var(--paper-dark);
+    border-color: var(--ink-tertiary);
+}
+
+.login-apple {
+    background: var(--ink);
+    border: 1px solid var(--ink);
+    color: white;
+}
+
+.login-apple:hover {
+    background: #333;
+}
+
+.login-footer {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    color: var(--ink-tertiary);
+    text-align: center;
+    margin-top: var(--lg);
+}
+
+.login-footer a {
+    color: var(--burgundy);
+    text-decoration: none;
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
 }
 
 /* ========== STICKY HEADER ========== */

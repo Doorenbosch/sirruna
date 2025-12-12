@@ -2900,3 +2900,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Export for use in other modules
 window.trackEvent = trackEvent;
+
+// ========== LOGIN POPUP ==========
+function showLoginPopup() {
+    const overlay = document.getElementById('login-overlay');
+    if (overlay) {
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeLoginPopup() {
+    const overlay = document.getElementById('login-overlay');
+    if (overlay) {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+// Initialize login popup handlers
+document.addEventListener('DOMContentLoaded', () => {
+    // Edition badge click -> show login popup
+    const editionBadge = document.getElementById('edition-badge');
+    if (editionBadge) {
+        editionBadge.addEventListener('click', showLoginPopup);
+    }
+    
+    // Close button
+    const closeBtn = document.getElementById('login-close');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeLoginPopup);
+    }
+    
+    // Click outside to close
+    const overlay = document.getElementById('login-overlay');
+    if (overlay) {
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                closeLoginPopup();
+            }
+        });
+    }
+    
+    // Google login button (placeholder - connect to Firebase auth)
+    const googleBtn = document.getElementById('login-google');
+    if (googleBtn) {
+        googleBtn.addEventListener('click', () => {
+            // TODO: Implement Google sign-in
+            console.log('Google sign-in clicked');
+            // signInWithGoogle(); // Uncomment when Firebase is ready
+        });
+    }
+    
+    // Apple login button (placeholder - connect to Firebase auth)
+    const appleBtn = document.getElementById('login-apple');
+    if (appleBtn) {
+        appleBtn.addEventListener('click', () => {
+            // TODO: Implement Apple sign-in
+            console.log('Apple sign-in clicked');
+            // signInWithApple(); // Uncomment when Firebase is ready
+        });
+    }
+});
+
+// Escape key to close popup
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeLoginPopup();
+    }
+});
