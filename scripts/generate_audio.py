@@ -196,8 +196,8 @@ def main():
     cleaned_text = clean_text_for_speech(content)
     
     # Add intro and outro
-    intro = f"This is The Week in Review from Litmus Daily. {headline}. "
-    outro = " This has been The Week in Review from Litmus Daily. Thank you for listening."
+    intro = f"This is The Week in Review from Sirruna, and I'm Barbara Miller. {headline}. "
+    outro = " This has been The Week in Review from Sirruna. Thank you for listening and looking forward to next week."
     
     full_text = intro + cleaned_text + outro
     
